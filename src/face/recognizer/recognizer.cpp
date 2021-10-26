@@ -1,4 +1,4 @@
-#include "recognizer.h"
+#include "../recognizer.h"
 #include "./mobilefacenet/mobilefacenet.hpp"
 
 IRecognizer new_mobilefacenet() {

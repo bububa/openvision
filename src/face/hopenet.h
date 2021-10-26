@@ -1,10 +1,10 @@
 #ifndef _ROS_NCNN_HOPENET_C_H_
 #define _ROS_NCNN_HOPENET_C_H_
 
-#include "../common/common.h"
+#include "common.h"
 
 #ifdef __cplusplus
-#include "hopenet.hpp"
+#include "hopenet/hopenet.hpp"
 extern "C" {
 #endif
     typedef void* IHopeNet;

@@ -1,4 +1,4 @@
-#include "landmarker.h"
+#include "../landmarker.h"
 #include "zqlandmarker/zqlandmarker.hpp"
 #include "insightface/insightface.hpp"
 

@@ -1,9 +1,10 @@
 #ifndef _FACE_RECOGNIZER_C_H_
 #define _FACE_RECOGNIZER_C_H_
-#include "../common/common.h"
+
+#include "common.h"
 
 #ifdef __cplusplus
-#include "recognizer.hpp"
+#include "recognizer/recognizer.hpp"
 extern "C" {
 #endif
     typedef void* IRecognizer;

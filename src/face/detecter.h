@@ -1,10 +1,10 @@
 #ifndef _FACE_DETECTER_C_H_
 #define _FACE_DETECTER_C_H_
 
-#include "../common/common.h"
+#include "common.h"
 
 #ifdef __cplusplus
-#include "detecter.hpp"
+#include "detecter/detecter.hpp"
 extern "C" {
 #endif
     typedef void* IDetecter;

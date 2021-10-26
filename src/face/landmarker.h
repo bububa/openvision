@@ -1,10 +1,10 @@
 #ifndef _FACE_LANDMARKER_C_H_
 #define _FACE_LANDMARKER_C_H_
 
-#include "../common/common.h"
+#include "common.h"
 
 #ifdef __cplusplus
-#include "landmarker.hpp"
+#include "landmarker/landmarker.hpp"
 extern "C" {
 #endif
     typedef void* ILandmarker;

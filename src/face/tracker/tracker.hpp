@@ -2,7 +2,7 @@
 #define _FACE_TRACKER_H_
 
 #include <vector>
-#include "../common/common.h"
+#include "../common/common.hpp"
 
 namespace ov {
 class Tracker {

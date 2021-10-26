@@ -1,4 +1,4 @@
-#include "hopenet.h"
+#include "../hopenet.h"
 
 #include <iostream>
 #include <numeric>

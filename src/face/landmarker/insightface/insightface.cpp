@@ -1,6 +1,5 @@
 #include "insightface.hpp"
 #include <string>
-#include "../../common/common.hpp"
 
 #ifdef OV_VULKAN
 #include "gpu.h"

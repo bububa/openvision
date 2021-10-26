@@ -3,7 +3,7 @@ package face
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/common/common.h"
+#include "openvision/face/common.h"
 */
 import "C"
 import (

@@ -1,4 +1,4 @@
-#include "detecter.h"
+#include "../detecter.h"
 #include "centerface/centerface.hpp"
 #include "mtcnn/mtcnn.hpp"
 #include "retinaface/retinaface.hpp"

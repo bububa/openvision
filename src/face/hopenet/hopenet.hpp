@@ -1,7 +1,7 @@
 #ifndef _ROS_NCNN_HOPENET_H_
 #define _ROS_NCNN_HOPENET_H_
 
-#include "../../common/common.h"
+#include "../common/common.hpp"
 #include "net.h"
 
 namespace ov {

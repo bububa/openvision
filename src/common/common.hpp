@@ -9,8 +9,6 @@
 #endif
 
 namespace ov {
-#define kFaceFeatureDim 128
-#define kFaceNameDim 256
 const int threads_num = 2;
 
 // Wrapper for an individual cv::cvSize
@@ -82,30 +80,6 @@ struct ObjectInfo {
 	std::string name_;
 };
 
-struct FaceInfo {
-	Rect location_;
-	float score_;
-	float keypoints_[10];
-    bool mask_;
-};
-
-struct TrackedFaceInfo {
-	FaceInfo face_info_;
-	float iou_score_;
-};
-
-struct HeadPose
-{
-    float roll;
-    float pitch;
-    float yaw;
-};
-
-struct QueryResult {
-    std::string name_;
-    float sim_;
-};
-
 int RatioAnchors(const Rect & anchor,
 	const std::vector<float>& ratios, std::vector<Rect>* anchors);
 
@@ -160,7 +134,6 @@ int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
     return 0;
 }
 
-float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<float>& feature2);
 void EnlargeRect(const float& scale, Rect* rect);
 void RectifyRect(Rect* rect);
 

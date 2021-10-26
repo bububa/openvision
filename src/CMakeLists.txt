@@ -131,12 +131,19 @@ file(COPY
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/common
 )
 file(COPY
-    ${CMAKE_CURRENT_SOURCE_DIR}/face/detecter/detecter.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/face/landmarker/landmarker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/face/recognizer/recognizer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/face/tracker/tracker.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet/hopenet.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/common.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/detecter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/landmarker.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/recognizer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/tracker.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/face
+)
+
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/pose/common.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter.h
+    DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/pose
 )
 
 file(COPY

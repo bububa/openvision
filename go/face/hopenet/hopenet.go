@@ -3,7 +3,7 @@ package hopenet
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/common/common.h"
+#include "openvision/face/common.h"
 #include "openvision/face/hopenet.h"
 */
 import "C"

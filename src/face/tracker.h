@@ -1,9 +1,9 @@
 #ifndef _FACE_TRACKER_C_H_
 #define _FACE_TRACKER_C_H_
-#include "../common/common.h"
+#include "common.h"
 
 #ifdef __cplusplus
-#include "tracker.hpp"
+#include "tracker/tracker.hpp"
 extern "C" {
 #endif
     typedef void* ITracker;
