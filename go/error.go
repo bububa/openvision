@@ -44,4 +44,16 @@ var (
 			Message: "track face failed",
 		}
 	}
+	DetectHeadPoseError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "detect head pose failed",
+		}
+	}
+	RealsrError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "super-resolution process error",
+		}
+	}
 )

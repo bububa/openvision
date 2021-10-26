@@ -14,9 +14,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../lib)
 set(INCLUDE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../include)
 set(CMAKE_CACHEFILE_DIR ${PROJECT_BINARY_DIR})
 
-Option(MIRROR_OPENMP "openmp support" ON)
-Option(MIRROR_VULKAN "vulkan compute used" ON)
-Option(MIRROR_BUILD_CLASSIFIER "build classifier test" ON)
+Option(OV_OPENMP "openmp support" ON)
+# Option(OV_VULKAN "vulkan compute used" ON)
 
 add_subdirectory(ncnn)
 

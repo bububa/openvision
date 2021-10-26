@@ -4,7 +4,7 @@
 #include "../detecter.hpp"
 #include "net.h"
 
-namespace mirror {
+namespace ov{
 using ANCHORS = std::vector<Rect>;
 class RetinaFace : public Detecter {
 public:

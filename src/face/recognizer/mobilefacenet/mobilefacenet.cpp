@@ -1,24 +1,20 @@
 #include "mobilefacenet.hpp"
 #include <string>
-#if MIRROR_VULKAN
+#ifdef OV_VULKAN
 #include "gpu.h"
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
-namespace mirror {
+namespace ov {
 Mobilefacenet::Mobilefacenet() {
 	mobileface_net_ = new ncnn::Net();
 	initialized_ = false;
-#if MIRROR_VULKAN
-	ncnn::create_gpu_instance();	
+#ifdef OV_VULKAN
     mobileface_net_->opt.use_vulkan_compute = true;
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 }
 
 Mobilefacenet::~Mobilefacenet() {
 	mobileface_net_->clear();
-#if MIRROR_VULKAN
-	ncnn::destroy_gpu_instance();
-#endif // MIRROR_VULKAN	
 }
 
 int Mobilefacenet::LoadModel(const char * root_path) {

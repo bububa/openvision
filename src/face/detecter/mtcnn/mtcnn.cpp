@@ -1,10 +1,10 @@
 #include "mtcnn.hpp"
 
-#if MIRROR_VULKAN
+#ifdef OV_VULKAN
 #include "gpu.h"
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
-namespace mirror {
+namespace ov{
 Mtcnn::Mtcnn() :
 	pnet_(new ncnn::Net()),
 	rnet_(new ncnn::Net()),
@@ -13,8 +13,7 @@ Mtcnn::Mtcnn() :
 	min_face_size_(40),
 	scale_factor_(0.709f),
 	initialized_(false) {
-#if MIRROR_VULKAN
-	ncnn::create_gpu_instance();	
+#ifdef OV_VULKAN
     pnet_->opt.use_vulkan_compute = true;
 	rnet_->opt.use_vulkan_compute = true;
 	onet_->opt.use_vulkan_compute = true;
@@ -31,9 +30,6 @@ Mtcnn::~Mtcnn() {
 	if (onet_) {
 		onet_->clear();
 	}
-#if MIRROR_VULKAN
-	ncnn::destroy_gpu_instance();
-#endif // MIRROR_VULKAN	
 }
 
 int Mtcnn::LoadModel(const char * root_path) {

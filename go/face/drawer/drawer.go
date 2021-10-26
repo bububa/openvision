@@ -1,7 +1,8 @@
-package face
+package drawer
 
 import (
 	"image"
+	"log"
 
 	"github.com/llgcode/draw2d/draw2dimg"
 
@@ -82,5 +83,43 @@ func (d *Drawer) DrawLandmark(img image.Image, points []common.Point) image.Imag
 	for _, pt := range points {
 		common.DrawCircle(gc, common.Pt(pt.X*imgW, pt.Y*imgH), d.KeypointRadius, d.KeypointColor, "", d.KeypointStrokeWidth)
 	}
+	return out
+}
+
+// DrawHeadPose draw head pose
+func (d *Drawer) DrawHeadPose(img image.Image, pose face.HeadPose, rect common.Rectangle) image.Image {
+	imgW := float64(img.Bounds().Dx())
+	imgH := float64(img.Bounds().Dy())
+	rect.X *= imgW
+	rect.Y *= imgH
+	rect.Width *= imgW
+	rect.Height *= imgH
+	xOffset := rect.X + rect.Width/2
+	yOffset := rect.Y + rect.Height/2
+	dist := rect.Height / 2
+	axises := EulrToAxisPoints(pose.Yaw, pose.Pitch, pose.Roll, dist)
+	log.Printf("%+v\n", axises)
+	out := image.NewRGBA(img.Bounds())
+	gc := draw2dimg.NewGraphicContext(out)
+	gc.DrawImage(img)
+	gc.SetLineWidth(d.BorderStrokeWidth)
+	gc.SetStrokeColor(common.ColorFromHex(common.Red))
+	gc.BeginPath()
+	gc.MoveTo(xOffset, yOffset)
+	gc.LineTo(axises[0][0]+xOffset, axises[0][1]+yOffset)
+	gc.Stroke()
+	gc.Close()
+	gc.SetStrokeColor(common.ColorFromHex(common.Green))
+	gc.BeginPath()
+	gc.MoveTo(xOffset, yOffset)
+	gc.LineTo(axises[1][0]+xOffset, axises[1][1]+yOffset)
+	gc.Stroke()
+	gc.Close()
+	gc.SetStrokeColor(common.ColorFromHex(common.Blue))
+	gc.BeginPath()
+	gc.MoveTo(xOffset, yOffset)
+	gc.LineTo(axises[2][0]+xOffset, axises[2][1]+yOffset)
+	gc.Stroke()
+	gc.Close()
 	return out
 }

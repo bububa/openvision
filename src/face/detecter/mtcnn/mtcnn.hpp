@@ -5,7 +5,7 @@
 #include <vector>
 #include "net.h"
 
-namespace mirror {
+namespace ov {
 class Mtcnn : public Detecter {
 public:
 	Mtcnn();

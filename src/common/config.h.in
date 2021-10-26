@@ -1,0 +1,2 @@
+#cmakedefine OV_VULKAN
+#cmakedefine OV_OPENMP

@@ -2,11 +2,11 @@
 #include <queue>
 
 ITracker new_tracker() {
-    return new mirror::Tracker();
+    return new ov::Tracker();
 }
 
 void destroy_tracker(ITracker t) {
-    delete static_cast<mirror::Tracker*>(t);
+    delete static_cast<ov::Tracker*>(t);
 }
 
 int track(ITracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces) {
@@ -15,7 +15,7 @@ int track(ITracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* f
         cfaces.push_back(static_cast<FaceInfo>(curr_faces->faces[i]));
     }
     std::vector<TrackedFaceInfo> tfaces;
-    int ret = static_cast<mirror::Tracker*>(t)->Track(cfaces, &tfaces);
+    int ret = static_cast<ov::Tracker*>(t)->Track(cfaces, &tfaces);
     if (ret != 0) {
         return ret;
     }
@@ -27,7 +27,7 @@ int track(ITracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* f
     return 0;
 }
 
-namespace mirror {
+namespace ov {
 Tracker::Tracker() {
 
 }

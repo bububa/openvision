@@ -4,7 +4,7 @@
 #include "../landmarker.hpp"
 #include "net.h"
 
-namespace mirror {
+namespace ov{
 class InsightfaceLandmarker : public Landmarker {
 public:
 	InsightfaceLandmarker();

@@ -5,32 +5,32 @@
 #include "anticonv/anticonv.hpp"
 
 IDetecter new_retinaface() {
-    return new mirror::RetinaFace();
+    return new ov::RetinaFace();
 }
 
 IDetecter new_centerface() {
-    return new mirror::CenterFace();
+    return new ov::CenterFace();
 }
 
 IDetecter new_mtcnn() {
-    return new mirror::Mtcnn();
+    return new ov::Mtcnn();
 }
 
 IDetecter new_anticonv() {
-    return new mirror::AntiConv();
+    return new ov::AntiConv();
 }
 
 void destroy_detecter(IDetecter d) {
-    delete static_cast<mirror::Detecter*>(d);
+    delete static_cast<ov::Detecter*>(d);
 }
 
 int detecter_load_model(IDetecter d, const char *root_path){
-    return static_cast<mirror::Detecter*>(d)->LoadModel(root_path);
+    return static_cast<ov::Detecter*>(d)->LoadModel(root_path);
 }
 
 int detect_face(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces) {
 	std::vector<FaceInfo> detected;
-    int ret = static_cast<mirror::Detecter*>(d)->DetectFace(rgbdata, img_width, img_height, &detected);
+    int ret = static_cast<ov::Detecter*>(d)->DetectFace(rgbdata, img_width, img_height, &detected);
     if (ret != 0) {
         return ret;
     }
@@ -44,7 +44,7 @@ int detect_face(IDetecter d, const unsigned char* rgbdata, int img_width, int im
     return 0;
 }
 
-namespace mirror {
+namespace ov{
 Detecter* CenterfaceFactory::CreateDetecter() {
 	return new CenterFace();
 }

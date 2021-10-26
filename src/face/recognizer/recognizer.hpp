@@ -4,7 +4,7 @@
 #include <vector>
 #include "../common/common.hpp"
 
-namespace mirror {
+namespace ov {
 class Recognizer {
 public:
 	virtual ~Recognizer() {};

@@ -1,15 +1,14 @@
 #include "centerface.hpp"
 
-#if MIRROR_VULKAN
+#ifdef OV_VULKAN
 #include "gpu.h"
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
-namespace mirror {
+namespace ov {
 CenterFace::CenterFace() {
     centernet_ = new ncnn::Net();
     initialized_ = false;
-#if MIRROR_VULKAN
-	ncnn::create_gpu_instance();	
+#ifdef OV_VULKAN
     centernet_->opt.use_vulkan_compute = true;
 #endif // MIRROR_VULKAN
 }
@@ -18,9 +17,6 @@ CenterFace::~CenterFace(){
     if (centernet_) {
         centernet_->clear();
     }
-#if MIRROR_VULKAN
-	ncnn::destroy_gpu_instance();
-#endif // MIRROR_VULKAN	
 }
 
 int CenterFace::LoadModel(const char* root_path) {

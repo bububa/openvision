@@ -1,17 +1,16 @@
 #include "anticonv.hpp"
 
-#if MIRROR_VULKAN
+#ifdef OV_VULKAN
 #include "gpu.h"
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
-namespace mirror {
+namespace ov {
 AntiConv::AntiConv() :
 	anticonv_net_(new ncnn::Net()),
 	initialized_(false) {
-#if MIRROR_VULKAN
-	ncnn::create_gpu_instance();	
+#ifdef OV_VULKAN
     anticonv_net_->opt.use_vulkan_compute = true;
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
 }
 
@@ -19,9 +18,6 @@ AntiConv::~AntiConv() {
 	if (anticonv_net_) {
 		anticonv_net_->clear();
 	}
-#if MIRROR_VULKAN
-	ncnn::destroy_gpu_instance();
-#endif // MIRROR_VULKAN	
 }
 
 int AntiConv::LoadModel(const char * root_path) {

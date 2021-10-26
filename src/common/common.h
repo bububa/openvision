@@ -7,12 +7,13 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
-typedef mirror::Size Size;
-typedef mirror::Point Point;
-typedef mirror::Point2f Point2f;
-typedef mirror::Rect Rect;
-typedef mirror::FaceInfo FaceInfo;
-typedef mirror::TrackedFaceInfo TrackedFaceInfo;
+typedef ov::Size Size;
+typedef ov::Point Point;
+typedef ov::Point2f Point2f;
+typedef ov::Rect Rect;
+typedef ov::FaceInfo FaceInfo;
+typedef ov::TrackedFaceInfo TrackedFaceInfo;
+typedef ov::HeadPose HeadPose;
 #else
 
 #define kFaceFeatureDim 128
@@ -58,7 +59,18 @@ typedef struct TrackedFaceInfo {
 	float iou_score_;
 } TrackedFaceInfo;
 
+typedef struct HeadPose
+{
+    float roll;
+    float pitch;
+    float yaw;
+} HeadPose;
+
 #endif
+
+int get_gpu_count();
+int create_gpu_instance();
+void destroy_gpu_instance();
 
 typedef struct Point2fVector {
     Point2f* points;
@@ -95,6 +107,13 @@ typedef struct FloatVector {
 } FloatVector;
 
 void FreeFloatVector(FloatVector *p);
+
+typedef struct Bytes {
+    unsigned char* values;
+    int length;
+} Bytes;
+
+void FreeBytes(Bytes *p);
 
 #ifdef __cplusplus
 }

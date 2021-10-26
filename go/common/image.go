@@ -34,6 +34,13 @@ func (i Image) Bytes() []byte {
 	return i.buffer.Bytes()
 }
 
+// RGBABytes returns image bytes in rgba
+func (i Image) RGBABytes() []byte {
+	buf := new(bytes.Buffer)
+	Image2RGBA(buf, i.Image)
+	return buf.Bytes()
+}
+
 // Width returns image width
 func (i Image) Width() int {
 	return i.Bounds().Dx()
@@ -101,6 +108,17 @@ func Image2RGB(buf io.Writer, img image.Image) {
 		for i := bounds.Min.X; i < bounds.Max.X; i++ {
 			r, g, b, _ := img.At(i, j).RGBA()
 			buf.Write([]byte{byte(b >> 8), byte(g >> 8), byte(r >> 8)})
+		}
+	}
+}
+
+// Image2RGBA write image rgbdata to buffer
+func Image2RGBA(buf io.Writer, img image.Image) {
+	bounds := img.Bounds()
+	for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
+		for i := bounds.Min.X; i < bounds.Max.X; i++ {
+			r, g, b, a := img.At(i, j).RGBA()
+			buf.Write([]byte{byte(b >> 8), byte(g >> 8), byte(r >> 8), byte(a >> 8)})
 		}
 	}
 }

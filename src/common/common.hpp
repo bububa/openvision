@@ -3,11 +3,12 @@
 
 #include <vector>
 #include <string>
-#if defined(_OPENMP)
+#include "config.h"
+#ifdef OV_OPENMP 
 #include <omp.h>
 #endif
 
-namespace mirror {
+namespace ov {
 #define kFaceFeatureDim 128
 #define kFaceNameDim 256
 const int threads_num = 2;
@@ -91,6 +92,13 @@ struct FaceInfo {
 struct TrackedFaceInfo {
 	FaceInfo face_info_;
 	float iou_score_;
+};
+
+struct HeadPose
+{
+    float roll;
+    float pitch;
+    float yaw;
 };
 
 struct QueryResult {

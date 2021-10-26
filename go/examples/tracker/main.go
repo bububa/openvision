@@ -23,6 +23,8 @@ func main() {
 	dataPath := cleanPath(wd, "~/go/src/github.com/bububa/openvision/data")
 	imgPath := filepath.Join(dataPath, "./images")
 	modelPath := filepath.Join(dataPath, "./models")
+	common.CreateGPUInstance()
+	defer common.DestroyGPUInstance()
 	d := retinaface(modelPath)
 	defer d.Destroy()
 	t := tracker.NewTracker()

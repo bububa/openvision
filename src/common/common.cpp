@@ -3,6 +3,30 @@
 #include <iostream>
 #include <math.h>
 
+#ifdef OV_VULKAN
+#include "gpu.h"
+#endif // OV_VULKAN
+
+int get_gpu_count() {
+#ifdef OV_VULKAN
+    return ncnn::get_gpu_count();
+#endif // OV_VULKAN
+    return 0;
+}
+
+int create_gpu_instance() {
+#ifdef OV_VULKAN
+    return ncnn::create_gpu_instance();
+#endif // OV_VULKAN
+    return 0;
+}
+
+void destroy_gpu_instance() {
+#ifdef OV_VULKAN
+    ncnn::destroy_gpu_instance();
+#endif // OV_VULKAN
+}
+
 void FreePoint2fVector(Point2fVector* p) {
     if (p->points != NULL) {
         free(p->points);
@@ -43,7 +67,14 @@ void FreeFloatVector(FloatVector *p) {
     }
 }
 
-namespace mirror {
+void FreeBytes(Bytes *p) {
+    if (p->values != NULL) {
+        free(p->values);
+        p->values = NULL;
+    }
+}
+
+namespace ov {
 
 int RatioAnchors(const Rect & anchor,
 	const std::vector<float>& ratios, 
@@ -52,7 +83,7 @@ int RatioAnchors(const Rect & anchor,
 	Point center = Point(anchor.x + (anchor.width - 1) * 0.5f,
 		anchor.y + (anchor.height - 1) * 0.5f);
 	float anchor_size = anchor.width * anchor.height;
-#if defined(_OPENMP)
+#ifdef OV_OPENMP 
 #pragma omp parallel for num_threads(threads_num)
 #endif
 	for (int i = 0; i < static_cast<int>(ratios.size()); ++i) {
@@ -138,7 +169,7 @@ float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<f
 	float inner_product = 0.0f;
 	float feature_norm1 = 0.0f;
 	float feature_norm2 = 0.0f;
-#if defined(_OPENMP)
+#ifdef OV_OPENMP
 #pragma omp parallel for num_threads(threads_num)
 #endif
 	for(int i = 0; i < kFaceFeatureDim; ++i) {

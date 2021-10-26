@@ -1,4 +1,4 @@
-package face
+package drawer
 
 // Option represents Drawer option interface
 type Option interface {

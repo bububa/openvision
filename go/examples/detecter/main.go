@@ -21,6 +21,8 @@ func main() {
 	dataPath := cleanPath(wd, "~/go/src/github.com/bububa/openvision/data")
 	imgPath := filepath.Join(dataPath, "./images")
 	modelPath := filepath.Join(dataPath, "./models")
+	common.CreateGPUInstance()
+	defer common.DestroyGPUInstance()
 	test_detect(imgPath, modelPath)
 	test_mask(imgPath, modelPath)
 }

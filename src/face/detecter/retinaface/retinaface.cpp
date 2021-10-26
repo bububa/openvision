@@ -1,18 +1,16 @@
 #include "retinaface.hpp"
-#include <iostream>
 
-#if MIRROR_VULKAN
+#ifdef OV_VULKAN
 #include "gpu.h"
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
-namespace mirror {
+namespace ov{
 RetinaFace::RetinaFace() :
 	retina_net_(new ncnn::Net()),
 	initialized_(false) {
-#if MIRROR_VULKAN
-	ncnn::create_gpu_instance();	
+#ifdef OV_VULKAN
     retina_net_->opt.use_vulkan_compute = true;
-#endif // MIRROR_VULKAN
+#endif // OV_VULKAN
 
 }
 
@@ -20,9 +18,6 @@ RetinaFace::~RetinaFace() {
 	if (retina_net_) {
 		retina_net_->clear();
 	}
-#if MIRROR_VULKAN
-	ncnn::destroy_gpu_instance();
-#endif // MIRROR_VULKAN	
 }
 
 int RetinaFace::LoadModel(const char * root_path) {

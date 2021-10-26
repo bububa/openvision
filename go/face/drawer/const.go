@@ -1,4 +1,4 @@
-package face
+package drawer
 
 import (
 	"github.com/bububa/openvision/go/common"

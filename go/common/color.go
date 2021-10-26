@@ -41,4 +41,5 @@ const (
 	Green = "#64DD17"
 	Pink  = "#E91E63"
 	Red   = "#FF1744"
+	Blue  = "#2196F3"
 )
