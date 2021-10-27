@@ -10,15 +10,7 @@ ILandmarker new_insightface() {
     return new ov::InsightfaceLandmarker();
 }
 
-void destroy_landmarker(ILandmarker m) {
-    delete static_cast<ov::Landmarker*>(m);
-}
-
-int landmarker_load_model(ILandmarker m, const char *root_path) {
-    return static_cast<ov::Landmarker*>(m)->LoadModel(root_path);
-}
-
-int extract_keypoints(
+int extract_face_keypoints(
     ILandmarker m, 
     const unsigned char* rgbdata, 
     int img_width, 

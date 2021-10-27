@@ -5,14 +5,13 @@
 #include <vector>
 namespace ov {
 
-class Detecter {
+class Detecter: Estimator {
 public:
     virtual ~Detecter(){};
-    virtual int LoadModel(const char* root_path) = 0;
     virtual int ExtractROIs(const unsigned char* rgbadata,
         int img_width, int img_height,
-        std::vector<ROI>* rois) = 0;
-    virtual int ExtractKeypoints(const ROI& roi, std::vector<Keypoint>* keypoints) = 0;
+        std::vector<PoseROI>* rois) = 0;
+    virtual int ExtractKeypoints(const PoseROI& roi, std::vector<PoseKeypoint>* keypoints) = 0;
 };
 
 class DetecterFactory {
@@ -21,10 +20,10 @@ public:
     virtual ~DetecterFactory() {};
 };
 
-class UtralightFactory: public DetecterFactory {
+class UltralightFactory: public DetecterFactory {
 public:
-    UtralightFactory() {}
-    ~UtralightFactory() {}
+    UltralightFactory() {}
+    ~UltralightFactory() {}
     Detecter* CreateDetecter();
 };
 }

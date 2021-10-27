@@ -1,6 +1,7 @@
 #ifndef _REALESRGAN_H
 #define _REALESRGAN_H
 
+#include "../common/common.hpp"
 // ncnn
 #include "net.h"
 #include "layer.h"
@@ -10,14 +11,11 @@
 
 namespace ov {
 
-class RealESRGAN
-{
+class RealESRGAN: public Estimator {
 public:
     RealESRGAN(int gpuid, bool tta_mode = false);
     ~RealESRGAN();
-
-    int LoadModel(const char* root_path);
-
+	int LoadModel(const char* root_path);
     int process(const ncnn::Mat& inimage, ncnn::Mat& outimage) const;
 
 public:

@@ -54,14 +54,6 @@ RealEsrgan new_realesrgan(int gpuid, bool _tta_model) {
     return new ov::RealESRGAN(gpuid, _tta_model);
 }
 
-void destroy_realesrgan(RealEsrgan r) {
-    delete static_cast<ov::RealESRGAN*>(r);
-}
-
-int realesrgan_load_model(RealEsrgan r, const char* root_path) {
-    return static_cast<ov::RealESRGAN*>(r)->LoadModel(root_path);
-}
-
 int realesrgan_process(RealEsrgan r, const unsigned char* rgbdata, int img_width, int img_height, int scale, Bytes* output) {
     size_t total_size = img_width * img_height * scale * scale * 3;
 #ifdef OV_VULKAN

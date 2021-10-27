@@ -20,14 +20,6 @@ IDetecter new_anticonv() {
     return new ov::AntiConv();
 }
 
-void destroy_detecter(IDetecter d) {
-    delete static_cast<ov::Detecter*>(d);
-}
-
-int detecter_load_model(IDetecter d, const char *root_path){
-    return static_cast<ov::Detecter*>(d)->LoadModel(root_path);
-}
-
 int detect_face(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces) {
 	std::vector<FaceInfo> detected;
     int ret = static_cast<ov::Detecter*>(d)->DetectFace(rgbdata, img_width, img_height, &detected);

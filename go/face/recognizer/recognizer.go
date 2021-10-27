@@ -26,7 +26,7 @@ type Recognizer interface {
 func LoadModel(r Recognizer, modelPath string) error {
 	cpath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.recognizer_load_model(r.Handler(), cpath)
+	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(r.Handler())), cpath)
 	if retCode != 0 {
 		return openvision.LoadModelError(int(retCode))
 	}
@@ -35,7 +35,7 @@ func LoadModel(r Recognizer, modelPath string) error {
 
 // Destroy a recognizer
 func Destroy(r Recognizer) {
-	C.destroy_recognizer(r.Handler())
+	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(r.Handler())))
 }
 
 // ExtractFeatures extract features using recognizer

@@ -50,6 +50,12 @@ var (
 			Message: "detect head pose failed",
 		}
 	}
+	DetectPoseError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "detect pose failed",
+		}
+	}
 	RealsrError = func(code int) Error {
 		return Error{
 			Code:    code,

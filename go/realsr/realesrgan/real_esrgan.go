@@ -30,14 +30,14 @@ func NewRealERSGAN(gpuid int, ttaMode bool) *RealESRGAN {
 
 // Destroy a detecter
 func (d *RealESRGAN) Destroy() {
-	C.destroy_realesrgan(d.d)
+	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(d.d)))
 }
 
 // LoadModel load processer model
 func (d *RealESRGAN) LoadModel(modelPath string) error {
 	cpath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.realesrgan_load_model(d.d, cpath)
+	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(d.d)), cpath)
 	if retCode != 0 {
 		return openvision.LoadModelError(int(retCode))
 	}

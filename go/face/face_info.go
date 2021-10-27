@@ -65,7 +65,7 @@ func (f FaceInfo) CFaceInfo() *C.FaceInfo {
 
 // NewCFaceInfoVector returns C.FaceInfoVector pointer
 func NewCFaceInfoVector() *C.FaceInfoVector {
-	return (*C.FaceInfoVector)(C.malloc(C.sizeof_FaceInfo))
+	return (*C.FaceInfoVector)(C.malloc(C.sizeof_FaceInfoVector))
 }
 
 // GoFaceInfoVector conver c FaceInfoVector to go FaceInfo slice

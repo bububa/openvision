@@ -27,6 +27,14 @@ void destroy_gpu_instance() {
 #endif // OV_VULKAN
 }
 
+int load_model(IEstimator d, const char *root_path) {
+    return static_cast<ov::Estimator*>(d)->LoadModel(root_path);
+}
+
+void destroy_estimator(IEstimator d) {
+    delete static_cast<ov::Estimator*>(d);
+}
+
 void FreePoint2fVector(Point2fVector* p) {
     if (p->points != NULL) {
         free(p->points);

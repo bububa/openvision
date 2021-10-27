@@ -27,7 +27,7 @@ type Detecter interface {
 func LoadModel(d Detecter, modelPath string) error {
 	cpath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.detecter_load_model(d.Handler(), cpath)
+	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(d.Handler())), cpath)
 	if retCode != 0 {
 		return openvision.LoadModelError(int(retCode))
 	}
@@ -36,7 +36,7 @@ func LoadModel(d Detecter, modelPath string) error {
 
 // Destroy a detecter
 func Destroy(d Detecter) {
-	C.destroy_detecter(d.Handler())
+	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(d.Handler())))
 }
 
 // DetectFace detect face useing detecter

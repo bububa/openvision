@@ -25,7 +25,7 @@ func NewRetinaFace() *RetinaFace {
 
 // Destroy free detecter
 func (d *RetinaFace) Destroy() {
-	C.destroy_detecter(d.d)
+	Destroy(d)
 }
 
 func (d *RetinaFace) Handler() C.IDetecter {

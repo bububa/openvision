@@ -9,12 +9,10 @@ extern "C" {
 #endif
     typedef void* IDetecter;
     IDetecter new_ultralight();
-    void destroy_detecter(IDetecter d);
-    int detecter_load_model(IDetecter d, const char* root_path);
-    int extract_rois(IDetecter d, const unsigned char* rgbdata,
+    int extract_pose_rois(IDetecter d, const unsigned char* rgbdata,
         int img_width, int img_height,
-        ROIVector* rois);
-    int extract_keypoints(IDetecter d, const ROI* roi,KeypointVector* keypoints); 
+        PoseROIVector* rois);
+    int extract_pose_keypoints(IDetecter d, const PoseROI* roi, PoseKeypointVector* keypoints); 
 #ifdef __cplusplus
 }
 #endif

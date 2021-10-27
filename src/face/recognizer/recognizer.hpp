@@ -5,10 +5,9 @@
 #include "../common/common.hpp"
 
 namespace ov {
-class Recognizer {
+class Recognizer: public Estimator {
 public:
 	virtual ~Recognizer() {};
-	virtual int LoadModel(const char* root_path) = 0;
 	virtual int ExtractFeature(const unsigned char* rgbdata, 
         int img_width, int img_height,
         const Rect& face,

@@ -26,7 +26,7 @@ func GoTrackedFaceInfo(cInfo *C.TrackedFaceInfo, w float64, h float64) TrackedFa
 
 // NewCTrackedFaceInfoVector returns C.TrackedFaceInfoVector pointer
 func NewCTrackedFaceInfoVector() *C.TrackedFaceInfoVector {
-	return (*C.TrackedFaceInfoVector)(C.malloc(C.sizeof_TrackedFaceInfo))
+	return (*C.TrackedFaceInfoVector)(C.malloc(C.sizeof_TrackedFaceInfoVector))
 }
 
 // GoTrackedFaceInfoVector conver c TrackedFaceInfoVector to go TrackedFaceInfo slice

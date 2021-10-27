@@ -1,13 +1,13 @@
 #include "../common.h"
 
-void FreeKeypointVector(KeypointVector *p) {
+void FreePoseKeypointVector(PoseKeypointVector *p) {
     if (p->points != NULL) {
         free(p->points);
         p->points = NULL;
     }
 }
 
-void FreeROIVector(ROIVector *p) {
+void FreePoseROIVector(PoseROIVector *p) {
     if (p->items!= NULL) {
         free(p->items);
         p->items= NULL;

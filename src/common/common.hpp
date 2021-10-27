@@ -11,6 +11,12 @@
 namespace ov {
 const int threads_num = 2;
 
+class Estimator {
+public:
+    virtual ~Estimator(){};
+    virtual int LoadModel(const char* root_path) = 0;
+};
+
 // Wrapper for an individual cv::cvSize
 typedef struct Size {
     int width;

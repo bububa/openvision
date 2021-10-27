@@ -5,10 +5,9 @@
 
 namespace ov {
 // 抽象类
-class Detecter {
+class Detecter: public Estimator {
 public:
 	virtual ~Detecter() {};
-	virtual int LoadModel(const char* root_path) = 0;
 	virtual int DetectFace(const unsigned char* rgbdata, 
         int img_width, int img_height,
         std::vector<FaceInfo>* faces) = 0;
@@ -19,7 +18,7 @@ public:
 class DetecterFactory {
 public:
 	virtual Detecter* CreateDetecter() = 0;
-	virtual ~DetecterFactory() {};
+	virtual ~DetecterFactory() {}
 };
 
 // 不同人脸检测器

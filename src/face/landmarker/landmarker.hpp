@@ -5,10 +5,9 @@
 
 namespace ov{
 // 抽象类
-class Landmarker {
+class Landmarker: public Estimator {
 public:
 	virtual ~Landmarker() {};
-	virtual int LoadModel(const char* root_path) = 0;
 	virtual int ExtractKeypoints(const unsigned char* rgbdata, 
         int img_width, int img_height,
 		const Rect& face, std::vector<Point2f>* keypoints) = 0;

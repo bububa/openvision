@@ -42,9 +42,13 @@ typedef struct Rect {
 
 #endif
 
+typedef void* IEstimator;
+
 int get_gpu_count();
 int create_gpu_instance();
 void destroy_gpu_instance();
+int load_model(IEstimator e, const char* root_path);
+void destroy_estimator(IEstimator e);
 
 typedef struct Point2fVector {
     Point2f* points;

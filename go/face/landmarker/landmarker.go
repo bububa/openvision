@@ -26,7 +26,7 @@ type Landmarker interface {
 func LoadModel(d Landmarker, modelPath string) error {
 	cpath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.landmarker_load_model(d.Handler(), cpath)
+	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(d.Handler())), cpath)
 	if retCode != 0 {
 		return openvision.LoadModelError(int(retCode))
 	}
@@ -35,7 +35,7 @@ func LoadModel(d Landmarker, modelPath string) error {
 
 // Destroy a landmarker
 func Destroy(d Landmarker) {
-	C.destroy_landmarker(d.Handler())
+	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(d.Handler())))
 }
 
 // ExtractKeypoints extract keypoints using landmarker
@@ -50,7 +50,7 @@ func ExtractKeypoints(d Landmarker, img *common.Image, faceRect common.Rectangle
 	CPoints := common.NewCPoint2fVector()
 	defer common.FreeCPoint2fVector(CPoints)
 	CRect := faceRect.CRect()
-	errCode := C.extract_keypoints(
+	errCode := C.extract_face_keypoints(
 		d.Handler(),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth), C.int(imgHeight),

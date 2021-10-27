@@ -122,7 +122,14 @@ target_include_directories(openvision
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/recognizer>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/recognizer/mobilefacenet>
+
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/tracker>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/pose>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/pose/common>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/pose/detecter>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})

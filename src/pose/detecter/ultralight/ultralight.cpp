@@ -1,4 +1,4 @@
-#include "utralight.hpp"
+#include "ultralight.hpp"
 #include <string>
 
 #ifdef OV_VULKAN
@@ -6,7 +6,7 @@
 #endif // OV_VULKAN
 
 namespace ov {
-Utralight::Utralight() {
+Ultralight::Ultralight() {
     roi_net_ = new ncnn::Net();
     pose_net_ = new ncnn::Net();
 	initialized_ = false;
@@ -16,12 +16,12 @@ Utralight::Utralight() {
 #endif // OV_VULKAN
 }
 
-Utralight::~Utralight() {
+Ultralight::~Ultralight() {
     roi_net_->clear();
     pose_net_->clear();
 }
 
-int Utralight::LoadModel(const char * root_path) {
+int Ultralight::LoadModel(const char * root_path) {
 	std::string roi_param_file = std::string(root_path) + "/roi.param";
 	std::string roi_bin_file = std::string(root_path) + "/roi.bin";
 	if (roi_net_->load_param(roi_param_file.c_str()) == -1 ||
@@ -40,9 +40,9 @@ int Utralight::LoadModel(const char * root_path) {
 	return 0;
 }
 
-int Utralight::ExtractROIs(const unsigned char* rgbdata,
+int Ultralight::ExtractROIs(const unsigned char* rgbdata,
     int img_width, int img_height,
-    std::vector<ROI>* rois) {
+    std::vector<PoseROI>* rois) {
 	if (!initialized_) {
 		return 10000;
 	}
@@ -64,7 +64,6 @@ int Utralight::ExtractROIs(const unsigned char* rgbdata,
 
     for (int i = 0; i < out.h; i++)
     {
-        printf("==================================\n");
         float x1, y1, x2, y2, score, label;
         float pw,ph,cx,cy;
         const float* values = out.row(i);
@@ -108,7 +107,7 @@ int Utralight::ExtractROIs(const unsigned char* rgbdata,
             unsigned char* dstCursor = cropdata + i * rect.width * 3;
             memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * rect.width);
         }
-        ROI roi;
+        PoseROI roi;
         roi.rect = rect;
         roi.data = cropdata; 
         roi.score = score;
@@ -118,7 +117,7 @@ int Utralight::ExtractROIs(const unsigned char* rgbdata,
     return 0;
 }
 
-int Utralight::ExtractKeypoints(const ROI& roi, std::vector<Keypoint>* keypoints) {
+int Ultralight::ExtractKeypoints(const PoseROI& roi, std::vector<PoseKeypoint>* keypoints) {
     keypoints->clear();
     int w = roi.rect.width;
     int h = roi.rect.height;
@@ -155,7 +154,7 @@ int Utralight::ExtractKeypoints(const ROI& roi, std::vector<Keypoint>* keypoints
             }
         }
 
-        Keypoint keypoint;
+        PoseKeypoint keypoint;
         keypoint.p = Point2f(max_x * w / (float)out.w+roi.rect.x, max_y * h / (float)out.h+roi.rect.y);
         keypoint.prob = max_prob;
         keypoints->push_back(keypoint);

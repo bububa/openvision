@@ -7,33 +7,33 @@
 extern "C" {
 #endif
 #ifdef __cplusplus
-typedef ov::Keypoint Keypoint;
-typedef ov::ROI ROI;
+typedef ov::PoseKeypoint PoseKeypoint;
+typedef ov::PoseROI PoseROI;
 #else
-typedef struct Keypoint {
+typedef struct PoseKeypoint {
     Point2f p;
     float prob;
-} Keypoint;
+} PoseKeypoint;
 
-typedef struct ROI {
+typedef struct PoseROI {
     Rect rect;
     unsigned char *data;
     float score;
-} ROI;
+} PoseROI;
 
 #endif
-typedef struct ROIVector {
-    ROI* items;
+typedef struct PoseROIVector {
+    PoseROI* items;
     int length;
-} ROIVector;
+} PoseROIVector;
 
-typedef struct KeypointVector {
-    Keypoint* points;
+typedef struct PoseKeypointVector {
+    PoseKeypoint* points;
     int length;
-} KeypointVector;
+} PoseKeypointVector;
 
-void FreeKeypointVector(KeypointVector *p);
-void FreeROIVector(ROIVector *p);
+void FreePoseKeypointVector(PoseKeypointVector *p);
+void FreePoseROIVector(PoseROIVector *p);
 #ifdef __cplusplus
 }
 #endif

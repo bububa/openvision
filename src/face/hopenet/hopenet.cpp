@@ -7,27 +7,21 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-#define NEAR_0 1e-10
-#define ODIM   66
 
-IHopeNet new_hopenet() {
-    return new ov::HopeNet();
+IHopenet new_hopenet() {
+    return new ov::Hopenet();
 }
 
-void destroy_hopenet(IHopeNet h) {
-    delete static_cast<ov::HopeNet*>(h);
-}
-
-int hopenet_load_model(IHopeNet h, const char* root_path) {
-    return static_cast<ov::HopeNet*>(h)->LoadModel(root_path);
-}
-
-int hopenet_detect(IHopeNet h, const unsigned char* rgbdata, int img_width, int img_height, const Rect* roi, HeadPose* euler_angles) {
-    return static_cast<ov::HopeNet*>(h)->Detect(rgbdata, img_width, img_height, *roi, static_cast<ov::HeadPose*>(euler_angles));
+int hopenet_detect(IHopenet h, const unsigned char* rgbdata, int img_width, int img_height, const Rect* roi, HeadPose* euler_angles) {
+    return static_cast<ov::Hopenet*>(h)->Detect(rgbdata, img_width, img_height, *roi, static_cast<ov::HeadPose*>(euler_angles));
 }
 
 namespace ov {
-HopeNet::HopeNet():
+
+#define NEAR_0 1e-10
+#define ODIM   66
+
+Hopenet::Hopenet():
     net_(new ncnn::Net()),
 	initialized_(false) {
 #ifdef OV_VULKAN
@@ -35,13 +29,13 @@ HopeNet::HopeNet():
 #endif // OV_VULKAN
 }
 
-HopeNet::~HopeNet() {
+Hopenet::~Hopenet() {
 	if (net_) {
 		net_->clear();
 	}
 }
 
-int HopeNet::LoadModel(const char * root_path) {
+int Hopenet::LoadModel(const char * root_path) {
 	std::string param_file = std::string(root_path) + "/param";
 	std::string bin_file = std::string(root_path) + "/bin";
 	if (net_->load_param(param_file.c_str()) == -1 ||
@@ -55,7 +49,7 @@ int HopeNet::LoadModel(const char * root_path) {
 }
 
 
-int HopeNet::Detect(const unsigned char* rgbdata, 
+int Hopenet::Detect(const unsigned char* rgbdata, 
     int img_width, int img_height,
     Rect roi, HeadPose* head_angles) {
     float diff = fabs(roi.height-roi.width);
@@ -101,7 +95,7 @@ int HopeNet::Detect(const unsigned char* rgbdata,
     return 0;
 }
 
-void HopeNet::softmax(float* z, size_t el) {
+void Hopenet::softmax(float* z, size_t el) {
     double zmax = -INFINITY;
     double zsum = 0;
     for (size_t i = 0; i < el; i++) if (z[i] > zmax) zmax=z[i];
@@ -110,7 +104,7 @@ void HopeNet::softmax(float* z, size_t el) {
     for (size_t i=0; i<el; i++) z[i] = (z[i]/zsum)+NEAR_0;
 }
 
-double HopeNet::getAngle(float* prediction, size_t len) {
+double Hopenet::getAngle(float* prediction, size_t len) {
     double expectation[len];
     for (uint i=0; i<len; i++) expectation[i]=idx_tensor[i]*prediction[i];
     double angle = std::accumulate(expectation, expectation+len, 0.0) * 3 - 99;

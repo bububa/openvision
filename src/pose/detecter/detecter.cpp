@@ -1,41 +1,33 @@
 #include "../detecter.h"
-#include "utralight/utralight.hpp"
+#include "ultralight/ultralight.hpp"
 
-IDetecter new_utralight() {
-    return new ov::Utralight();
+IDetecter new_ultralight() {
+    return new ov::Ultralight();
 }
 
-void destroy_detecter(IDetecter d) {
-    delete static_cast<ov::Detecter*>(d);
-}
-
-int detecter_load_model(IDetecter d, const char *root_path){
-    return static_cast<ov::Detecter*>(d)->LoadModel(root_path);
-}
-
-int extract_rois(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, ROIVector* rois) {
-	std::vector<ROI> detected;
+int extract_pose_rois(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, PoseROIVector* rois) {
+	std::vector<PoseROI> detected;
     int ret = static_cast<ov::Detecter*>(d)->ExtractROIs(rgbdata, img_width, img_height, &detected);
     if (ret != 0) {
         return ret;
     }
 
     rois->length = detected.size();
-    rois->items = (ROI*)malloc(rois->length * sizeof(ROI));
+    rois->items = (PoseROI*)malloc(rois->length * sizeof(PoseROI));
     for (size_t i = 0; i < detected.size(); ++i) {
         rois->items[i] = detected[i];
     }
     return 0;
 }
 
-int extract_keypoints(IDetecter d, const ROI* roi, KeypointVector* keypoints) {
-    std::vector<Keypoint> points;
+int extract_pose_keypoints(IDetecter d, const PoseROI* roi, PoseKeypointVector* keypoints) {
+    std::vector<PoseKeypoint> points;
     int ret = static_cast<ov::Detecter*>(d)->ExtractKeypoints(*roi, &points);
     if (ret != 0) {
         return ret;
     }
     keypoints->length = points.size();
-    keypoints->points = (Keypoint*)malloc(keypoints->length * sizeof(Keypoint));
+    keypoints->points = (PoseKeypoint*)malloc(keypoints->length * sizeof(PoseKeypoint));
     for (size_t i = 0; i < points.size(); ++i) {
         keypoints->points[i] = points[i];
     }
@@ -43,7 +35,7 @@ int extract_keypoints(IDetecter d, const ROI* roi, KeypointVector* keypoints) {
 }
 
 namespace ov{
-Detecter* UtralightFactory::CreateDetecter() {
-	return new Utralight();
+Detecter* UltralightFactory::CreateDetecter() {
+	return new Ultralight();
 }
 }

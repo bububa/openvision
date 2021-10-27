@@ -1,2 +1,2 @@
-// Package hopenet head pose detecter
+// Package hopenet include head pose estimation
 package hopenet

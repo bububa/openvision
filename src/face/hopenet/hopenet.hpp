@@ -1,15 +1,14 @@
-#ifndef _ROS_NCNN_HOPENET_H_
-#define _ROS_NCNN_HOPENET_H_
+#ifndef _HEAD_HOPENET_H_
+#define _HEAD_HOPENET_H_
 
 #include "../common/common.hpp"
 #include "net.h"
 
 namespace ov {
-
-class HopeNet {
+class Hopenet : public Estimator {
 public:
-    HopeNet();
-    ~HopeNet();
+    Hopenet();
+    ~Hopenet();
 	int LoadModel(const char* root_path);
     int Detect(const unsigned char* rgbdata, 
         int img_width, int img_height,
@@ -23,7 +22,5 @@ private:
     double getAngle(float* prediction, size_t len);
 
 };
-
 }
-
-#endif
+#endif // !_HEAD_HOPENET_H_

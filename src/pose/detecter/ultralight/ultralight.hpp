@@ -1,5 +1,5 @@
-#ifndef _POSE_UTRALIGHT_H_
-#define _POSE_UTRALIGHT_H_ 
+#ifndef _POSE_ULTRALIGHT_H_
+#define _POSE_ULTRALIGHT_H_ 
 
 #include "../detecter.hpp"
 #include <vector>
@@ -7,17 +7,17 @@
 
 namespace ov {
 
-class Utralight : public Detecter {
+class Ultralight : public Detecter {
 public:
-	Utralight();
-	~Utralight();
+	Ultralight();
+	~Ultralight();
 
 	int LoadModel(const char* root_path);
     int ExtractROIs(const unsigned char* rgbadata,
         int img_width, int img_height,
-        std::vector<ROI>* rois);
-	int ExtractKeypoints(const ROI& roi, 
-        std::vector<Keypoint>* keypoints);
+        std::vector<PoseROI>* rois);
+	int ExtractKeypoints(const PoseROI& roi, 
+        std::vector<PoseKeypoint>* keypoints);
 
 private:
 	ncnn::Net* roi_net_;
@@ -27,5 +27,5 @@ private:
 
 }
 
-#endif // !_POSE_MOBILEFACENET_H_
+#endif // !_POSE_ULTRALIGHT_H_
 

@@ -3,7 +3,6 @@ package hopenet
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/face/common.h"
 #include "openvision/face/hopenet.h"
 */
 import "C"
@@ -17,7 +16,7 @@ import (
 
 // Hopenet represents Hopenet detecter
 type Hopenet struct {
-	d C.IHopeNet
+	d C.IHopenet
 }
 
 // NewHopenet returns a new Hopenet
@@ -27,22 +26,23 @@ func NewHopenet() *Hopenet {
 	}
 }
 
-// Destroy destroy C.IHopeNet
-func (h *Hopenet) Destroy() {
-	C.destroy_hopenet(h.d)
-}
-
+// LoadModel load detecter model
 func (h *Hopenet) LoadModel(modelPath string) error {
 	cpath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.hopenet_load_model(h.d, cpath)
+	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(h.d)), cpath)
 	if retCode != 0 {
 		return openvision.LoadModelError(int(retCode))
 	}
 	return nil
 }
 
-// Detect
+// Destroy destroy C.IHopeNet
+func (h *Hopenet) Destroy() {
+	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(h.d)))
+}
+
+// Detect head pose
 func (h *Hopenet) Detect(img *common.Image, faceRect common.Rectangle) (face.HeadPose, error) {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()

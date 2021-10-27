@@ -4,12 +4,12 @@
 #include "../../common/common.h"
 
 namespace ov {
-struct Keypoint {
+struct PoseKeypoint {
     Point2f p;
     float prob;
 };
 
-struct ROI {
+struct PoseROI {
     Rect rect;
     unsigned char *data;
     float score;
