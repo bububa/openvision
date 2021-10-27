@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/realsr"
-	"github.com/bububa/openvision/go/realsr/realesrgan"
+	"github.com/bububa/openvision/go/pose/detecter"
+	posedrawer "github.com/bububa/openvision/go/pose/drawer"
 )
 
 func main() {
@@ -23,34 +23,36 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
-	d := real_esrgan(modelPath)
+	d := ultralightDetector(modelPath)
 	defer d.Destroy()
-	process(d, imgPath, "realsr-1.jpg")
+	detect(d, imgPath, "ultralight-pose3.jpg")
 }
 
-func real_esrgan(modelPath string) realsr.Processer {
-	gpuCount := common.GetGPUCount()
-	log.Printf("gpu: %d\n", gpuCount)
-	modelPath = filepath.Join(modelPath, "realesrgan/x4-jpeg")
-	d := realesrgan.NewRealERSGAN(1, false)
+func ultralightDetector(modelPath string) detecter.Detecter {
+	modelPath = filepath.Join(modelPath, "ultralight-pose")
+	d := detecter.NewUltralight()
 	if err := d.LoadModel(modelPath); err != nil {
 		log.Fatalln(err)
 	}
 	return d
 }
 
-func process(d realsr.Processer, imgPath string, filename string) {
+func detect(d detecter.Detecter, imgPath string, filename string) {
 	inPath := filepath.Join(imgPath, filename)
-	imgLoaded, err := loadImage(inPath)
+	img, err := loadImage(inPath)
 	if err != nil {
 		log.Fatalln("load image failed,", err)
 	}
-	img := common.NewImage(imgLoaded)
-	out, err := d.Process(img, 4)
+	rois, err := d.ExtractKeypoints(common.NewImage(img))
 	if err != nil {
 		log.Fatalln(err)
 	}
-	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("realrs-%s", filename))
+
+	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("pose-%s", filename))
+
+	drawer := posedrawer.New()
+
+	out := drawer.Draw(img, rois, true)
 
 	if err := saveImage(out, outPath); err != nil {
 		log.Fatalln(err)

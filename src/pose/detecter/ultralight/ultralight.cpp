@@ -100,19 +100,17 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
         //printf("x1:%f y1:%f x2:%f y2:%f\n",x1,y1,x2,y2);
         Rect rect = Rect(x1, y1, x2-x1, y2-y1);
         size_t total_size = rect.width * rect.height * 3 * sizeof(unsigned char);
-        unsigned char* cropdata = (unsigned char*)malloc(total_size);
+        PoseROI roi;
+        roi.rect = rect;
+        roi.score = score;
+        roi.data = (unsigned char*)malloc(total_size);
         const unsigned char *start_ptr = rgbdata;
         for(size_t i = 0; i < rect.height; ++i) {
             const unsigned char* srcCursor = start_ptr + ((i + rect.y) * img_width + rect.x) * 3; 
-            unsigned char* dstCursor = cropdata + i * rect.width * 3;
+            unsigned char* dstCursor = roi.data + i * rect.width * 3;
             memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * rect.width);
         }
-        PoseROI roi;
-        roi.rect = rect;
-        roi.data = cropdata; 
-        roi.score = score;
         rois->push_back(roi);
-        free(cropdata);
     }
     return 0;
 }

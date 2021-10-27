@@ -36,3 +36,7 @@ func FreeCROIVector(p *C.PoseROIVector) {
 func CROIVectiorLength(c *C.PoseROIVector) int {
 	return int(c.length)
 }
+
+func CROIVectorPtr(c *C.PoseROIVector) unsafe.Pointer {
+	return unsafe.Pointer(c.items)
+}

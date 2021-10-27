@@ -57,7 +57,7 @@ func ExtractKeypoints(d Detecter, img *common.Image) ([]pose.ROI, error) {
 	}
 	totalROIs := pose.CROIVectiorLength(cROIs)
 	rois := make([]pose.ROI, 0, totalROIs)
-	ptr := unsafe.Pointer(cROIs)
+	ptr := pose.CROIVectorPtr(cROIs)
 	for i := 0; i < totalROIs; i++ {
 		cKeypoints := pose.NewCKeypointVector()
 		defer pose.FreeCKeypointVector(cKeypoints)

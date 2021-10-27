@@ -29,4 +29,7 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - zq
   - tracker (for face IOU calculation bettween frames)
   - hopenet (for head pose detection)
+- pose
+- detector (for pose estimation)
+  - ultralight
 - golang binding (github.com/bububa/openvision/go)

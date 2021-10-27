@@ -33,6 +33,7 @@ typedef struct PoseKeypointVector {
 } PoseKeypointVector;
 
 void FreePoseKeypointVector(PoseKeypointVector *p);
+void FreePoseROI(PoseROI *p);
 void FreePoseROIVector(PoseROIVector *p);
 #ifdef __cplusplus
 }

@@ -7,8 +7,18 @@ void FreePoseKeypointVector(PoseKeypointVector *p) {
     }
 }
 
+void FreePoseROI(PoseROI *p) {
+    if (p->data!= NULL) {
+        free(p->data);
+        p->data= NULL;
+    }
+}
+
 void FreePoseROIVector(PoseROIVector *p) {
     if (p->items!= NULL) {
+        for (int i=0; i < p->length; i ++) {
+            FreePoseROI(&p->items[i]);
+        }
         free(p->items);
         p->items= NULL;
     }
