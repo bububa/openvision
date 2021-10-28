@@ -144,6 +144,15 @@ int Nanodet::Detect(const unsigned char* rgbdata,
 
         rois->push_back(roi);
     }
+    // sort objects by area
+    struct
+    {
+        bool operator()(const HandROI& a, const HandROI& b) const
+        {
+            return a.rect.area() > b.rect.area();
+        }
+    } objects_area_greater;
+    std::sort(rois->begin(), rois->end(), objects_area_greater);
     return 0;
 }
 }
