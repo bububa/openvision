@@ -13,7 +13,7 @@ import (
 
 // Mtcnn represents mtcnn detecter
 type Mtcnn struct {
-	d C.IDetecter
+	d C.IFaceDetecter
 }
 
 // NewMtcnn returns a new Mtcnn
@@ -28,8 +28,8 @@ func (d *Mtcnn) Destroy() {
 	Destroy(d)
 }
 
-// Handler returns C.IDetecter
-func (d *Mtcnn) Handler() C.IDetecter {
+// Handler returns C.IFaceDetecter
+func (d *Mtcnn) Handler() C.IFaceDetecter {
 	return d.d
 }
 

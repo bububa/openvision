@@ -17,7 +17,7 @@ import (
 
 // Detecter represents deteter interface
 type Detecter interface {
-	Handler() C.IDetecter
+	Handler() C.IPoseDetecter
 	LoadModel(modelPath string) error
 	ExtractKeypoints(img *common.Image) ([]pose.ROI, error)
 	Destroy()

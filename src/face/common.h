@@ -8,9 +8,9 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
-typedef ov::FaceInfo FaceInfo;
-typedef ov::TrackedFaceInfo TrackedFaceInfo;
-typedef ov::HeadPose HeadPose;
+typedef ovface::FaceInfo FaceInfo;
+typedef ovface::TrackedFaceInfo TrackedFaceInfo;
+typedef ovface::HeadPose HeadPose;
 #else
 typedef struct FaceInfo {
     Rect location_;

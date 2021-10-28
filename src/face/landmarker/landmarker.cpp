@@ -2,23 +2,23 @@
 #include "zqlandmarker/zqlandmarker.hpp"
 #include "insightface/insightface.hpp"
 
-ILandmarker new_zq() {
-    return new ov::ZQLandmarker();
+IFaceLandmarker new_zq() {
+    return new ovface::ZQLandmarker();
 }
 
-ILandmarker new_insightface() {
-    return new ov::InsightfaceLandmarker();
+IFaceLandmarker new_insightface() {
+    return new ovface::InsightfaceLandmarker();
 }
 
 int extract_face_keypoints(
-    ILandmarker m, 
+    IFaceLandmarker m, 
     const unsigned char* rgbdata, 
     int img_width, 
     int img_height, 
     const Rect* face, 
     Point2fVector* keypoints) {
     std::vector<Point2f> points;
-    int ret = static_cast<ov::Landmarker*>(m)->ExtractKeypoints(rgbdata, img_width, img_height, *face, &points);
+    int ret = static_cast<ovface::Landmarker*>(m)->ExtractKeypoints(rgbdata, img_width, img_height, *face, &points);
     if (ret != 0) {
         return ret;
     }
@@ -30,7 +30,7 @@ int extract_face_keypoints(
     return 0;
 }
 
-namespace ov {
+namespace ovface {
 Landmarker* ZQLandmarkerFactory::CreateLandmarker() {
 	return new ZQLandmarker();
 }

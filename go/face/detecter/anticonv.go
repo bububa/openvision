@@ -13,7 +13,7 @@ import (
 
 // Anticonv represents anticonv detecter
 type Anticonv struct {
-	d C.IDetecter
+	d C.IFaceDetecter
 }
 
 // NewAnticonv returns a new Anticonv
@@ -29,7 +29,7 @@ func (d *Anticonv) Destroy() {
 }
 
 // Handler returns C.IDetecter
-func (d *Anticonv) Handler() C.IDetecter {
+func (d *Anticonv) Handler() C.IFaceDetecter {
 	return d.d
 }
 

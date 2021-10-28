@@ -4,7 +4,7 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov{
+namespace ovface {
 RetinaFace::RetinaFace() :
 	retina_net_(new ncnn::Net()),
 	initialized_(false) {
@@ -139,7 +139,7 @@ int RetinaFace::DetectFace(const unsigned char* rgbdata,
 		}
 	}
 	
-	NMS(faces_tmp, faces, iouThreshold_);
+    ov::NMS(faces_tmp, faces, iouThreshold_);
 	return 0;
 }
 

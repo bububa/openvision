@@ -7,12 +7,12 @@
 #include "detecter/detecter.hpp"
 extern "C" {
 #endif
-    typedef void* IDetecter;
-    IDetecter new_retinaface();
-    IDetecter new_centerface();
-    IDetecter new_mtcnn();
-    IDetecter new_anticonv();
-    int detect_face(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces); 
+    typedef void* IFaceDetecter;
+    IFaceDetecter new_retinaface();
+    IFaceDetecter new_centerface();
+    IFaceDetecter new_mtcnn();
+    IFaceDetecter new_anticonv();
+    int detect_face(IFaceDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces); 
 #ifdef __cplusplus
 }
 #endif

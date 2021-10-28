@@ -4,7 +4,7 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov {
+namespace ovface {
 Mobilefacenet::Mobilefacenet() {
 	mobileface_net_ = new ncnn::Net();
 	initialized_ = false;
@@ -31,7 +31,7 @@ int Mobilefacenet::LoadModel(const char * root_path) {
 
 int Mobilefacenet::ExtractFeature(const unsigned char* rgbdata, 
     int img_width, int img_height,
-	const Rect & face, std::vector<float>* feature) {
+	const ov::Rect & face, std::vector<float>* feature) {
 	feature->clear();
 	if (!initialized_) {
 		return 10000;

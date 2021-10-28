@@ -10,7 +10,7 @@ import "github.com/bububa/openvision/go/common"
 
 // Zq represents Zq landmarker
 type Zq struct {
-	d C.ILandmarker
+	d C.IFaceLandmarker
 }
 
 // NewZq returns a new Zq landmarker
@@ -21,7 +21,7 @@ func NewZq() *Zq {
 }
 
 // Handler returns C.ILandmarker
-func (d *Zq) Handler() C.ILandmarker {
+func (d *Zq) Handler() C.IFaceLandmarker {
 	return d.d
 }
 

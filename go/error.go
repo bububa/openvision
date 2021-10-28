@@ -50,6 +50,12 @@ var (
 			Message: "detect head pose failed",
 		}
 	}
+	DetectHandError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "detect hand failed",
+		}
+	}
 	DetectPoseError = func(code int) Error {
 		return Error{
 			Code:    code,

@@ -10,7 +10,7 @@ import "github.com/bububa/openvision/go/common"
 
 // Insightface represents Insightface landmarker
 type Insightface struct {
-	d C.ILandmarker
+	d C.IFaceLandmarker
 }
 
 // NewInsightface returns a new Insightface landmarker
@@ -21,7 +21,7 @@ func NewInsightface() *Insightface {
 }
 
 // Handler returns C.ILandmarker
-func (d *Insightface) Handler() C.ILandmarker {
+func (d *Insightface) Handler() C.IFaceLandmarker {
 	return d.d
 }
 

@@ -16,7 +16,7 @@ import (
 
 // Recognizer represents Recognizer interface
 type Recognizer interface {
-	Handler() C.IRecognizer
+	Handler() C.IFaceRecognizer
 	LoadModel(modelPath string) error
 	ExtractFeatures(img *common.Image, face common.Rectangle) ([]float64, error)
 	Destroy()

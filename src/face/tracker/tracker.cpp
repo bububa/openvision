@@ -1,21 +1,21 @@
 #include "../tracker.h"
 #include <queue>
 
-ITracker new_tracker() {
-    return new ov::Tracker();
+IFaceTracker new_tracker() {
+    return new ovface::Tracker();
 }
 
-void destroy_tracker(ITracker t) {
-    delete static_cast<ov::Tracker*>(t);
+void destroy_tracker(IFaceTracker t) {
+    delete static_cast<ovface::Tracker*>(t);
 }
 
-int track(ITracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces) {
-    std::vector<FaceInfo> cfaces;    
+int track(IFaceTracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces) {
+    std::vector<ovface::FaceInfo> cfaces;    
     for (int i = 0; i < curr_faces->length; ++i) {
-        cfaces.push_back(static_cast<FaceInfo>(curr_faces->faces[i]));
+        cfaces.push_back(static_cast<ovface::FaceInfo>(curr_faces->faces[i]));
     }
-    std::vector<TrackedFaceInfo> tfaces;
-    int ret = static_cast<ov::Tracker*>(t)->Track(cfaces, &tfaces);
+    std::vector<ovface::TrackedFaceInfo> tfaces;
+    int ret = static_cast<ovface::Tracker*>(t)->Track(cfaces, &tfaces);
     if (ret != 0) {
         return ret;
     }
@@ -27,7 +27,7 @@ int track(ITracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* f
     return 0;
 }
 
-namespace ov {
+namespace ovface {
 Tracker::Tracker() {
 
 }

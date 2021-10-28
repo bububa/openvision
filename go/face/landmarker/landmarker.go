@@ -16,7 +16,7 @@ import (
 
 // Landmarker represents landmarker interface
 type Landmarker interface {
-	Handler() C.ILandmarker
+	Handler() C.IFaceLandmarker
 	LoadModel(modelPath string) error
 	ExtractKeypoints(img *common.Image, face common.Rectangle) ([]common.Point, error)
 	Destroy()

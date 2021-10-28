@@ -5,11 +5,11 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov {
-Ultralight::Ultralight() {
-    roi_net_ = new ncnn::Net();
-    pose_net_ = new ncnn::Net();
-	initialized_ = false;
+namespace ovpose {
+Ultralight::Ultralight() :
+    roi_net_(new ncnn::Net()),
+    pose_net_(new ncnn::Net()),
+	initialized_(false) {
 #ifdef OV_VULKAN
     roi_net_->opt.use_vulkan_compute = true;
     pose_net_->opt.use_vulkan_compute = true;
@@ -98,7 +98,7 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
         if(y2>img_height) y2=img_height;
         //截取人体ROI
         //printf("x1:%f y1:%f x2:%f y2:%f\n",x1,y1,x2,y2);
-        Rect rect = Rect(x1, y1, x2-x1, y2-y1);
+        Rect rect = ov::Rect(x1, y1, x2-x1, y2-y1);
         size_t total_size = rect.width * rect.height * 3 * sizeof(unsigned char);
         PoseROI roi;
         roi.rect = rect;

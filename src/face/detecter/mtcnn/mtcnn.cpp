@@ -4,7 +4,7 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov{
+namespace ovface {
 Mtcnn::Mtcnn() :
 	pnet_(new ncnn::Net()),
 	rnet_(new ncnn::Net()),
@@ -72,17 +72,17 @@ int Mtcnn::DetectFace(const unsigned char* rgbdata,
 	std::vector<FaceInfo> first_bboxes, second_bboxes;
 	std::vector<FaceInfo> first_bboxes_result;
 	PDetect(img_in, &first_bboxes);
-	NMS(first_bboxes, &first_bboxes_result, nms_threshold_[0]);
+    ov::NMS(first_bboxes, &first_bboxes_result, nms_threshold_[0]);
 	Refine(&first_bboxes_result, max_size);
 
 	RDetect(img_in, first_bboxes_result, &second_bboxes);
 	std::vector<FaceInfo> second_bboxes_result;
-	NMS(second_bboxes, &second_bboxes_result, nms_threshold_[1]);
+    ov::NMS(second_bboxes, &second_bboxes_result, nms_threshold_[1]);
 	Refine(&second_bboxes_result, max_size);
 
 	std::vector<FaceInfo> third_bboxes;
 	ODetect(img_in, second_bboxes_result, &third_bboxes);
-	NMS(third_bboxes, faces, nms_threshold_[2], "MIN");
+    ov::NMS(third_bboxes, faces, nms_threshold_[2], "MIN");
 	Refine(faces, max_size);
 	return 0;
 }

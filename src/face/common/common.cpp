@@ -31,7 +31,7 @@ void FreeTrackedFaceInfoVector(TrackedFaceInfoVector *p) {
     }
 }
 
-namespace ov {
+namespace ovface {
 
 float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<float>& feature2) {
 	if (feature1.size() != feature2.size()) {
@@ -41,7 +41,7 @@ float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<f
 	float feature_norm1 = 0.0f;
 	float feature_norm2 = 0.0f;
 #ifdef OV_OPENMP
-#pragma omp parallel for num_threads(threads_num)
+#pragma omp parallel for num_threads(ov::threads_num)
 #endif
 	for(int i = 0; i < kFaceFeatureDim; ++i) {
 		inner_product += feature1[i] * feature2[i];

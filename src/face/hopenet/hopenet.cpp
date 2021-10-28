@@ -9,14 +9,14 @@
 
 
 IHopenet new_hopenet() {
-    return new ov::Hopenet();
+    return new ovface::Hopenet();
 }
 
 int hopenet_detect(IHopenet h, const unsigned char* rgbdata, int img_width, int img_height, const Rect* roi, HeadPose* euler_angles) {
-    return static_cast<ov::Hopenet*>(h)->Detect(rgbdata, img_width, img_height, *roi, static_cast<ov::HeadPose*>(euler_angles));
+    return static_cast<ovface::Hopenet*>(h)->Detect(rgbdata, img_width, img_height, *roi, static_cast<ovface::HeadPose*>(euler_angles));
 }
 
-namespace ov {
+namespace ovface {
 
 #define NEAR_0 1e-10
 #define ODIM   66

@@ -4,7 +4,7 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov {
+namespace ovface {
 CenterFace::CenterFace() {
     centernet_ = new ncnn::Net();
     initialized_ = false;
@@ -91,7 +91,7 @@ int CenterFace::DetectFace(const unsigned char* rgbdata,
             faces_tmp.push_back(face_info);
 		}
 	}
-    NMS(faces_tmp, faces, nmsThreshold_);
+    ov::NMS(faces_tmp, faces, nmsThreshold_);
     return 0;
 }
 

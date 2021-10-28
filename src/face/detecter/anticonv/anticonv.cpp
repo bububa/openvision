@@ -4,7 +4,7 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov {
+namespace ovface {
 AntiConv::AntiConv() :
 	anticonv_net_(new ncnn::Net()),
 	initialized_(false) {
@@ -124,7 +124,7 @@ int AntiConv::DetectFace(const unsigned char* rgbdata,
 		}
 	}
 	
-	NMS(faces_tmp, faces, iouThreshold_);
+    ov::NMS(faces_tmp, faces, iouThreshold_);
 
 	return 0;
 }

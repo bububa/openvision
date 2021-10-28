@@ -1,13 +1,13 @@
 #include "../detecter.h"
 #include "ultralight/ultralight.hpp"
 
-IDetecter new_ultralight() {
-    return new ov::Ultralight();
+IPoseDetecter new_ultralight() {
+    return new ovpose::Ultralight();
 }
 
-int extract_pose_rois(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, PoseROIVector* rois) {
+int extract_pose_rois(IPoseDetecter d, const unsigned char* rgbdata, int img_width, int img_height, PoseROIVector* rois) {
 	std::vector<PoseROI> detected;
-    int ret = static_cast<ov::Detecter*>(d)->ExtractROIs(rgbdata, img_width, img_height, &detected);
+    int ret = static_cast<ovpose::Detecter*>(d)->ExtractROIs(rgbdata, img_width, img_height, &detected);
     if (ret != 0) {
         return ret;
     }
@@ -20,9 +20,9 @@ int extract_pose_rois(IDetecter d, const unsigned char* rgbdata, int img_width, 
     return 0;
 }
 
-int extract_pose_keypoints(IDetecter d, const PoseROI* roi, PoseKeypointVector* keypoints) {
+int extract_pose_keypoints(IPoseDetecter d, const PoseROI* roi, PoseKeypointVector* keypoints) {
     std::vector<PoseKeypoint> points;
-    int ret = static_cast<ov::Detecter*>(d)->ExtractKeypoints(*roi, &points);
+    int ret = static_cast<ovpose::Detecter*>(d)->ExtractKeypoints(*roi, &points);
     if (ret != 0) {
         return ret;
     }
@@ -34,7 +34,7 @@ int extract_pose_keypoints(IDetecter d, const PoseROI* roi, PoseKeypointVector* 
     return 0;
 }
 
-namespace ov{
+namespace ovpose {
 Detecter* UltralightFactory::CreateDetecter() {
 	return new Ultralight();
 }

@@ -7,9 +7,9 @@
 #include "recognizer/recognizer.hpp"
 extern "C" {
 #endif
-    typedef void* IRecognizer;
-    IRecognizer new_mobilefacenet();
-    int extract_feature(IRecognizer r, const unsigned char* rgbdata, int img_width, int img_height, const Rect* face, FloatVector* feature); 
+    typedef void* IFaceRecognizer;
+    IFaceRecognizer new_mobilefacenet();
+    int extract_feature(IFaceRecognizer r, const unsigned char* rgbdata, int img_width, int img_height, const Rect* face, FloatVector* feature); 
 #ifdef __cplusplus
 }
 #endif

@@ -13,7 +13,7 @@ import (
 
 // Ultralight represents utralight detecter
 type Ultralight struct {
-	d C.IDetecter
+	d C.IPoseDetecter
 }
 
 // NewUltralight returns a new Utralight
@@ -28,8 +28,8 @@ func (d *Ultralight) Destroy() {
 	Destroy(d)
 }
 
-// Handler returns C.IDetecter
-func (d *Ultralight) Handler() C.IDetecter {
+// Handler returns C.IPoseDetecter
+func (d *Ultralight) Handler() C.IPoseDetecter {
 	return d.d
 }
 

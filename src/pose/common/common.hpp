@@ -3,14 +3,14 @@
 
 #include "../../common/common.h"
 
-namespace ov {
+namespace ovpose {
 struct PoseKeypoint {
-    Point2f p;
+    ov::Point2f p;
     float prob;
 };
 
 struct PoseROI {
-    Rect rect;
+    ov::Rect rect;
     unsigned char *data;
     float score;
 };

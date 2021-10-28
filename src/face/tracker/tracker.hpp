@@ -4,7 +4,7 @@
 #include <vector>
 #include "../common/common.hpp"
 
-namespace ov {
+namespace ovface {
 class Tracker {
 public:
     Tracker();

@@ -1,5 +1,6 @@
 file(GLOB_RECURSE SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cxx
 )
 
 message(${SRC_FILES})
@@ -59,9 +60,13 @@ target_include_directories(openvision
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet>
 
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/pose>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/pose/common>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/pose/detecter>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/common>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/common>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})
@@ -69,6 +74,7 @@ file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/common/common.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/common
 )
+
 file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/face/common.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/detecter.h
@@ -77,6 +83,12 @@ file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/face/tracker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/face
+)
+
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/hand/common.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter.h
+    DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/hand
 )
 
 file(COPY

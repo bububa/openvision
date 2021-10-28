@@ -3,9 +3,9 @@
 
 #include "../common/common.hpp"
 #include <vector>
-namespace ov {
+namespace ovpose {
 
-class Detecter: Estimator {
+class Detecter: public ov::Estimator {
 public:
     virtual ~Detecter(){};
     virtual int ExtractROIs(const unsigned char* rgbadata,

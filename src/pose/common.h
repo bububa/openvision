@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 #ifdef __cplusplus
-typedef ov::PoseKeypoint PoseKeypoint;
-typedef ov::PoseROI PoseROI;
+typedef ovpose::PoseKeypoint PoseKeypoint;
+typedef ovpose::PoseROI PoseROI;
 #else
 typedef struct PoseKeypoint {
     Point2f p;

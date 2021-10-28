@@ -4,13 +4,13 @@
 #include <vector>
 #include "../common/common.hpp"
 
-namespace ov {
-class Recognizer: public Estimator {
+namespace ovface {
+class Recognizer: public ov::Estimator {
 public:
 	virtual ~Recognizer() {};
 	virtual int ExtractFeature(const unsigned char* rgbdata, 
         int img_width, int img_height,
-        const Rect& face,
+        const ov::Rect& face,
         std::vector<float>* feature) = 0;
 
 };

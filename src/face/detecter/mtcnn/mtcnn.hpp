@@ -5,7 +5,7 @@
 #include <vector>
 #include "net.h"
 
-namespace ov {
+namespace ovface {
 class Mtcnn : public Detecter {
 public:
 	Mtcnn();

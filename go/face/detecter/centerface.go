@@ -13,7 +13,7 @@ import (
 
 // Centerface represents centerface detecter
 type Centerface struct {
-	d C.IDetecter
+	d C.IFaceDetecter
 }
 
 // NewCenterface returns a new Centerface
@@ -29,7 +29,7 @@ func (d *Centerface) Destroy() {
 }
 
 // Handler returns C.IDetecter
-func (d *Centerface) Handler() C.IDetecter {
+func (d *Centerface) Handler() C.IFaceDetecter {
 	return d.d
 }
 

@@ -1,13 +1,13 @@
 #include "../recognizer.h"
 #include "./mobilefacenet/mobilefacenet.hpp"
 
-IRecognizer new_mobilefacenet() {
-    return new ov::Mobilefacenet();
+IFaceRecognizer new_mobilefacenet() {
+    return new ovface::Mobilefacenet();
 }
 
-int extract_feature(IRecognizer r, const unsigned char* rgbdata, int img_width, int img_height, const Rect* face, FloatVector* feature) {
+int extract_feature(IFaceRecognizer r, const unsigned char* rgbdata, int img_width, int img_height, const Rect* face, FloatVector* feature) {
     std::vector<float>features;
-    int ret = static_cast<ov::Recognizer*>(r)->ExtractFeature(rgbdata, img_width, img_height, *face, &features);
+    int ret = static_cast<ovface::Recognizer*>(r)->ExtractFeature(rgbdata, img_width, img_height, *face, &features);
     if (ret != 0) {
         return ret;
     }
@@ -19,7 +19,7 @@ int extract_feature(IRecognizer r, const unsigned char* rgbdata, int img_width, 
     return 0;
 }
 
-namespace ov {
+namespace ovface {
 Recognizer* MobilefacenetRecognizerFactory::CreateRecognizer() {
 	return new Mobilefacenet();
 }

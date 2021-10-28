@@ -4,8 +4,8 @@
 #include "../common/common.hpp"
 #include "net.h"
 
-namespace ov {
-class Hopenet : public Estimator {
+namespace ovface {
+class Hopenet : public ov::Estimator {
 public:
     Hopenet();
     ~Hopenet();

@@ -4,8 +4,8 @@
 #include "../detecter.hpp"
 #include "net.h"
 
-namespace ov {
-using ANCHORS = std::vector<Rect>;
+namespace ovface {
+using ANCHORS = std::vector<ov::Rect>;
 class AntiConv : public Detecter {
 public:
 	AntiConv();

@@ -3,9 +3,9 @@
 
 #include "../common/common.hpp"
 
-namespace ov {
+namespace ovface {
 // 抽象类
-class Detecter: public Estimator {
+class Detecter: public ov::Estimator {
 public:
 	virtual ~Detecter() {};
 	virtual int DetectFace(const unsigned char* rgbdata, 

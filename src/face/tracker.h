@@ -6,10 +6,10 @@
 #include "tracker/tracker.hpp"
 extern "C" {
 #endif
-    typedef void* ITracker;
-    ITracker new_tracker();
-    void destroy_tracker(ITracker t);
-    int track(ITracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces); 
+    typedef void* IFaceTracker;
+    IFaceTracker new_tracker();
+    void destroy_tracker(IFaceTracker t);
+    int track(IFaceTracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces); 
 #ifdef __cplusplus
 }
 #endif

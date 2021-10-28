@@ -5,7 +5,7 @@
 #include <vector>
 #include "net.h"
 
-namespace ov {
+namespace ovpose {
 
 class Ultralight : public Detecter {
 public:

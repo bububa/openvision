@@ -10,7 +10,7 @@ import "github.com/bububa/openvision/go/common"
 
 // Mobilefacenet represents Mobilefacenet recognizer
 type Mobilefacenet struct {
-	d C.IRecognizer
+	d C.IFaceRecognizer
 }
 
 // NewMobilefacenet returns a new Mobilefacenet recognizer
@@ -20,8 +20,8 @@ func NewMobilefacenet() *Mobilefacenet {
 	}
 }
 
-// Handler returns C.IRecognizer
-func (d *Mobilefacenet) Handler() C.IRecognizer {
+// Handler returns C.IFaceRecognizer
+func (d *Mobilefacenet) Handler() C.IFaceRecognizer {
 	return d.d
 }
 

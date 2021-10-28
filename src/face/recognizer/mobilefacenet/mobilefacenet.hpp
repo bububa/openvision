@@ -5,7 +5,7 @@
 #include <vector>
 #include "net.h"
 
-namespace ov {
+namespace ovface {
 
 class Mobilefacenet : public Recognizer {
 public:
@@ -15,7 +15,7 @@ public:
 	int LoadModel(const char* root_path);
 	int ExtractFeature(const unsigned char* rgbdata, 
         int img_width, int img_height,
-        const Rect& face,
+        const ov::Rect& face,
         std::vector<float>* feature);
 
 private:

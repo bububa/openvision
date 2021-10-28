@@ -3,9 +3,9 @@
 
 #include "../common/common.hpp"
 
-namespace ov{
+namespace ovface {
 // 抽象类
-class Landmarker: public Estimator {
+class Landmarker: public ov::Estimator {
 public:
 	virtual ~Landmarker() {};
 	virtual int ExtractKeypoints(const unsigned char* rgbdata, 

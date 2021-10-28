@@ -4,7 +4,7 @@
 #include "../landmarker.hpp"
 #include "net.h"
 
-namespace ov{
+namespace ovface {
 class InsightfaceLandmarker : public Landmarker {
 public:
 	InsightfaceLandmarker();
@@ -13,7 +13,7 @@ public:
 	int LoadModel(const char* root_path);
 	int ExtractKeypoints(const unsigned char* rgbdata, 
         int img_width, int img_height,
-		const Rect& face, std::vector<Point2f>* keypoints);
+		const ov::Rect& face, std::vector<ov::Point2f>* keypoints);
 
 private:
 	ncnn::Net* insightface_landmarker_net_;

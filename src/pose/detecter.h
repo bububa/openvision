@@ -7,12 +7,12 @@
 #include "detecter/detecter.hpp"
 extern "C" {
 #endif
-    typedef void* IDetecter;
-    IDetecter new_ultralight();
-    int extract_pose_rois(IDetecter d, const unsigned char* rgbdata,
+    typedef void* IPoseDetecter;
+    IPoseDetecter new_ultralight();
+    int extract_pose_rois(IPoseDetecter d, const unsigned char* rgbdata,
         int img_width, int img_height,
         PoseROIVector* rois);
-    int extract_pose_keypoints(IDetecter d, const PoseROI* roi, PoseKeypointVector* keypoints); 
+    int extract_pose_keypoints(IPoseDetecter d, const PoseROI* roi, PoseKeypointVector* keypoints); 
 #ifdef __cplusplus
 }
 #endif

@@ -17,7 +17,7 @@ import (
 
 // Tracker represents Tracker
 type Tracker struct {
-	d C.ITracker
+	d C.IFaceTracker
 }
 
 // NewTracker returns a new Tracker

@@ -4,11 +4,11 @@
 #include "../../common/common.h"
 #include <vector>
 
-namespace ov {
+namespace ovface {
 #define kFaceFeatureDim 128
 #define kFaceNameDim 256
 struct FaceInfo {
-	Rect location_;
+    ov::Rect location_;
 	float score_;
 	float keypoints_[10];
     bool mask_;

@@ -17,7 +17,7 @@ import (
 
 // Detecter represents deteter interface
 type Detecter interface {
-	Handler() C.IDetecter
+	Handler() C.IFaceDetecter
 	LoadModel(modelPath string) error
 	DetectFace(img *common.Image) ([]face.FaceInfo, error)
 	Destroy()

@@ -5,7 +5,7 @@
 #include "gpu.h"
 #endif // OV_VULKAN
 
-namespace ov{
+namespace ovface {
 ZQLandmarker::ZQLandmarker() {
 	zq_landmarker_net_ = new ncnn::Net();
 	initialized = false;
@@ -31,7 +31,7 @@ int ZQLandmarker::LoadModel(const char * root_path) {
 
 int ZQLandmarker::ExtractKeypoints(const unsigned char* rgbdata, 
     int img_width, int img_height,
-	const Rect & face, std::vector<Point2f>* keypoints) {
+	const ov::Rect & face, std::vector<ov::Point2f>* keypoints) {
 	keypoints->clear();
 	if (!initialized) {
 		return 10000;

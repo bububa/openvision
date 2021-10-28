@@ -4,25 +4,25 @@
 #include "retinaface/retinaface.hpp"
 #include "anticonv/anticonv.hpp"
 
-IDetecter new_retinaface() {
-    return new ov::RetinaFace();
+IFaceDetecter new_retinaface() {
+    return new ovface::RetinaFace();
 }
 
-IDetecter new_centerface() {
-    return new ov::CenterFace();
+IFaceDetecter new_centerface() {
+    return new ovface::CenterFace();
 }
 
-IDetecter new_mtcnn() {
-    return new ov::Mtcnn();
+IFaceDetecter new_mtcnn() {
+    return new ovface::Mtcnn();
 }
 
-IDetecter new_anticonv() {
-    return new ov::AntiConv();
+IFaceDetecter new_anticonv() {
+    return new ovface::AntiConv();
 }
 
-int detect_face(IDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces) {
-	std::vector<FaceInfo> detected;
-    int ret = static_cast<ov::Detecter*>(d)->DetectFace(rgbdata, img_width, img_height, &detected);
+int detect_face(IFaceDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces) {
+	std::vector<ovface::FaceInfo> detected;
+    int ret = static_cast<ovface::Detecter*>(d)->DetectFace(rgbdata, img_width, img_height, &detected);
     if (ret != 0) {
         return ret;
     }
@@ -36,7 +36,7 @@ int detect_face(IDetecter d, const unsigned char* rgbdata, int img_width, int im
     return 0;
 }
 
-namespace ov{
+namespace ovface {
 Detecter* CenterfaceFactory::CreateDetecter() {
 	return new CenterFace();
 }

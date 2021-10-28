@@ -13,7 +13,7 @@ import (
 
 // RetinaFace represents retinaface detecter
 type RetinaFace struct {
-	d C.IDetecter
+	d C.IFaceDetecter
 }
 
 // NewRetinaFace returns a new RetinaFace
@@ -28,10 +28,12 @@ func (d *RetinaFace) Destroy() {
 	Destroy(d)
 }
 
-func (d *RetinaFace) Handler() C.IDetecter {
+// Handler returns C.IFaceDetecter
+func (d *RetinaFace) Handler() C.IFaceDetecter {
 	return d.d
 }
 
+// LoadModel implement Detecter interface
 func (d *RetinaFace) LoadModel(modelPath string) error {
 	return LoadModel(d, modelPath)
 }
