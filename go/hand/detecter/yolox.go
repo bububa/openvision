@@ -8,7 +8,6 @@ package detecter
 import "C"
 import (
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/hand"
 )
 
 // Yolox represents yolox detecter
@@ -39,6 +38,6 @@ func (d *Yolox) LoadModel(modelPath string) error {
 }
 
 // Detect implement Detecter interface
-func (d *Yolox) Detect(img *common.Image) ([]hand.ROI, error) {
+func (d *Yolox) Detect(img *common.Image) ([]common.ObjectInfo, error) {
 	return Detect(d, img)
 }

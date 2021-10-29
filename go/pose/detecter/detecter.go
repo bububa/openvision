@@ -3,7 +3,7 @@ package detecter
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/pose/common.h"
+#include "openvision/common/common.h"
 #include "openvision/pose/detecter.h"
 */
 import "C"
@@ -12,14 +12,13 @@ import (
 
 	openvision "github.com/bububa/openvision/go"
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/pose"
 )
 
 // Detecter represents deteter interface
 type Detecter interface {
 	Handler() C.IPoseDetecter
 	LoadModel(modelPath string) error
-	ExtractKeypoints(img *common.Image) ([]pose.ROI, error)
+	ExtractKeypoints(img *common.Image) ([]common.ObjectInfo, error)
 	Destroy()
 }
 
@@ -40,37 +39,40 @@ func Destroy(d Detecter) {
 }
 
 // ExtractKeypoints detect pose keypoints using detecter
-func ExtractKeypoints(d Detecter, img *common.Image) ([]pose.ROI, error) {
+func ExtractKeypoints(d Detecter, img *common.Image) ([]common.ObjectInfo, error) {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
-	cROIs := pose.NewCROIVector()
-	defer pose.FreeCROIVector(cROIs)
+	cObjs := common.NewCObjectInfoVector()
+	defer common.FreeCObjectInfoVector(cObjs)
 	errCode := C.extract_pose_rois(
 		d.Handler(),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth),
 		C.int(imgHeight),
-		(*C.PoseROIVector)(unsafe.Pointer(cROIs)))
+		(*C.ObjectInfoVector)(unsafe.Pointer(cObjs)))
 	if errCode != 0 {
 		return nil, openvision.DetectPoseError(int(errCode))
 	}
-	totalROIs := pose.CROIVectiorLength(cROIs)
-	rois := make([]pose.ROI, 0, totalROIs)
-	ptr := pose.CROIVectorPtr(cROIs)
+	totalROIs := common.CObjectInfoVectiorLength(cObjs)
+	rois := make([]common.ObjectInfo, 0, totalROIs)
+	ptr := common.CObjectInfoVectorPtr(cObjs)
 	for i := 0; i < totalROIs; i++ {
-		cKeypoints := pose.NewCKeypointVector()
-		defer pose.FreeCKeypointVector(cKeypoints)
-		cROI := (*C.PoseROI)(unsafe.Pointer(uintptr(ptr) + uintptr(C.sizeof_PoseROI*C.int(i))))
+		cKeypoints := common.NewCKeypointVector()
+		defer common.FreeCKeypointVector(cKeypoints)
+		cROI := (*C.ObjectInfo)(unsafe.Pointer(uintptr(ptr) + uintptr(C.sizeof_ObjectInfo*C.int(i))))
 		errCode := C.extract_pose_keypoints(
 			d.Handler(),
-			cROI,
-			(*C.PoseKeypointVector)(unsafe.Pointer(cKeypoints)))
+			(*C.uchar)(unsafe.Pointer(&data[0])),
+			C.int(imgWidth),
+			C.int(imgHeight),
+			(*C.Rect)(unsafe.Pointer(&cROI.rect)),
+			(*C.KeypointVector)(unsafe.Pointer(cKeypoints)))
 		if errCode != 0 {
 			return nil, openvision.DetectPoseError(int(errCode))
 		}
-		keypoints := pose.GoKeypointVector(cKeypoints, imgWidth, imgHeight)
-		rois = append(rois, pose.ROI{
+		keypoints := common.GoKeypointVector(cKeypoints, imgWidth, imgHeight)
+		rois = append(rois, common.ObjectInfo{
 			Keypoints: keypoints,
 			Rect: common.Rect(
 				float64(cROI.rect.x)/imgWidth,
@@ -78,7 +80,7 @@ func ExtractKeypoints(d Detecter, img *common.Image) ([]pose.ROI, error) {
 				float64(cROI.rect.width)/imgWidth,
 				float64(cROI.rect.height)/imgHeight,
 			),
-			Score: float32(cROI.score),
+			Score: float32(cROI.prob),
 		})
 
 	}

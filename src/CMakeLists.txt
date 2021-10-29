@@ -61,12 +61,10 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/common>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/pose>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/common>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter>
 )
 
@@ -87,14 +85,12 @@ file(COPY
 )
 
 file(COPY
-    ${CMAKE_CURRENT_SOURCE_DIR}/hand/common.h
     ${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/hand/pose.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/hand
 )
 
 file(COPY
-    ${CMAKE_CURRENT_SOURCE_DIR}/pose/common.h
     ${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/pose
 )

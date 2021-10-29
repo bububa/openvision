@@ -79,7 +79,13 @@ func detect(d detecter.Detecter, e pose.Estimator, imgPath string, filename stri
 			log.Fatalln(err)
 			continue
 		}
-		rois[idx].Keypoints = keypoints
+		pts := make([]common.Keypoint, 0, len(keypoints))
+		for _, pt := range keypoints {
+			pts = append(pts, common.Keypoint{
+				Point: pt,
+			})
+		}
+		rois[idx].Keypoints = pts
 		log.Printf("keypoints: %d\n", len(keypoints))
 	}
 

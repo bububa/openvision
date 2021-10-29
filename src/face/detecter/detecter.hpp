@@ -44,6 +44,13 @@ public:
 	Detecter* CreateDetecter();
 };
 
+class YoloFaceFactory : public DetecterFactory {
+public:
+	YoloFaceFactory() {}
+	~YoloFaceFactory() {}
+	Detecter* CreateDetecter();
+};
+
 class AnticonvFactory : public DetecterFactory {
 public:
 	AnticonvFactory() {}

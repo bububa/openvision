@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <float.h>
 
 #ifdef OV_VULKAN
 #include "gpu.h"
@@ -42,6 +43,13 @@ void FreePoint2fVector(Point2fVector* p) {
     }
 }
 
+void Point2fVectorSetValue(Point2fVector *p, int i, const Point2f* val) {
+    if (p->points == NULL || i >= p->length) {
+        return;
+    }
+    p->points[i] = *val;
+}
+
 void FreeFloatVector(FloatVector *p) {
     if (p->values != NULL) {
         free(p->values);
@@ -56,6 +64,37 @@ void FreeBytes(Bytes *p) {
     }
 }
 
+void FreeKeypointVector(KeypointVector *p) {
+    if (p->points != NULL) {
+        free(p->points);
+        p->points = NULL;
+    }
+}
+
+void KeypointVectorSetValue(KeypointVector *p, int i, const Keypoint* val) {
+    if (p->points == NULL || i >= p->length) {
+        return;
+    }
+    p->points[i] = *val;
+}
+
+void FreeObjectInfo(ObjectInfo *p) {
+    if (p->pts != NULL) {
+        FreeKeypointVector(p->pts);
+        free(p->pts);
+        p->pts = NULL;
+    }
+}
+
+void FreeObjectInfoVector(ObjectInfoVector *p) {
+    if (p->items!=NULL) {
+        for (int i=0; i < p->length; i ++) {
+            FreeObjectInfo(&p->items[i]);
+        }
+        free(p->items);
+        p->items= NULL;
+    }
+}
 namespace ov {
 
 int RatioAnchors(const Rect & anchor,
@@ -162,6 +201,107 @@ void RectifyRect(Rect* rect) {
 	rect->y -= offset_y;
 	rect->width = max_side;
 	rect->height = max_side;    
+}
+
+void qsort_descent_inplace(std::vector<ObjectInfo>& objects, int left, int right)
+{
+    int i = left;
+    int j = right;
+    float p = objects[(left + right) / 2].prob;
+
+    while (i <= j)
+    {
+        while (objects[i].prob > p)
+            i++;
+
+        while (objects[j].prob < p)
+            j--;
+
+        if (i <= j)
+        {
+            // swap
+            std::swap(objects[i], objects[j]);
+
+            i++;
+            j--;
+        }
+    }
+
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        {
+            if (left < j) qsort_descent_inplace(objects, left, j);
+        }
+        #pragma omp section
+        {
+            if (i < right) qsort_descent_inplace(objects, i, right);
+        }
+    }
+}
+
+void qsort_descent_inplace(std::vector<ObjectInfo>& objects) 
+{
+    if (objects.empty())
+        return;
+
+    qsort_descent_inplace(objects, 0, objects.size() - 1);
+}
+
+void nms_sorted_bboxes(const std::vector<ObjectInfo>& objects, std::vector<int>& picked, float nms_threshold)
+{
+    picked.clear();
+
+    const int n = objects.size();
+
+    std::vector<float> areas(n);
+    for (int i = 0; i < n; i++)
+    {
+        areas[i] = objects[i].rect.area();
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        const ObjectInfo& a = objects[i];
+
+        int keep = 1;
+        for (int j = 0; j < (int)picked.size(); j++)
+        {
+            const ObjectInfo& b = objects[picked[j]];
+
+            // intersection over union
+            float inter_area = InterRectArea(a.rect, b.rect);
+            float union_area = areas[i] + areas[picked[j]] - inter_area;
+            // float IoU = inter_area / union_area
+            if (inter_area / union_area > nms_threshold)
+                keep = 0;
+        }
+
+        if (keep)
+            picked.push_back(i);
+    }
+}
+
+int generate_grids_and_stride(const int target_size, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides)
+{
+    for (auto stride : strides)
+    {
+        int num_grid = target_size / stride;
+        for (int g1 = 0; g1 < num_grid; g1++)
+        {
+            for (int g0 = 0; g0 < num_grid; g0++)
+            {
+                grid_strides.push_back((GridAndStride){g0, g1, stride});
+            }
+        }
+    }
+
+    return 0;
+}
+
+float sigmoid(float x)
+{
+    return static_cast<float>(1.f / (1.f + exp(-x)));
 }
 
 }

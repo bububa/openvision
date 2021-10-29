@@ -8,7 +8,6 @@ package detecter
 import "C"
 import (
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/pose"
 )
 
 // Ultralight represents utralight detecter
@@ -39,6 +38,6 @@ func (d *Ultralight) LoadModel(modelPath string) error {
 }
 
 // ExtractKeypoints implement Detecter interface
-func (d *Ultralight) ExtractKeypoints(img *common.Image) ([]pose.ROI, error) {
+func (d *Ultralight) ExtractKeypoints(img *common.Image) ([]common.ObjectInfo, error) {
 	return ExtractKeypoints(d, img)
 }

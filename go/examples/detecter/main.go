@@ -32,6 +32,7 @@ func test_detect(imgPath string, modelPath string) {
 		retinaface(modelPath),
 		centerface(modelPath),
 		mtcnn(modelPath),
+		yoloface(modelPath),
 	} {
 		detect(d, imgPath, idx, "4.jpg", false)
 		d.Destroy()
@@ -56,6 +57,15 @@ func retinaface(modelPath string) detecter.Detecter {
 func mtcnn(modelPath string) detecter.Detecter {
 	modelPath = filepath.Join(modelPath, "mtcnn")
 	d := detecter.NewMtcnn()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func yoloface(modelPath string) detecter.Detecter {
+	modelPath = filepath.Join(modelPath, "yoloface/v505")
+	d := detecter.NewYoloFace()
 	if err := d.LoadModel(modelPath); err != nil {
 		log.Fatalln(err)
 	}

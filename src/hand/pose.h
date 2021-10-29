@@ -1,7 +1,7 @@
 #ifndef _HAND_POSE_C_H_
 #define _HAND_POSE_C_H_
 
-#include "common.h"
+#include "../common/common.h"
 
 #ifdef __cplusplus
 #include "pose/estimator.hpp"

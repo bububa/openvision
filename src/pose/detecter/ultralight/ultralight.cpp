@@ -42,7 +42,7 @@ int Ultralight::LoadModel(const char * root_path) {
 
 int Ultralight::ExtractROIs(const unsigned char* rgbdata,
     int img_width, int img_height,
-    std::vector<PoseROI>* rois) {
+    std::vector<ov::ObjectInfo>* rois) {
 	if (!initialized_) {
 		return 10000;
 	}
@@ -52,8 +52,6 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata,
 		ncnn::Mat::PIXEL_RGB, img_width, img_height, 320, 320);
     //数据预处理
-    const float mean_vals[3] = {0.f, 0.f, 0.f};
-    const float norm_vals[3] = {1/255.f, 1/255.f, 1/255.f};
     in.substract_mean_normalize(mean_vals, norm_vals);
 
     ncnn::Extractor ex = roi_net_->create_extractor();
@@ -98,32 +96,32 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
         if(y2>img_height) y2=img_height;
         //截取人体ROI
         //printf("x1:%f y1:%f x2:%f y2:%f\n",x1,y1,x2,y2);
-        Rect rect = ov::Rect(x1, y1, x2-x1, y2-y1);
-        size_t total_size = rect.width * rect.height * 3 * sizeof(unsigned char);
-        PoseROI roi;
+        ov::Rect rect = ov::Rect(x1, y1, x2-x1, y2-y1);
+        ov::ObjectInfo roi;
         roi.rect = rect;
-        roi.score = score;
-        roi.data = (unsigned char*)malloc(total_size);
-        const unsigned char *start_ptr = rgbdata;
-        for(size_t i = 0; i < rect.height; ++i) {
-            const unsigned char* srcCursor = start_ptr + ((i + rect.y) * img_width + rect.x) * 3; 
-            unsigned char* dstCursor = roi.data + i * rect.width * 3;
-            memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * rect.width);
-        }
+        roi.prob = score;
         rois->push_back(roi);
     }
     return 0;
 }
 
-int Ultralight::ExtractKeypoints(const PoseROI& roi, std::vector<PoseKeypoint>* keypoints) {
+int Ultralight::ExtractKeypoints(const unsigned char* rgbdata, 
+    int img_width, int img_height,
+    const ov::Rect& rect, std::vector<ov::Keypoint>* keypoints) {
     keypoints->clear();
-    int w = roi.rect.width;
-    int h = roi.rect.height;
-    ncnn::Mat in = ncnn::Mat::from_pixels_resize(roi.data, ncnn::Mat::PIXEL_RGB, w, h, 192, 256);
+    int w = rect.width;
+    int h = rect.height;
+    size_t total_size = w * h * 3 * sizeof(unsigned char);
+    unsigned char* data = (unsigned char*)malloc(total_size);
+    const unsigned char *start_ptr = rgbdata;
+    for(size_t i = 0; i < h; ++i) {
+        const unsigned char* srcCursor = start_ptr + ((i + rect.y) * img_width + rect.x) * 3; 
+        unsigned char* dstCursor = data + i * w * 3;
+        memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * w);
+    }
+    ncnn::Mat in = ncnn::Mat::from_pixels_resize(data, ncnn::Mat::PIXEL_RGB, w, h, 192, 256);
     //数据预处理
-    const float mean_vals[3] = {0.485f * 255.f, 0.456f * 255.f, 0.406f * 255.f};
-    const float norm_vals[3] = {1 / 0.229f / 255.f, 1 / 0.224f / 255.f, 1 / 0.225f / 255.f};
-    in.substract_mean_normalize(mean_vals, norm_vals);
+    in.substract_mean_normalize(meanVals, normVals);
 
     ncnn::Extractor ex = pose_net_->create_extractor();
     ex.set_num_threads(4);
@@ -152,11 +150,13 @@ int Ultralight::ExtractKeypoints(const PoseROI& roi, std::vector<PoseKeypoint>* 
             }
         }
 
-        PoseKeypoint keypoint;
-        keypoint.p = Point2f(max_x * w / (float)out.w+roi.rect.x, max_y * h / (float)out.h+roi.rect.y);
+        ov::Keypoint keypoint;
+        keypoint.p = ov::Point2f(max_x * w / (float)out.w+rect.x, max_y * h / (float)out.h+rect.y);
         keypoint.prob = max_prob;
         keypoints->push_back(keypoint);
     }
+
+    free(data);
     return 0;
 }
 

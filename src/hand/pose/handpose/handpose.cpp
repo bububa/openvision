@@ -32,8 +32,8 @@ int HandPose::LoadModel(const char * root_path) {
 int HandPose::Detect(const unsigned char* rgbdata,
     int img_width, int img_height,
     const ov::Rect& rect,
-    std::vector<ov::Point2f>* keypoints) {
-    keypoints->clear(); 
+    std::vector<ov::Point2f>& keypoints) {
+    keypoints.clear(); 
 	if (!initialized_) {
 		return 10000;
 	}
@@ -58,6 +58,8 @@ int HandPose::Detect(const unsigned char* rgbdata,
     ex1.input("input", ncnn_in);
     ncnn::Mat ncnn_out;
     ex1.extract("output", ncnn_out);
+    keypoints.resize(21);
+
     for (int c = 0; c < ncnn_out.c; c++)
     {
         ncnn::Mat data = ncnn_out.channel(c);
@@ -66,8 +68,7 @@ int HandPose::Detect(const unsigned char* rgbdata,
         {
             float pt_x = ptr[j * 2] * rect.width;
             float pt_y = ptr[j * 2 + 1] * rect.height;
-            keypoints->push_back(ov::Point2f(pt_x + rect.x, pt_y + rect.y));
-
+            keypoints[j] = ov::Point2f(pt_x + rect.x, pt_y + rect.y);
         }
     }
     free(crop_img);

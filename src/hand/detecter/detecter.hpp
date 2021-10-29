@@ -8,7 +8,7 @@ public:
     virtual ~Detecter() {};
     virtual int Detect(const unsigned char*rgbdata,
         int img_width, int img_height,
-        std::vector<HandROI>* rois) = 0;
+        std::vector<ov::ObjectInfo>& rois) = 0;
 };
 
 class DetecterFactory {

@@ -3,6 +3,7 @@
 #include "mtcnn/mtcnn.hpp"
 #include "retinaface/retinaface.hpp"
 #include "anticonv/anticonv.hpp"
+#include "yoloface/yoloface.hpp"
 
 IFaceDetecter new_retinaface() {
     return new ovface::RetinaFace();
@@ -14,6 +15,10 @@ IFaceDetecter new_centerface() {
 
 IFaceDetecter new_mtcnn() {
     return new ovface::Mtcnn();
+}
+
+IFaceDetecter new_yoloface() {
+    return new ovface::YoloFace();
 }
 
 IFaceDetecter new_anticonv() {
@@ -47,6 +52,10 @@ Detecter* MtcnnFactory::CreateDetecter() {
 
 Detecter* RetinafaceFactory::CreateDetecter() {
 	return new RetinaFace();
+}
+
+Detecter* YoloFaceFactory::CreateDetecter() {
+	return new YoloFace();
 }
 
 Detecter* AnticonvFactory::CreateDetecter() {

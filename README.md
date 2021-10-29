@@ -21,6 +21,7 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - mtcnn [Google Drive](https://drive.google.com/drive/folders/14ToHyDXZr4Ihuk8WYp1mVS7QnVxnzEjn?usp=sharing)
     - centerface [Google Drive](https://drive.google.com/drive/folders/1xMhO6aCnkkjt90Fh8BxVD_JHB3QJ2q-q?usp=sharing)
     - retainface [Google Drive](https://drive.google.com/drive/folders/1nxR3WFqqEWLwGVsp5c4tI0_iVVEaVOe8?usp=sharing)
+    - yoloface [Google Drive](https://drive.google.com/drive/folders/1EM9H6-aYXKsWTRxx_wbKDyYHVIYpU6f7?usp=sharing)
     - anticonv (for mask detection) [Google Drive](https://drive.google.com/drive/folders/1Fje0fmVPy5g0_oaxUbH_cAedkgjBf7QW?usp=sharing)
   - recognizer (face feature extration for classification)
     - mobilenet [Google Drive](https://drive.google.com/drive/folders/1fRLs10atm_vwDWQXZ-GJbKQpypNcXLAx?usp=sharing)

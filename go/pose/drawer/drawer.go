@@ -6,7 +6,6 @@ import (
 	"github.com/llgcode/draw2d/draw2dimg"
 
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/pose"
 )
 
 // Drawer represents a pose drawer
@@ -36,7 +35,7 @@ func New(options ...Option) *Drawer {
 }
 
 // Draw draw rois
-func (d *Drawer) Draw(img image.Image, rois []pose.ROI, drawBorder bool) image.Image {
+func (d *Drawer) Draw(img image.Image, rois []common.ObjectInfo, drawBorder bool) image.Image {
 	imgW := float64(img.Bounds().Dx())
 	imgH := float64(img.Bounds().Dy())
 	out := image.NewRGBA(img.Bounds())

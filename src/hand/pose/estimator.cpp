@@ -10,9 +10,9 @@ int hand_pose(IHandPoseEstimator d, const unsigned char* rgbdata,
     int img_width, int img_height,
     const Rect* rect,
     Point2fVector* keypoints) {
-    std::vector<ov::Point2f>points;
+    std::vector<ov::Point2f> points;
 
-    int ret = static_cast<ovhand::HandPose*>(d)->Detect(rgbdata, img_width, img_height, *rect, &points);
+    int ret = static_cast<ovhand::HandPose*>(d)->Detect(rgbdata, img_width, img_height, *rect, points);
     if (ret != 0) {
         return ret;
     }

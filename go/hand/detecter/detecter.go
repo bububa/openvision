@@ -3,7 +3,7 @@ package detecter
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/hand/common.h"
+#include "openvision/common/common.h"
 #include "openvision/hand/detecter.h"
 */
 import "C"
@@ -12,14 +12,13 @@ import (
 
 	openvision "github.com/bububa/openvision/go"
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/hand"
 )
 
 // Detecter represents deteter interface
 type Detecter interface {
 	Handler() C.IHandDetecter
 	LoadModel(modelPath string) error
-	Detect(img *common.Image) ([]hand.ROI, error)
+	Detect(img *common.Image) ([]common.ObjectInfo, error)
 	Destroy()
 }
 
@@ -40,20 +39,20 @@ func Destroy(d Detecter) {
 }
 
 // Detect detect hand ROI
-func Detect(d Detecter, img *common.Image) ([]hand.ROI, error) {
+func Detect(d Detecter, img *common.Image) ([]common.ObjectInfo, error) {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
-	cROIs := hand.NewCROIVector()
-	defer hand.FreeCROIVector(cROIs)
+	cObjs := common.NewCObjectInfoVector()
+	defer common.FreeCObjectInfoVector(cObjs)
 	errCode := C.extract_hand_rois(
 		d.Handler(),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth),
 		C.int(imgHeight),
-		(*C.HandROIVector)(unsafe.Pointer(cROIs)))
+		(*C.ObjectInfoVector)(unsafe.Pointer(cObjs)))
 	if errCode != 0 {
 		return nil, openvision.DetectHandError(int(errCode))
 	}
-	return hand.GoROIVector(cROIs, imgWidth, imgHeight), nil
+	return common.GoObjectInfoVector(cObjs, imgWidth, imgHeight), nil
 }

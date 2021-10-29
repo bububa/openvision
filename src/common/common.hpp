@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "config.h"
+#include "net.h"
 #ifdef OV_OPENMP 
 #include <omp.h>
 #endif
@@ -80,10 +81,23 @@ struct ImageInfo {
     float score_;
 };
 
+struct Keypoint {
+    ov::Point2f p;
+    float prob;
+};
+
 struct ObjectInfo {
-	Rect location_;
-	float score_;
-	std::string name_;
+	Rect rect;
+	float prob;
+    int label;
+    std::vector<Point2f> pts;
+};
+
+struct GridAndStride
+{
+    int grid0;
+    int grid1;
+    int stride;
 };
 
 int RatioAnchors(const Rect & anchor,
@@ -139,6 +153,16 @@ int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
     }
     return 0;
 }
+
+void qsort_descent_inplace(std::vector<ObjectInfo>& objects, int left, int right);
+
+void qsort_descent_inplace(std::vector<ObjectInfo>& objects); 
+
+void nms_sorted_bboxes(const std::vector<ObjectInfo>& objects, std::vector<int>& picked, float nms_threshold);
+
+int generate_grids_and_stride(const int target_size, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
+
+float sigmoid(float x);
 
 void EnlargeRect(const float& scale, Rect* rect);
 void RectifyRect(Rect* rect);

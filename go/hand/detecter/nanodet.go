@@ -8,7 +8,6 @@ package detecter
 import "C"
 import (
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/hand"
 )
 
 // Nanodet represents nanodet detecter
@@ -39,6 +38,6 @@ func (d *Nanodet) LoadModel(modelPath string) error {
 }
 
 // Detect implement Detecter interface
-func (d *Nanodet) Detect(img *common.Image) ([]hand.ROI, error) {
+func (d *Nanodet) Detect(img *common.Image) ([]common.ObjectInfo, error) {
 	return Detect(d, img)
 }

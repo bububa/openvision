@@ -11,7 +11,7 @@ public:
     virtual int Detect(const unsigned char*rgbdata,
         int img_width, int img_height,
         const ov::Rect& rect,
-        std::vector<ov::Point2f>* keypoints) = 0;
+        std::vector<ov::Point2f>& keypoints) = 0;
 };
 
 class PoseEstimatorFactory {

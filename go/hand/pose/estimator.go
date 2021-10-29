@@ -3,7 +3,7 @@ package pose
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/hand/common.h"
+#include "openvision/common/common.h"
 #include "openvision/hand/pose.h"
 */
 import "C"

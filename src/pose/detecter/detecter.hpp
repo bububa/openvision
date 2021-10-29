@@ -10,8 +10,10 @@ public:
     virtual ~Detecter(){};
     virtual int ExtractROIs(const unsigned char* rgbadata,
         int img_width, int img_height,
-        std::vector<PoseROI>* rois) = 0;
-    virtual int ExtractKeypoints(const PoseROI& roi, std::vector<PoseKeypoint>* keypoints) = 0;
+        std::vector<ov::ObjectInfo>* rois) = 0;
+    virtual int ExtractKeypoints(const unsigned char* rgbdata,
+        int img_width, int img_height,
+        const ov::Rect& rect, std::vector<ov::Keypoint>* keypoints) = 0;
 };
 
 class DetecterFactory {

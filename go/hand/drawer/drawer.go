@@ -6,7 +6,6 @@ import (
 	"github.com/llgcode/draw2d/draw2dimg"
 
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/hand"
 )
 
 // Drawer represents a hand drawer
@@ -36,7 +35,7 @@ func New(options ...Option) *Drawer {
 }
 
 // Draw draw rois
-func (d *Drawer) Draw(img image.Image, rois []hand.ROI, drawBorder bool) image.Image {
+func (d *Drawer) Draw(img image.Image, rois []common.ObjectInfo, drawBorder bool) image.Image {
 	imgW := float64(img.Bounds().Dx())
 	imgH := float64(img.Bounds().Dy())
 	out := image.NewRGBA(img.Bounds())
@@ -68,8 +67,8 @@ func (d *Drawer) Draw(img image.Image, rois []hand.ROI, drawBorder bool) image.I
 			)
 			gc.SetStrokeColor(common.ColorFromHex(poseColor))
 			if idx == 5 || idx == 9 || idx == 13 || idx == 17 {
-				p0 = roi.Keypoints[0]
-				p1 = roi.Keypoints[idx]
+				p0 = roi.Keypoints[0].Point
+				p1 = roi.Keypoints[idx].Point
 				gc.BeginPath()
 				gc.MoveTo(p0.X*imgW, p0.Y*imgH)
 				gc.LineTo(p1.X*imgW, p1.Y*imgH)
@@ -78,8 +77,8 @@ func (d *Drawer) Draw(img image.Image, rois []hand.ROI, drawBorder bool) image.I
 			} else if idx == 4 || idx == 8 || idx == 12 || idx == 16 {
 				continue
 			}
-			p0 = roi.Keypoints[idx]
-			p1 = roi.Keypoints[idx+1]
+			p0 = roi.Keypoints[idx].Point
+			p1 = roi.Keypoints[idx+1].Point
 			gc.BeginPath()
 			gc.MoveTo(p0.X*imgW, p0.Y*imgH)
 			gc.LineTo(p1.X*imgW, p1.Y*imgH)
@@ -94,7 +93,7 @@ func (d *Drawer) Draw(img image.Image, rois []hand.ROI, drawBorder bool) image.I
 				colorIdx--
 			}
 			poseColor := PoseColors[colorIdx]
-			common.DrawCircle(gc, common.Pt(pt.X*imgW, pt.Y*imgH), d.KeypointRadius, poseColor, "", d.KeypointStrokeWidth)
+			common.DrawCircle(gc, common.Pt(pt.Point.X*imgW, pt.Point.Y*imgH), d.KeypointRadius, poseColor, "", d.KeypointStrokeWidth)
 		}
 	}
 	return out

@@ -11,6 +11,7 @@ typedef ov::Size Size;
 typedef ov::Point Point;
 typedef ov::Point2f Point2f;
 typedef ov::Rect Rect;
+typedef ov::Keypoint Keypoint;
 #else
 
 // Wrapper for an individual cv::cvSize
@@ -40,6 +41,12 @@ typedef struct Rect {
     int height;
 } Rect;
 
+typedef struct Keypoint {
+    Point2f p;
+    float prob;
+} Keypoint;
+
+
 #endif
 
 typedef void* IEstimator;
@@ -56,6 +63,7 @@ typedef struct Point2fVector {
 } Point2fVector;
 
 void FreePoint2fVector(Point2fVector *p);
+void Point2fVectorSetValue(Point2fVector *p, int i, const Point2f* val);
 
 typedef struct RectVector {
     Rect* rects;
@@ -77,6 +85,30 @@ typedef struct Bytes {
 } Bytes;
 
 void FreeBytes(Bytes *p);
+
+typedef struct KeypointVector {
+    Keypoint* points;
+    int length;
+} KeypointVector;
+
+void FreeKeypointVector(KeypointVector *p);
+void KeypointVectorSetValue(KeypointVector *p, int i, const Keypoint* val);
+
+typedef struct ObjectInfoC {
+    Rect rect;
+    float prob;
+    int label;
+    KeypointVector* pts;
+} ObjectInfo;
+
+void FreeObjectInfo(ObjectInfo *p);
+
+typedef struct ObjectInfoVector {
+    ObjectInfo* items;
+    int length;
+} ObjectInfoVector;
+
+void FreeObjectInfoVector(ObjectInfoVector *p);
 
 #ifdef __cplusplus
 }

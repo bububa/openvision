@@ -11,6 +11,7 @@ extern "C" {
     IFaceDetecter new_retinaface();
     IFaceDetecter new_centerface();
     IFaceDetecter new_mtcnn();
+    IFaceDetecter new_yoloface();
     IFaceDetecter new_anticonv();
     int detect_face(IFaceDetecter d, const unsigned char* rgbdata, int img_width, int img_height, FaceInfoVector* faces); 
 #ifdef __cplusplus
