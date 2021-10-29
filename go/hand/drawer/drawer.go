@@ -54,33 +54,48 @@ func (d *Drawer) Draw(img image.Image, rois []hand.ROI, drawBorder bool) image.I
 			borderColor := d.BorderColor
 			common.DrawRectangle(gc, rect, borderColor, "", d.BorderStrokeWidth)
 		}
-		/*
-			// draw joins
-			for idx, pair := range CocoPair {
-				p0 := roi.Keypoints[pair[0]]
-				p1 := roi.Keypoints[pair[1]]
-				if p0.Score < 0.2 || p1.Score < 0.2 {
-					continue
-				}
-				cocoColor := CocoColors[idx]
-				gc.SetLineWidth(d.BorderStrokeWidth)
-				gc.SetStrokeColor(common.ColorFromHex(cocoColor))
+		l := len(roi.Keypoints)
+		if l == 0 {
+			continue
+		}
+		// draw lines
+		gc.SetLineWidth(d.BorderStrokeWidth)
+		for idx := range roi.Keypoints[:l-1] {
+			var (
+				p0        common.Point
+				p1        common.Point
+				poseColor = PoseColors[idx/4]
+			)
+			gc.SetStrokeColor(common.ColorFromHex(poseColor))
+			if idx == 5 || idx == 9 || idx == 13 || idx == 17 {
+				p0 = roi.Keypoints[0]
+				p1 = roi.Keypoints[idx]
 				gc.BeginPath()
-				gc.MoveTo(p0.Point.X*imgW, p0.Point.Y*imgH)
-				gc.LineTo(p1.Point.X*imgW, p1.Point.Y*imgH)
+				gc.MoveTo(p0.X*imgW, p0.Y*imgH)
+				gc.LineTo(p1.X*imgW, p1.Y*imgH)
 				gc.Close()
 				gc.Stroke()
+			} else if idx == 4 || idx == 8 || idx == 12 || idx == 16 {
+				continue
 			}
+			p0 = roi.Keypoints[idx]
+			p1 = roi.Keypoints[idx+1]
+			gc.BeginPath()
+			gc.MoveTo(p0.X*imgW, p0.Y*imgH)
+			gc.LineTo(p1.X*imgW, p1.Y*imgH)
+			gc.Close()
+			gc.Stroke()
+		}
 
-			// draw keypoints
-			for idx, pt := range roi.Keypoints {
-				if pt.Score < 0.2 {
-					continue
-				}
-				cocoColor := CocoColors[idx]
-				common.DrawCircle(gc, common.Pt(pt.Point.X*imgW, pt.Point.Y*imgH), d.KeypointRadius, cocoColor, "", d.KeypointStrokeWidth)
+		// draw keypoints
+		for idx, pt := range roi.Keypoints {
+			colorIdx := idx / 4
+			if idx == 4 || idx == 8 || idx == 12 || idx == 16 || idx >= 20 {
+				colorIdx--
 			}
-		*/
+			poseColor := PoseColors[colorIdx]
+			common.DrawCircle(gc, common.Pt(pt.X*imgW, pt.Y*imgH), d.KeypointRadius, poseColor, "", d.KeypointStrokeWidth)
+		}
 	}
 	return out
 }

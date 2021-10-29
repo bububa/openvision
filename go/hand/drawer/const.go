@@ -10,9 +10,9 @@ const (
 	// DefaultBorderStrokeWidth default drawer border stroke width
 	DefaultBorderStrokeWidth = 3
 	// DefaultKeypointRadius default drawer keypoint radius
-	DefaultKeypointRadius = 2
+	DefaultKeypointRadius = 3
 	// DefaultKeypointStrokeWidth default drawer keypoint stroke width
-	DefaultKeypointStrokeWidth = 2
+	DefaultKeypointStrokeWidth = 1
 )
 
 // CocoPart coco part define
@@ -71,5 +71,12 @@ var (
 		"#00ffff", "#00aaff", "#0055ff",
 		"#0000ff", "#aa00ff", "#ff00ff",
 		"#ff00aa", "#ff0055",
+	}
+)
+
+var (
+	// PoseColors represents color for hand pose
+	PoseColors = [6]string{
+		"#0ad7ff", "#ff7337", "#05ff37", "#190fff", "#ff0f37", "#aa00ff",
 	}
 )

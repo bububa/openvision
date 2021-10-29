@@ -38,18 +38,7 @@ func (t *Tracker) Track(img *common.Image, faces []face.FaceInfo) ([]face.Tracke
 	imgHeight := img.HeightF64()
 	l := len(faces)
 	currFaces := make([]face.FaceInfo, 0, l)
-	for _, f := range faces {
-		f.Rect.X *= imgWidth
-		f.Rect.Y *= imgHeight
-		f.Rect.Width *= imgWidth
-		f.Rect.Height *= imgHeight
-		for i := 0; i < 5; i++ {
-			f.Keypoints[i].X *= imgWidth
-			f.Keypoints[i].Y *= imgHeight
-		}
-		currFaces = append(currFaces, f)
-	}
-	CCurrFaces := face.NewCFaceInfoVectorFromFaces(currFaces)
+	CCurrFaces := face.NewCFaceInfoVectorFromFaces(currFaces, imgWidth, imgHeight)
 	defer face.FreeCFaceInfoVector(CCurrFaces)
 	CTrackedFaces := face.NewCTrackedFaceInfoVector()
 	defer face.FreeCTrackedFaceInfoVector(CTrackedFaces)

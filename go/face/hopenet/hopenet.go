@@ -46,12 +46,8 @@ func (h *Hopenet) Destroy() {
 func (h *Hopenet) Detect(img *common.Image, faceRect common.Rectangle) (face.HeadPose, error) {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
-	faceRect.X *= imgWidth
-	faceRect.Y *= imgHeight
-	faceRect.Width *= imgWidth
-	faceRect.Height *= imgHeight
 	data := img.Bytes()
-	CRect := faceRect.CRect()
+	CRect := faceRect.CRect(imgWidth, imgHeight)
 	CHeadPose := face.NewCHeadPose()
 	defer C.free(unsafe.Pointer(CHeadPose))
 	errCode := C.hopenet_detect(

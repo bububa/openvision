@@ -1,4 +1,4 @@
-# libopenvision deep learning visualization C liberay
+# libopenvision deep learning visualization C library
 
 ## Prerequest
 
@@ -36,4 +36,6 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
   - detector (for hand detect)
     - yolox [Google Drive](https://drive.google.com/drive/folders/1lNm5X6DJ1ZXVaqg54rXnRhvPfC5lAxlH?usp=sharing)
     - nanodet [Google Drive](https://drive.google.com/drive/folders/1ywH7r_clqqA_BAOFSzA92Q0lxJtWlN3z?usp=sharing)
+  - pose (for hand pose estimation)
+    - handnet [Google Drive](https://drive.google.com/drive/folders/1DsCGmiVaZobbMWRp5Oec8GbIpeg7CsNR?usp=sharing)
 - golang binding (github.com/bububa/openvision/go)

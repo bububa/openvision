@@ -14,6 +14,7 @@ import (
 	"github.com/bububa/openvision/go/common"
 	"github.com/bububa/openvision/go/hand/detecter"
 	handdrawer "github.com/bububa/openvision/go/hand/drawer"
+	"github.com/bububa/openvision/go/hand/pose"
 )
 
 func main() {
@@ -23,11 +24,13 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
+	estimator := handpose(modelPath)
+	defer estimator.Destroy()
 	for idx, d := range []detecter.Detecter{
 		yolox(modelPath), nanodet(modelPath),
 	} {
 		defer d.Destroy()
-		detect(d, imgPath, "hand3.jpg", idx)
+		detect(d, estimator, imgPath, "hand2.jpg", idx)
 	}
 }
 
@@ -49,17 +52,36 @@ func nanodet(modelPath string) detecter.Detecter {
 	return d
 }
 
-func detect(d detecter.Detecter, imgPath string, filename string, idx int) {
+func handpose(modelPath string) pose.Estimator {
+	modelPath = filepath.Join(modelPath, "handpose")
+	d := pose.NewHandPoseEstimator()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func detect(d detecter.Detecter, e pose.Estimator, imgPath string, filename string, idx int) {
 	inPath := filepath.Join(imgPath, filename)
-	img, err := loadImage(inPath)
+	imgSrc, err := loadImage(inPath)
 	if err != nil {
 		log.Fatalln("load image failed,", err)
 	}
-	rois, err := d.Detect(common.NewImage(img))
+	img := common.NewImage(imgSrc)
+	rois, err := d.Detect(img)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	log.Printf("%+v\n", rois)
+	for idx, roi := range rois {
+		keypoints, err := e.Detect(img, roi.Rect)
+		if err != nil {
+			log.Fatalln(err)
+			continue
+		}
+		rois[idx].Keypoints = keypoints
+		log.Printf("keypoints: %d\n", len(keypoints))
+	}
 
 	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("%d-hand-%s", idx, filename))
 

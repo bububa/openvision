@@ -46,19 +46,19 @@ func GoFaceInfo(cInfo *C.FaceInfo, w float64, h float64) FaceInfo {
 }
 
 // CFaceInfo convert FaceInfo to C.FaceInfo
-func (f FaceInfo) CFaceInfo() *C.FaceInfo {
+func (f FaceInfo) CFaceInfo(w float64, h float64) *C.FaceInfo {
 	ret := (*C.FaceInfo)(C.malloc(C.sizeof_FaceInfo))
 	ret.score_ = C.float(f.Score)
 	ret.mask_ = C.bool(f.Mask)
 	ret.location_ = C.Rect{
-		C.int(f.Rect.X),
-		C.int(f.Rect.Y),
-		C.int(f.Rect.Width),
-		C.int(f.Rect.Height),
+		C.int(f.Rect.X * w),
+		C.int(f.Rect.Y * h),
+		C.int(f.Rect.Width * w),
+		C.int(f.Rect.Height * h),
 	}
 	for i := 0; i < 5; i++ {
-		ret.keypoints_[i] = C.float(f.Keypoints[i].X)
-		ret.keypoints_[i+5] = C.float(f.Keypoints[i].Y)
+		ret.keypoints_[i] = C.float(f.Keypoints[i].X * w)
+		ret.keypoints_[i+5] = C.float(f.Keypoints[i].Y * h)
 	}
 	return ret
 }
@@ -87,13 +87,13 @@ func FreeCFaceInfoVector(faces *C.FaceInfoVector) {
 }
 
 // NewCFaceInfoVectorFromFaces returns C.FaceInfoVector pointer
-func NewCFaceInfoVectorFromFaces(faces []FaceInfo) *C.FaceInfoVector {
+func NewCFaceInfoVectorFromFaces(faces []FaceInfo, w float64, h float64) *C.FaceInfoVector {
 	l := len(faces)
 	vec := (*C.FaceInfoVector)(C.malloc(C.sizeof_FaceInfoVector))
 	C.NewFaceInfoVector(vec, C.int(l))
 	p := (*[1 << 30]C.FaceInfo)(unsafe.Pointer(vec.faces))[:l:l]
 	for i := 0; i < l; i++ {
-		face := faces[i].CFaceInfo()
+		face := faces[i].CFaceInfo(w, h)
 		defer C.free(unsafe.Pointer(face))
 		p[i] = *face
 	}

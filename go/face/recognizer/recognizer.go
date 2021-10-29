@@ -42,14 +42,10 @@ func Destroy(r Recognizer) {
 func ExtractFeatures(r Recognizer, img *common.Image, faceRect common.Rectangle) ([]float64, error) {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
-	faceRect.X *= imgWidth
-	faceRect.Y *= imgHeight
-	faceRect.Width *= imgWidth
-	faceRect.Height *= imgHeight
 	data := img.Bytes()
 	CFeatures := common.NewCFloatVector()
 	defer common.FreeCFloatVector(CFeatures)
-	CRect := faceRect.CRect()
+	CRect := faceRect.CRect(imgWidth, imgHeight)
 	errCode := C.extract_feature(
 		r.Handler(),
 		(*C.uchar)(unsafe.Pointer(&data[0])),

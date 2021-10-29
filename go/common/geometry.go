@@ -39,13 +39,23 @@ func (r Rectangle) MaxY() float64 {
 }
 
 // CRect returns C.Rect
-func (r Rectangle) CRect() *C.Rect {
+func (r Rectangle) CRect(w float64, h float64) *C.Rect {
 	v := (*C.Rect)(C.malloc(C.sizeof_Rect))
-	v.x = C.int(r.X)
-	v.y = C.int(r.Y)
-	v.width = C.int(r.Width)
-	v.height = C.int(r.Height)
+	v.x = C.int(r.X * w)
+	v.y = C.int(r.Y * h)
+	v.width = C.int(r.Width * w)
+	v.height = C.int(r.Height * h)
 	return v
+}
+
+// GoRect convert C.Rect to go type
+func GoRect(c *C.Rect, w float64, h float64) Rectangle {
+	return Rect(
+		float64(c.x)/w,
+		float64(c.y)/h,
+		float64(c.width)/w,
+		float64(c.height)/h,
+	)
 }
 
 // Point represents a Point

@@ -29,12 +29,12 @@ func GoKeypoint(c *C.PoseKeypoint, w float64, h float64) Keypoint {
 }
 
 // Convert Keypoint to C.Keypoint pointer
-func (k Keypoint) CKeypoint() *C.PoseKeypoint {
+func (k Keypoint) CKeypoint(w float64, h float64) *C.PoseKeypoint {
 	ret := (*C.PoseKeypoint)(C.malloc(C.sizeof_PoseKeypoint))
 	ret.prob = C.float(k.Score)
 	ret.p = C.Point2f{
-		C.float(k.Point.X),
-		C.float(k.Point.Y),
+		C.float(k.Point.X * w),
+		C.float(k.Point.Y * h),
 	}
 	return ret
 }

@@ -20,6 +20,8 @@ type ROI struct {
 	Label int
 	// Rect roi location
 	Rect common.Rectangle
+	// Points keypoints
+	Keypoints []common.Point
 }
 
 // GoROI convert C.HandROI to go type
