@@ -26,7 +26,7 @@ type ObjectInfo struct {
 func GoObjectInfo(c *C.ObjectInfo, w float64, h float64) ObjectInfo {
 	ret := ObjectInfo{
 		Label: int(c.label),
-		Score: float32(c.prob),
+		Score: float32(c.score),
 		Rect: Rect(
 			float64(c.rect.x)/w,
 			float64(c.rect.y)/h,
@@ -44,7 +44,7 @@ func GoObjectInfo(c *C.ObjectInfo, w float64, h float64) ObjectInfo {
 func (o ObjectInfo) ToCObjectInfo(w float64, h float64) *C.ObjectInfo {
 	ret := (*C.ObjectInfo)(C.malloc(C.sizeof_ObjectInfo))
 	ret.label = C.int(o.Label)
-	ret.prob = C.float(o.Score)
+	ret.score = C.float(o.Score)
 	ret.rect.x = C.int(o.Rect.X * w)
 	ret.rect.y = C.int(o.Rect.Y * h)
 	ret.rect.width = C.int(o.Rect.Width * w)

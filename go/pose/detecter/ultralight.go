@@ -7,6 +7,8 @@ package detecter
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 )
 
@@ -24,17 +26,17 @@ func NewUltralight() *Ultralight {
 
 // Destroy free detecter
 func (d *Ultralight) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IPoseDetecter
-func (d *Ultralight) Handler() C.IPoseDetecter {
-	return d.d
+// Pointer implement Estimator interface
+func (d *Ultralight) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel load model for detecter
 func (d *Ultralight) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // ExtractKeypoints implement Detecter interface

@@ -46,7 +46,7 @@ static void generate_yolox_proposals(std::vector<ov::GridAndStride> grid_strides
                 obj.rect.width = w;
                 obj.rect.height = h;
                 obj.label = class_idx;
-                obj.prob = box_prob;
+                obj.score= box_prob;
 
                 objects.push_back(obj);
             }
@@ -57,28 +57,9 @@ static void generate_yolox_proposals(std::vector<ov::GridAndStride> grid_strides
     } // point anchor loop
 }
 
-Yolox::Yolox() : 
-    net_ (new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-Yolox::~Yolox() {
-    net_->clear();
-}
-
 int Yolox::LoadModel(const char * root_path) {
     register_yolov5focus(net_);
-	std::string param_file = std::string(root_path) + "/param";
-	std::string bin_file = std::string(root_path) + "/bin";
-	if (net_->load_param(param_file.c_str()) == -1 ||
-		net_->load_model(bin_file.c_str()) == -1) {
-		return 10000;
-	}
-	initialized_ = true;
-	return 0;
+    return Estimator::LoadModel(root_path);
 }
 
 int Yolox::Detect(const unsigned char* rgbdata,
@@ -116,7 +97,6 @@ int Yolox::Detect(const unsigned char* rgbdata,
     in_pad.substract_mean_normalize(mean_vals, norm_vals);
 
     ncnn::Extractor ex = net_->create_extractor();
-    ex.set_num_threads(4);
     ex.input("input", in_pad);
     ncnn::Mat out;
     ex.extract("output", out);

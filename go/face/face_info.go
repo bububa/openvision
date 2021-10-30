@@ -27,13 +27,13 @@ type FaceInfo struct {
 // GoFaceInfo convert c FaceInfo to go type
 func GoFaceInfo(cInfo *C.FaceInfo, w float64, h float64) FaceInfo {
 	info := FaceInfo{
-		Score: float32(cInfo.score_),
+		Score: float32(cInfo.score),
 		Mask:  bool(cInfo.mask_),
 		Rect: common.Rect(
-			float64(cInfo.location_.x)/w,
-			float64(cInfo.location_.y)/h,
-			float64(cInfo.location_.width)/w,
-			float64(cInfo.location_.height)/h,
+			float64(cInfo.rect.x)/w,
+			float64(cInfo.rect.y)/h,
+			float64(cInfo.rect.width)/w,
+			float64(cInfo.rect.height)/h,
 		),
 	}
 	for i := 0; i < 5; i++ {
@@ -48,9 +48,9 @@ func GoFaceInfo(cInfo *C.FaceInfo, w float64, h float64) FaceInfo {
 // CFaceInfo convert FaceInfo to C.FaceInfo
 func (f FaceInfo) CFaceInfo(w float64, h float64) *C.FaceInfo {
 	ret := (*C.FaceInfo)(C.malloc(C.sizeof_FaceInfo))
-	ret.score_ = C.float(f.Score)
+	ret.score = C.float(f.Score)
 	ret.mask_ = C.bool(f.Mask)
-	ret.location_ = C.Rect{
+	ret.rect = C.Rect{
 		C.int(f.Rect.X * w),
 		C.int(f.Rect.Y * h),
 		C.int(f.Rect.Width * w),

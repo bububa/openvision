@@ -92,7 +92,7 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
                     obj.rect.width = x1 - x0;
                     obj.rect.height = y1 - y0;
                     obj.label = class_index;
-                    obj.prob = confidence;
+                    obj.score = confidence;
 
 					for (int l = 0; l < 5; l++)
 					{
@@ -107,28 +107,10 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
     }
 }
 
-YoloFace::YoloFace() : 
-    net_ (new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-YoloFace::~YoloFace() {
-    net_->clear();
-}
 
 int YoloFace::LoadModel(const char * root_path) {
     register_yolov5focus(net_);
-	std::string param_file = std::string(root_path) + "/param";
-	std::string bin_file = std::string(root_path) + "/bin";
-	if (net_->load_param(param_file.c_str()) == -1 ||
-		net_->load_model(bin_file.c_str()) == -1) {
-		return 10000;
-	}
-	initialized_ = true;
-	return 0;
+    return Estimator::LoadModel(root_path);
 }
 
 int YoloFace::DetectFace(const unsigned char* rgbdata,
@@ -274,7 +256,7 @@ int YoloFace::DetectFace(const unsigned char* rgbdata,
         obj.rect.height = y1 - y0;
 
         FaceInfo info;
-        info.location_ = obj.rect;
+        info.rect = obj.rect;
         for (int k = 0; k < 5; ++k) {
             info.keypoints_[k] = obj.pts[k].x;
             info.keypoints_[k + 5] = obj.pts[k].y;

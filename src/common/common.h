@@ -43,7 +43,7 @@ typedef struct Rect {
 
 typedef struct Keypoint {
     Point2f p;
-    float prob;
+    float score;
 } Keypoint;
 
 
@@ -54,8 +54,11 @@ typedef void* IEstimator;
 int get_gpu_count();
 int create_gpu_instance();
 void destroy_gpu_instance();
+int get_big_cpu_count(); 
+void set_omp_num_threads(int n);
 int load_model(IEstimator e, const char* root_path);
 void destroy_estimator(IEstimator e);
+void set_num_threads(IEstimator e, int n);
 
 typedef struct Point2fVector {
     Point2f* points;
@@ -96,7 +99,7 @@ void KeypointVectorSetValue(KeypointVector *p, int i, const Keypoint* val);
 
 typedef struct ObjectInfoC {
     Rect rect;
-    float prob;
+    float score;
     int label;
     KeypointVector* pts;
 } ObjectInfo;

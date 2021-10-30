@@ -7,6 +7,8 @@ package detecter
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 	"github.com/bububa/openvision/go/face"
 )
@@ -25,20 +27,20 @@ func NewMtcnn() *Mtcnn {
 
 // Destroy free detecter
 func (d *Mtcnn) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IFaceDetecter
-func (d *Mtcnn) Handler() C.IFaceDetecter {
-	return d.d
+// Pointer implement Estimator interface
+func (d *Mtcnn) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel implement Detecter interface
 func (d *Mtcnn) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
-// DetectFace implement Detecter interface
-func (d *Mtcnn) DetectFace(img *common.Image) ([]face.FaceInfo, error) {
-	return DetectFace(d, img)
+// Detect implement Detecter interface
+func (d *Mtcnn) Detect(img *common.Image) ([]face.FaceInfo, error) {
+	return Detect(d, img)
 }

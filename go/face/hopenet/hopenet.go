@@ -26,20 +26,20 @@ func NewHopenet() *Hopenet {
 	}
 }
 
+// Pointer implement Estimator interface
+func (h *Hopenet) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(h.d)
+}
+
 // LoadModel load detecter model
 func (h *Hopenet) LoadModel(modelPath string) error {
-	cpath := C.CString(modelPath)
-	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(h.d)), cpath)
-	if retCode != 0 {
-		return openvision.LoadModelError(int(retCode))
-	}
+	return common.EstimatorLoadModel(h, modelPath)
 	return nil
 }
 
 // Destroy destroy C.IHopeNet
 func (h *Hopenet) Destroy() {
-	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(h.d)))
+	common.DestroyEstimator(h)
 }
 
 // Detect head pose
@@ -51,7 +51,7 @@ func (h *Hopenet) Detect(img *common.Image, faceRect common.Rectangle) (face.Hea
 	CHeadPose := face.NewCHeadPose()
 	defer C.free(unsafe.Pointer(CHeadPose))
 	errCode := C.hopenet_detect(
-		h.d,
+		(C.IHopenet)(h.Pointer()),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth), C.int(imgHeight),
 		(*C.Rect)(unsafe.Pointer(CRect)),

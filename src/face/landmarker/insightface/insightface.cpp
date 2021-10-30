@@ -6,34 +6,12 @@
 #endif // OV_VULKAN
 
 namespace ovface {
-InsightfaceLandmarker::InsightfaceLandmarker() {
-	insightface_landmarker_net_ = new ncnn::Net();
-	initialized = false;
-#ifdef OV_VULKAN
-    insightface_landmarker_net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-InsightfaceLandmarker::~InsightfaceLandmarker() {
-	insightface_landmarker_net_->clear();
-}
-
-int InsightfaceLandmarker::LoadModel(const char * root_path) {
-	std::string fl_param = std::string(root_path) + "/param";
-	std::string fl_bin = std::string(root_path) + "/bin";
-	if (insightface_landmarker_net_->load_param(fl_param.c_str()) == -1 ||
-		insightface_landmarker_net_->load_model(fl_bin.c_str()) == -1) {
-		return 10000;
-	}
-	initialized = true;
-	return 0;
-}
 
 int InsightfaceLandmarker::ExtractKeypoints(const unsigned char* rgbdata, 
     int img_width, int img_height,
 	const ov::Rect & face, std::vector<ov::Point2f>* keypoints) {
 	keypoints->clear();
-	if (!initialized) {
+	if (!initialized_) {
 		return 10000;
 	}
 
@@ -42,7 +20,7 @@ int InsightfaceLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
 	}
 
 	// 1 enlarge the face rect
-	Rect face_enlarged = face; 
+    ov::Rect face_enlarged = face; 
 	const float enlarge_scale = 1.5f;
 	EnlargeRect(enlarge_scale, &face_enlarged);
 
@@ -61,7 +39,7 @@ int InsightfaceLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
     }
 
 	// 4 do inference
-	ncnn::Extractor ex = insightface_landmarker_net_->create_extractor();
+	ncnn::Extractor ex = net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face,
 		ncnn::Mat::PIXEL_RGB, face_enlarged.width, face_enlarged.height, 192, 192);
 	ex.input("data", in);

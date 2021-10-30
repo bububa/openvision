@@ -62,7 +62,7 @@ static void generate_nanodet_proposals(const ncnn::Mat& cls_pred, const ncnn::Ma
                     softmax->load_param(pd);
 
                     ncnn::Option opt;
-                    opt.num_threads = 1;
+                    // opt.num_threads = 1;
                     opt.use_packing_layout = false;
 
                     softmax->create_pipeline(opt);
@@ -101,35 +101,12 @@ static void generate_nanodet_proposals(const ncnn::Mat& cls_pred, const ncnn::Ma
                 obj.rect.width = x1 - x0;
                 obj.rect.height = y1 - y0;
                 obj.label = label;
-                obj.prob = score;
+                obj.score= score;
 
                 objects.push_back(obj);
             }
         }
     }
-}
-
-Nanodet::Nanodet() : 
-    net_ (new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-Nanodet::~Nanodet() {
-    net_->clear();
-}
-
-int Nanodet::LoadModel(const char * root_path) {
-	std::string param_file = std::string(root_path) + "/param";
-	std::string bin_file = std::string(root_path) + "/bin";
-	if (net_->load_param(param_file.c_str()) == -1 ||
-		net_->load_model(bin_file.c_str()) == -1) {
-		return 10000;
-	}
-	initialized_ = true;
-	return 0;
 }
 
 int Nanodet::Detect(const unsigned char* rgbdata,

@@ -45,8 +45,8 @@ int Tracker::Track(const std::vector<FaceInfo>& curr_faces, std::vector<TrackedF
     for (int i = 0; i < num_faces; ++i) {
         auto& face = curr_faces.at(i);
         for (auto scored_tracked_face : scored_tracked_faces) {
-            ComputeIOU(scored_tracked_face.face_info_.location_,
-                face.location_, &scored_tracked_face.iou_score_);
+            ComputeIOU(scored_tracked_face.face_info_.rect,
+                face.rect, &scored_tracked_face.iou_score_);
         }
         if (scored_tracked_faces.size() > 0) {
             std::partial_sort(scored_tracked_faces.begin(),
@@ -61,10 +61,10 @@ int Tracker::Track(const std::vector<FaceInfo>& curr_faces, std::vector<TrackedF
 			scored_tracked_faces.pop_front();
 			TrackedFaceInfo &tracked_face = matched_face;
 			if (matched_face.iou_score_ < maxScore_) {
-				tracked_face.face_info_.location_.x = (tracked_face.face_info_.location_.x + face.location_.x) / 2;
-				tracked_face.face_info_.location_.y = (tracked_face.face_info_.location_.y + face.location_.y) / 2;
-				tracked_face.face_info_.location_.width = (tracked_face.face_info_.location_.width + face.location_.width) / 2;
-				tracked_face.face_info_.location_.height = (tracked_face.face_info_.location_.height + face.location_.height) / 2;
+				tracked_face.face_info_.rect.x = (tracked_face.face_info_.rect.x + face.rect.x) / 2;
+				tracked_face.face_info_.rect.y = (tracked_face.face_info_.rect.y + face.rect.y) / 2;
+				tracked_face.face_info_.rect.width = (tracked_face.face_info_.rect.width + face.rect.width) / 2;
+				tracked_face.face_info_.rect.height = (tracked_face.face_info_.rect.height + face.rect.height) / 2;
 			} else {
 				tracked_face.face_info_ = face;
 			}

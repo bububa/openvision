@@ -6,7 +6,11 @@ package landmarker
 #include "openvision/face/landmarker.h"
 */
 import "C"
-import "github.com/bububa/openvision/go/common"
+import (
+	"unsafe"
+
+	"github.com/bububa/openvision/go/common"
+)
 
 // Zq represents Zq landmarker
 type Zq struct {
@@ -20,19 +24,19 @@ func NewZq() *Zq {
 	}
 }
 
-// Handler returns C.ILandmarker
-func (d *Zq) Handler() C.IFaceLandmarker {
-	return d.d
+// Pointer implement Estimator interface
+func (d *Zq) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel implement Landmarker interface
 func (d *Zq) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Destroy implement Landmarker interface
 func (d *Zq) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
 // ExtractKeypoints implement Landmarker interface

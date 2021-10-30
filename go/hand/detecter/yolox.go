@@ -7,6 +7,8 @@ package detecter
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 )
 
@@ -24,17 +26,17 @@ func NewYolox() *Yolox {
 
 // Destroy free detecter
 func (d *Yolox) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IHandDetecter
-func (d *Yolox) Handler() C.IHandDetecter {
-	return d.d
+// Pointer implenment Estimator interface
+func (d *Yolox) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel load model for detecter
 func (d *Yolox) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Detect implement Detecter interface

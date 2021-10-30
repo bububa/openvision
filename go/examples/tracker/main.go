@@ -48,7 +48,7 @@ func track(d detecter.Detecter, t *tracker.Tracker, imgPath string, filename str
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	faces, err := d.DetectFace(img)
+	faces, err := d.Detect(img)
 	if err != nil {
 		log.Fatalln(err)
 	}

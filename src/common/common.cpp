@@ -1,8 +1,8 @@
 #include "common.h"
 #include <algorithm>
-#include <iostream>
 #include <math.h>
 #include <float.h>
+#include "cpu.h"
 
 #ifdef OV_VULKAN
 #include "gpu.h"
@@ -28,12 +28,26 @@ void destroy_gpu_instance() {
 #endif // OV_VULKAN
 }
 
+int get_big_cpu_count() {
+    return ncnn::get_big_cpu_count();
+}
+
+void set_omp_num_threads(int n) {
+#ifdef OV_OPENMP
+    ncnn::set_omp_num_threads(n);
+#endif
+}
+
 int load_model(IEstimator d, const char *root_path) {
     return static_cast<ov::Estimator*>(d)->LoadModel(root_path);
 }
 
 void destroy_estimator(IEstimator d) {
     delete static_cast<ov::Estimator*>(d);
+}
+
+void set_num_threads(IEstimator d, int n) {
+    static_cast<ov::Estimator*>(d)->set_num_threads(n);
 }
 
 void FreePoint2fVector(Point2fVector* p) {
@@ -97,9 +111,44 @@ void FreeObjectInfoVector(ObjectInfoVector *p) {
 }
 namespace ov {
 
+Estimator::Estimator() {
+    net_ = new ncnn::Net();
+	initialized_ = false;
+#ifdef OV_VULKAN
+    net_->opt.use_vulkan_compute = true;
+#endif // OV_VULKAN
+}
+
+Estimator::~Estimator() {
+    if (net_) {
+        net_->clear();
+    }
+}
+
+int Estimator::LoadModel(const char * root_path) {
+	std::string param_file = std::string(root_path) + "/param";
+	std::string bin_file = std::string(root_path) + "/bin";
+	if (net_->load_param(param_file.c_str()) == -1 ||
+		net_->load_model(bin_file.c_str()) == -1) {
+		return 10000;
+	}
+
+	initialized_ = true;
+
+	return 0;
+}
+
+void Estimator::set_num_threads(int n) {
+    num_threads = n;
+    if (net_) {
+        net_->opt.num_threads = n;
+    }
+}
+
+
 int RatioAnchors(const Rect & anchor,
 	const std::vector<float>& ratios, 
-	std::vector<Rect>* anchors) {
+	std::vector<Rect>* anchors, int threads_num) {
 	anchors->clear();
 	Point center = Point(anchor.x + (anchor.width - 1) * 0.5f,
 		anchor.y + (anchor.height - 1) * 0.5f);
@@ -123,7 +172,7 @@ int RatioAnchors(const Rect & anchor,
 }
 
 int ScaleAnchors(const std::vector<Rect>& ratio_anchors,
-	const std::vector<float>& scales, std::vector<Rect>* anchors) {
+	const std::vector<float>& scales, std::vector<Rect>* anchors, int threads_num) {
 	anchors->clear();
 #if defined(_OPENMP)
 #pragma omp parallel for num_threads(threads_num)
@@ -150,12 +199,13 @@ int ScaleAnchors(const std::vector<Rect>& ratio_anchors,
 int GenerateAnchors(const int & base_size,
 	const std::vector<float>& ratios, 
 	const std::vector<float> scales,
-	std::vector<Rect>* anchors) {
+	std::vector<Rect>* anchors,
+    int threads_num) {
 	anchors->clear();
 	Rect anchor = Rect(0, 0, base_size, base_size);
 	std::vector<Rect> ratio_anchors;
-	RatioAnchors(anchor, ratios, &ratio_anchors);
-	ScaleAnchors(ratio_anchors, scales, anchors);
+	RatioAnchors(anchor, ratios, &ratio_anchors, threads_num);
+	ScaleAnchors(ratio_anchors, scales, anchors, threads_num);
 	
 	return 0;
 }
@@ -207,14 +257,14 @@ void qsort_descent_inplace(std::vector<ObjectInfo>& objects, int left, int right
 {
     int i = left;
     int j = right;
-    float p = objects[(left + right) / 2].prob;
+    float p = objects[(left + right) / 2].score;
 
     while (i <= j)
     {
-        while (objects[i].prob > p)
+        while (objects[i].score > p)
             i++;
 
-        while (objects[j].prob < p)
+        while (objects[j].score < p)
             j--;
 
         if (i <= j)
@@ -280,6 +330,44 @@ void nms_sorted_bboxes(const std::vector<ObjectInfo>& objects, std::vector<int>&
         if (keep)
             picked.push_back(i);
     }
+}
+//
+// insightface/detection/scrfd/mmdet/core/anchor/anchor_generator.py gen_single_level_base_anchors()
+ncnn::Mat generate_anchors(int base_size, const ncnn::Mat& ratios, const ncnn::Mat& scales)
+{
+    int num_ratio = ratios.w;
+    int num_scale = scales.w;
+
+    ncnn::Mat anchors;
+    anchors.create(4, num_ratio * num_scale);
+
+    const float cx = 0;
+    const float cy = 0;
+
+    for (int i = 0; i < num_ratio; i++)
+    {
+        float ar = ratios[i];
+
+        int r_w = round(base_size / sqrt(ar));
+        int r_h = round(r_w * ar); //round(base_size * sqrt(ar));
+
+        for (int j = 0; j < num_scale; j++)
+        {
+            float scale = scales[j];
+
+            float rs_w = r_w * scale;
+            float rs_h = r_h * scale;
+
+            float* anchor = anchors.row(i * num_scale + j);
+
+            anchor[0] = cx - rs_w * 0.5f;
+            anchor[1] = cy - rs_h * 0.5f;
+            anchor[2] = cx + rs_w * 0.5f;
+            anchor[3] = cy + rs_h * 0.5f;
+        }
+    }
+
+    return anchors;
 }
 
 int generate_grids_and_stride(const int target_size, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides)

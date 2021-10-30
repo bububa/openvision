@@ -7,7 +7,6 @@ namespace ovface {
 // 抽象类
 class Landmarker: public ov::Estimator {
 public:
-	virtual ~Landmarker() {};
 	virtual int ExtractKeypoints(const unsigned char* rgbdata, 
         int img_width, int img_height,
 		const Rect& face, std::vector<Point2f>* keypoints) = 0;
@@ -33,6 +32,13 @@ public:
 	InsightfaceLandmarkerFactory(){}
 	Landmarker* CreateLandmarker();
 	~InsightfaceLandmarkerFactory() {}
+};
+
+class ScrfdLandmarkerFactory : public LandmarkerFactory {
+public:
+	ScrfdLandmarkerFactory(){}
+	Landmarker* CreateLandmarker();
+	~ScrfdLandmarkerFactory() {}
 };
 
 }

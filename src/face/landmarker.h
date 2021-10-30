@@ -10,6 +10,7 @@ extern "C" {
     typedef void* IFaceLandmarker;
     IFaceLandmarker new_insightface();
     IFaceLandmarker new_zq();
+    IFaceLandmarker new_scrfd_landmarker();
     int extract_face_keypoints(IFaceLandmarker m, const unsigned char* rgbdata, int img_width, int img_height, const Rect* face, Point2fVector* keypoints); 
 #ifdef __cplusplus
 }

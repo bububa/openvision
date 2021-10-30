@@ -55,7 +55,6 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
     in.substract_mean_normalize(mean_vals, norm_vals);
 
     ncnn::Extractor ex = roi_net_->create_extractor();
-    ex.set_num_threads(4);
     ex.input("data", in);
     ncnn::Mat out;
     ex.extract("output", out);
@@ -99,7 +98,7 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
         ov::Rect rect = ov::Rect(x1, y1, x2-x1, y2-y1);
         ov::ObjectInfo roi;
         roi.rect = rect;
-        roi.prob = score;
+        roi.score = score;
         rois->push_back(roi);
     }
     return 0;
@@ -124,7 +123,6 @@ int Ultralight::ExtractKeypoints(const unsigned char* rgbdata,
     in.substract_mean_normalize(meanVals, normVals);
 
     ncnn::Extractor ex = pose_net_->create_extractor();
-    ex.set_num_threads(4);
     ex.input("data", in);
     ncnn::Mat out;
     ex.extract("hybridsequential0_conv7_fwd", out);
@@ -152,7 +150,7 @@ int Ultralight::ExtractKeypoints(const unsigned char* rgbdata,
 
         ov::Keypoint keypoint;
         keypoint.p = ov::Point2f(max_x * w / (float)out.w+rect.x, max_y * h / (float)out.h+rect.y);
-        keypoint.prob = max_prob;
+        keypoint.score = max_prob;
         keypoints->push_back(keypoint);
     }
 

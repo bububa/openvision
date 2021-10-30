@@ -16,26 +16,8 @@ import (
 
 // Detecter represents deteter interface
 type Detecter interface {
-	Handler() C.IPoseDetecter
-	LoadModel(modelPath string) error
+	common.Estimator
 	ExtractKeypoints(img *common.Image) ([]common.ObjectInfo, error)
-	Destroy()
-}
-
-// LoadModel load detecter model
-func LoadModel(d Detecter, modelPath string) error {
-	cpath := C.CString(modelPath)
-	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(d.Handler())), cpath)
-	if retCode != 0 {
-		return openvision.LoadModelError(int(retCode))
-	}
-	return nil
-}
-
-// Destroy a detecter
-func Destroy(d Detecter) {
-	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(d.Handler())))
 }
 
 // ExtractKeypoints detect pose keypoints using detecter
@@ -46,7 +28,7 @@ func ExtractKeypoints(d Detecter, img *common.Image) ([]common.ObjectInfo, error
 	cObjs := common.NewCObjectInfoVector()
 	defer common.FreeCObjectInfoVector(cObjs)
 	errCode := C.extract_pose_rois(
-		d.Handler(),
+		(C.IPoseDetecter)(d.Pointer()),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth),
 		C.int(imgHeight),
@@ -62,7 +44,7 @@ func ExtractKeypoints(d Detecter, img *common.Image) ([]common.ObjectInfo, error
 		defer common.FreeCKeypointVector(cKeypoints)
 		cROI := (*C.ObjectInfo)(unsafe.Pointer(uintptr(ptr) + uintptr(C.sizeof_ObjectInfo*C.int(i))))
 		errCode := C.extract_pose_keypoints(
-			d.Handler(),
+			(C.IPoseDetecter)(d.Pointer()),
 			(*C.uchar)(unsafe.Pointer(&data[0])),
 			C.int(imgWidth),
 			C.int(imgHeight),
@@ -80,7 +62,7 @@ func ExtractKeypoints(d Detecter, img *common.Image) ([]common.ObjectInfo, error
 				float64(cROI.rect.width)/imgWidth,
 				float64(cROI.rect.height)/imgHeight,
 			),
-			Score: float32(cROI.prob),
+			Score: float32(cROI.score),
 		})
 
 	}

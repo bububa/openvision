@@ -7,7 +7,6 @@ namespace ovpose {
 
 class Detecter: public ov::Estimator {
 public:
-    virtual ~Detecter(){};
     virtual int ExtractROIs(const unsigned char* rgbadata,
         int img_width, int img_height,
         std::vector<ov::ObjectInfo>* rois) = 0;

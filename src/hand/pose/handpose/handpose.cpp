@@ -6,28 +6,6 @@
 #endif // OV_VULKAN
 
 namespace ovhand {
-HandPose::HandPose() : 
-    net_ (new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-HandPose::~HandPose() {
-    net_->clear();
-}
-
-int HandPose::LoadModel(const char * root_path) {
-	std::string param_file = std::string(root_path) + "/param";
-	std::string bin_file = std::string(root_path) + "/bin";
-	if (net_->load_param(param_file.c_str()) == -1 ||
-		net_->load_model(bin_file.c_str()) == -1) {
-		return 10000;
-	}
-	initialized_ = true;
-	return 0;
-}
 
 int HandPose::Detect(const unsigned char* rgbdata,
     int img_width, int img_height,

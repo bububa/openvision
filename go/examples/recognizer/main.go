@@ -22,10 +22,15 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
+	cpuCores := common.GetBigCPUCount()
+	common.SetOMPThreads(cpuCores)
+	log.Printf("CPU big cores:%d\n", cpuCores)
 	d := retinaface(modelPath)
 	defer d.Destroy()
+	common.SetEstimatorThreads(d, cpuCores)
 	m := mobilefacenet(modelPath)
 	defer m.Destroy()
+	common.SetEstimatorThreads(m, cpuCores)
 	extract_features(d, m, imgPath, "4.jpg")
 }
 
@@ -54,7 +59,7 @@ func extract_features(d detecter.Detecter, r recognizer.Recognizer, imgPath stri
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	faces, err := d.DetectFace(img)
+	faces, err := d.Detect(img)
 	if err != nil {
 		log.Fatalln(err)
 	}

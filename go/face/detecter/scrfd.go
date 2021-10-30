@@ -13,34 +13,34 @@ import (
 	"github.com/bububa/openvision/go/face"
 )
 
-// YoloFace represents yoloface detecter
-type YoloFace struct {
+// Scrfd represents scrfd detecter
+type Scrfd struct {
 	d C.IFaceDetecter
 }
 
-// NewYoloFace returns a new YoloFace
-func NewYoloFace() *YoloFace {
-	return &YoloFace{
-		d: C.new_yoloface(),
+// NewScrfd returns a new Scrfd
+func NewScrfd() *Scrfd {
+	return &Scrfd{
+		d: C.new_scrfd(),
 	}
 }
 
 // Destroy free detecter
-func (d *YoloFace) Destroy() {
+func (d *Scrfd) Destroy() {
 	common.DestroyEstimator(d)
 }
 
-// Pointer implement Estimator interface
-func (d *YoloFace) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(d.d)
-}
-
 // LoadModel implement Detecter interface
-func (d *YoloFace) LoadModel(modelPath string) error {
+func (d *Scrfd) LoadModel(modelPath string) error {
 	return common.EstimatorLoadModel(d, modelPath)
 }
 
+// Pointer implement Estimator interface
+func (d *Scrfd) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
+}
+
 // Detect implement Detecter interface
-func (d *YoloFace) Detect(img *common.Image) ([]face.FaceInfo, error) {
+func (d *Scrfd) Detect(img *common.Image) ([]face.FaceInfo, error) {
 	return Detect(d, img)
 }

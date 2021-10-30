@@ -12,34 +12,34 @@ import (
 	"github.com/bububa/openvision/go/common"
 )
 
-// Insightface represents Insightface landmarker
-type Insightface struct {
+// Scrfd represents Scrfd landmarker
+type Scrfd struct {
 	d C.IFaceLandmarker
 }
 
-// NewInsightface returns a new Insightface landmarker
-func NewInsightface() *Insightface {
-	return &Insightface{
-		d: C.new_insightface(),
+// NewScrfd returns a new Scrfd landmarker
+func NewScrfd() *Scrfd {
+	return &Scrfd{
+		d: C.new_scrfd_landmarker(),
 	}
 }
 
 // Pointer implement Estimator interface
-func (d *Insightface) Pointer() unsafe.Pointer {
+func (d *Scrfd) Pointer() unsafe.Pointer {
 	return unsafe.Pointer(d.d)
 }
 
 // LoadModel implement Landmarker interface
-func (d *Insightface) LoadModel(modelPath string) error {
+func (d *Scrfd) LoadModel(modelPath string) error {
 	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Destroy implement Landmarker interface
-func (d *Insightface) Destroy() {
+func (d *Scrfd) Destroy() {
 	common.DestroyEstimator(d)
 }
 
 // ExtractKeypoints implement Landmarker interface
-func (d *Insightface) ExtractKeypoints(img *common.Image, faceRect common.Rectangle) ([]common.Point, error) {
+func (d *Scrfd) ExtractKeypoints(img *common.Image, faceRect common.Rectangle) ([]common.Point, error) {
 	return ExtractKeypoints(d, img, faceRect)
 }

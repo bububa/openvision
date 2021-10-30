@@ -21,33 +21,14 @@ namespace ovface {
 #define NEAR_0 1e-10
 #define ODIM   66
 
-Hopenet::Hopenet():
-    net_(new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-Hopenet::~Hopenet() {
-	if (net_) {
-		net_->clear();
-	}
-}
-
-int Hopenet::LoadModel(const char * root_path) {
-	std::string param_file = std::string(root_path) + "/param";
-	std::string bin_file = std::string(root_path) + "/bin";
-	if (net_->load_param(param_file.c_str()) == -1 ||
-		net_->load_model(bin_file.c_str()) == -1) {
-		return 10000;
-	}
+int Hopenet::LoadModel(const char* root_path) {
+    int ret = Estimator::LoadModel(root_path);
+    if (ret != 0) {
+        return ret;
+    }
     for (uint i=1; i<67; i++) idx_tensor[i-1] = i;
-	initialized_ = true;
-
-	return 0;
+    return 0;
 }
-
 
 int Hopenet::Detect(const unsigned char* rgbdata, 
     int img_width, int img_height,
@@ -80,15 +61,15 @@ int Hopenet::Detect(const unsigned char* rgbdata,
     float* pred_roll  = output.range(ODIM, ODIM*2);
     float* pred_yaw   = output.range(ODIM*2, ODIM*3);
 
-    softmax(pred_pitch, ODIM);
-    softmax(pred_roll,  ODIM);
-    softmax(pred_yaw,   ODIM);
+    this->softmax(pred_pitch, ODIM);
+    this->softmax(pred_roll,  ODIM);
+    this->softmax(pred_yaw,   ODIM);
 
     // printArray(pred_pitch, ODIM);
 
-    head_angles->pitch = getAngle(pred_pitch, ODIM);
-    head_angles->roll  = getAngle(pred_roll,  ODIM);
-    head_angles->yaw   = getAngle(pred_yaw,   ODIM);
+    head_angles->pitch = this->getAngle(pred_pitch, ODIM);
+    head_angles->roll  = this->getAngle(pred_roll,  ODIM);
+    head_angles->yaw   = this->getAngle(pred_yaw,   ODIM);
 
     free(img_face);
 

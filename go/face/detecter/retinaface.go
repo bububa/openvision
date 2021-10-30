@@ -7,6 +7,8 @@ package detecter
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 	"github.com/bububa/openvision/go/face"
 )
@@ -25,19 +27,20 @@ func NewRetinaFace() *RetinaFace {
 
 // Destroy free detecter
 func (d *RetinaFace) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IFaceDetecter
-func (d *RetinaFace) Handler() C.IFaceDetecter {
-	return d.d
+// Pointer implement Estimator interface
+func (d *RetinaFace) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel implement Detecter interface
 func (d *RetinaFace) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
-func (d *RetinaFace) DetectFace(img *common.Image) ([]face.FaceInfo, error) {
-	return DetectFace(d, img)
+// Detect implement Detecter interface
+func (d *RetinaFace) Detect(img *common.Image) ([]face.FaceInfo, error) {
+	return Detect(d, img)
 }

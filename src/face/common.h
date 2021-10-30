@@ -13,8 +13,8 @@ typedef ovface::TrackedFaceInfo TrackedFaceInfo;
 typedef ovface::HeadPose HeadPose;
 #else
 typedef struct FaceInfo {
-    Rect location_;
-    float score_;
+    Rect rect;
+    float score;
     float keypoints_[10];
     bool mask_;
 } FaceInfo;

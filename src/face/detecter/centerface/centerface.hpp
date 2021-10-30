@@ -8,18 +8,13 @@
 namespace ovface {
 class CenterFace : public Detecter {
 public:
-    CenterFace();
-    ~CenterFace();
-	int LoadModel(const char* root_path);
 	int DetectFace(const unsigned char* rgbdata,
         int img_width, int img_height,
         std::vector<FaceInfo>* faces);
 
 private:
-    ncnn::Net* centernet_ = nullptr;
     const float scoreThreshold_ = 0.5f;
     const float nmsThreshold_ = 0.5f;
-    bool initialized_;
 };
 
 }

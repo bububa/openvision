@@ -4,6 +4,7 @@
 #include "retinaface/retinaface.hpp"
 #include "anticonv/anticonv.hpp"
 #include "yoloface/yoloface.hpp"
+#include "scrfd/scrfd.hpp"
 
 IFaceDetecter new_retinaface() {
     return new ovface::RetinaFace();
@@ -19,6 +20,10 @@ IFaceDetecter new_mtcnn() {
 
 IFaceDetecter new_yoloface() {
     return new ovface::YoloFace();
+}
+
+IFaceDetecter new_scrfd() {
+    return new ovface::Scrfd();
 }
 
 IFaceDetecter new_anticonv() {
@@ -56,6 +61,10 @@ Detecter* RetinafaceFactory::CreateDetecter() {
 
 Detecter* YoloFaceFactory::CreateDetecter() {
 	return new YoloFace();
+}
+
+Detecter* ScrfdFactory::CreateDetecter() {
+	return new Scrfd();
 }
 
 Detecter* AnticonvFactory::CreateDetecter() {

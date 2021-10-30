@@ -1,6 +1,7 @@
 #include "../landmarker.h"
 #include "zqlandmarker/zqlandmarker.hpp"
 #include "insightface/insightface.hpp"
+#include "scrfd/scrfd.hpp"
 
 IFaceLandmarker new_zq() {
     return new ovface::ZQLandmarker();
@@ -8,6 +9,10 @@ IFaceLandmarker new_zq() {
 
 IFaceLandmarker new_insightface() {
     return new ovface::InsightfaceLandmarker();
+}
+
+IFaceLandmarker new_scrfd_landmarker() {
+    return new ovface::ScrfdLandmarker();
 }
 
 int extract_face_keypoints(
@@ -37,6 +42,10 @@ Landmarker* ZQLandmarkerFactory::CreateLandmarker() {
 
 Landmarker* InsightfaceLandmarkerFactory::CreateLandmarker() {
 	return new InsightfaceLandmarker();
+}
+
+Landmarker* ScrfdLandmarkerFactory::CreateLandmarker() {
+	return new ScrfdLandmarker();
 }
 
 }

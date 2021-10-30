@@ -7,7 +7,6 @@
 namespace ovhand {
 class PoseEstimator: public ov::Estimator {
 public:
-    virtual ~PoseEstimator() {};
     virtual int Detect(const unsigned char*rgbdata,
         int img_width, int img_height,
         const ov::Rect& rect,

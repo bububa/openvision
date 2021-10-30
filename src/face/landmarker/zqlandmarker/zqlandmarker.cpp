@@ -1,39 +1,16 @@
 #include "zqlandmarker.hpp"
-#include <string>
 
 #ifdef OV_VULKAN
 #include "gpu.h"
 #endif // OV_VULKAN
 
 namespace ovface {
-ZQLandmarker::ZQLandmarker() {
-	zq_landmarker_net_ = new ncnn::Net();
-	initialized = false;
-#ifdef OV_VULKAN
-    zq_landmarker_net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
-
-ZQLandmarker::~ZQLandmarker() {
-	zq_landmarker_net_->clear();
-}
-
-int ZQLandmarker::LoadModel(const char * root_path) {
-	std::string fl_param = std::string(root_path) + "/param";
-	std::string fl_bin = std::string(root_path) + "/bin";
-	if (zq_landmarker_net_->load_param(fl_param.c_str()) == -1 ||
-		zq_landmarker_net_->load_model(fl_bin.c_str()) == -1) {
-		return 10000;
-	}
-	initialized = true;
-	return 0;
-}
 
 int ZQLandmarker::ExtractKeypoints(const unsigned char* rgbdata, 
     int img_width, int img_height,
 	const ov::Rect & face, std::vector<ov::Point2f>* keypoints) {
 	keypoints->clear();
-	if (!initialized) {
+	if (!initialized_) {
 		return 10000;
 	}
 
@@ -49,7 +26,7 @@ int ZQLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
         unsigned char* dstCursor = img_face + i * face.width * 3;
         memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * face.width);
     }
-	ncnn::Extractor ex = zq_landmarker_net_->create_extractor();
+	ncnn::Extractor ex = net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face,
 		ncnn::Mat::PIXEL_RGB, face.width, face.height, 112, 112);
 	in.substract_mean_normalize(meanVals, normVals);

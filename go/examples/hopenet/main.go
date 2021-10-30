@@ -24,10 +24,15 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
+	cpuCores := common.GetBigCPUCount()
+	common.SetOMPThreads(cpuCores)
+	log.Printf("CPU big cores:%d\n", cpuCores)
 	d := retinaface(modelPath)
 	defer d.Destroy()
+	common.SetEstimatorThreads(d, cpuCores)
 	h := processer(modelPath)
 	defer h.Destroy()
+	common.SetEstimatorThreads(h, cpuCores)
 	for _, fn := range []string{"robocop.jpg", "terminator.jpg"} {
 		process(d, h, imgPath, fn)
 	}
@@ -60,7 +65,7 @@ func process(d detecter.Detecter, h *hopenet.Hopenet, imgPath string, filename s
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	faces, err := d.DetectFace(img)
+	faces, err := d.Detect(img)
 	if err != nil {
 		log.Fatalln(err)
 	}

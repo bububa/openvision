@@ -5,31 +5,6 @@
 #endif // OV_VULKAN
 
 namespace ovface {
-CenterFace::CenterFace() {
-    centernet_ = new ncnn::Net();
-    initialized_ = false;
-#ifdef OV_VULKAN
-    centernet_->opt.use_vulkan_compute = true;
-#endif // MIRROR_VULKAN
-}
-
-CenterFace::~CenterFace(){
-    if (centernet_) {
-        centernet_->clear();
-    }
-}
-
-int CenterFace::LoadModel(const char* root_path) {
-    std::string param_file = std::string(root_path) + "/param";
-	std::string model_file = std::string(root_path) + "/bin";
-    if (centernet_->load_param(param_file.c_str()) == -1 ||
-        centernet_->load_model(model_file.c_str()) == -1) {
-        return 10000;
-	}
-
-    initialized_ = true;
-    return 0;
-}
 
 int CenterFace::DetectFace(const unsigned char* rgbdata, 
     int img_width, int img_height,
@@ -49,7 +24,7 @@ int CenterFace::DetectFace(const unsigned char* rgbdata,
 
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata, ncnn::Mat::PIXEL_RGB,
 		img_width, img_height, img_width_new, img_height_new);
-	ncnn::Extractor ex = centernet_->create_extractor();
+	ncnn::Extractor ex = net_->create_extractor();
 	ex.input("input.1", in);
 	ncnn::Mat mat_heatmap, mat_scale, mat_offset, mat_landmark;
 	ex.extract("537", mat_heatmap);
@@ -78,11 +53,11 @@ int CenterFace::DetectFace(const unsigned char* rgbdata,
 			float xmax = fminf(xmin + s1, img_width_new);
 
             FaceInfo face_info;
-            face_info.score_ = score;
-            face_info.location_.x = scale_x * xmin;
-            face_info.location_.y = scale_y * ymin;
-            face_info.location_.width = scale_x * (xmax - xmin);
-            face_info.location_.height = scale_y * (ymax - ymin);
+            face_info.score = score;
+            face_info.rect.x = scale_x * xmin;
+            face_info.rect.y = scale_y * ymin;
+            face_info.rect.width = scale_x * (xmax - xmin);
+            face_info.rect.height = scale_y * (ymax - ymin);
 
             for (int num = 0; num < 5; ++num) {
                 face_info.keypoints_[num    ] = scale_x * (s1 * mat_landmark.channel(2 * num + 1)[index] + xmin);

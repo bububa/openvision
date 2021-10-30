@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/jpeg"
 	"log"
@@ -23,11 +24,21 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
+	cpuCores := common.GetBigCPUCount()
+	common.SetOMPThreads(cpuCores)
+	log.Printf("CPU big cores:%d\n", cpuCores)
 	d := retinaface(modelPath)
 	defer d.Destroy()
-	m := insightface(modelPath)
-	defer m.Destroy()
-	extract_keypoints(d, m, imgPath, "4.jpg")
+	common.SetEstimatorThreads(d, cpuCores)
+	for idx, m := range []landmarker.Landmarker{
+		insightface(modelPath),
+		zq(modelPath),
+		scrfd(modelPath),
+	} {
+		defer m.Destroy()
+		common.SetEstimatorThreads(m, cpuCores)
+		extract_keypoints(d, m, imgPath, "4.jpg", idx)
+	}
 }
 
 func retinaface(modelPath string) detecter.Detecter {
@@ -57,14 +68,23 @@ func zq(modelPath string) landmarker.Landmarker {
 	return d
 }
 
-func extract_keypoints(d detecter.Detecter, m landmarker.Landmarker, imgPath string, filename string) {
+func scrfd(modelPath string) landmarker.Landmarker {
+	modelPath = filepath.Join(modelPath, "scrfd/landmarker")
+	d := landmarker.NewScrfd()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func extract_keypoints(d detecter.Detecter, m landmarker.Landmarker, imgPath string, filename string, idx int) {
 	inPath := filepath.Join(imgPath, filename)
 	imgLoaded, err := loadImage(inPath)
 	if err != nil {
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	faces, err := d.DetectFace(img)
+	faces, err := d.Detect(img)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -83,8 +103,7 @@ func extract_keypoints(d detecter.Detecter, m landmarker.Landmarker, imgPath str
 		keypoints = append(keypoints, points...)
 	}
 	out := drawer.DrawLandmark(imgLoaded, keypoints)
-	outPath := filepath.Join(imgPath, "./results", filename)
-
+	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("landmarker-%d-%s", idx, filename))
 	if err := saveImage(out, outPath); err != nil {
 		log.Fatalln(err)
 	}

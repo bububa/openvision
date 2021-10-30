@@ -7,6 +7,8 @@ package pose
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 )
 
@@ -24,17 +26,17 @@ func NewHandPoseEstimator() *HandPoseEstimator {
 
 // Destroy free Estimator
 func (d *HandPoseEstimator) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IHandPoseEstimator
-func (d *HandPoseEstimator) Handler() C.IHandPoseEstimator {
-	return d.d
+// Pointer implement Estimator interface
+func (d *HandPoseEstimator) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel load model for  estimator
 func (d *HandPoseEstimator) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Detect implement Estimator interface

@@ -23,7 +23,7 @@ int extract_hand_rois(IHandDetecter d, const unsigned char* rgbdata, int img_wid
         ov::ObjectInfo o = detected[i];
         rois->items[i] = ObjectInfo{
             o.rect,
-            o.prob,
+            o.score,
             o.label,
             NULL
         };

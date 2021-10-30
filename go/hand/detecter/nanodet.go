@@ -7,6 +7,8 @@ package detecter
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 )
 
@@ -24,17 +26,17 @@ func NewNanodet() *Nanodet {
 
 // Destroy free detecter
 func (d *Nanodet) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IHandDetecter
-func (d *Nanodet) Handler() C.IHandDetecter {
-	return d.d
+// Pointer implement Estimator interface
+func (d *Nanodet) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel load model for detecter
 func (d *Nanodet) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Detect implement Detecter interface

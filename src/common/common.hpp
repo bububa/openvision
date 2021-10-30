@@ -10,12 +10,17 @@
 #endif
 
 namespace ov {
-const int threads_num = 2;
 
 class Estimator {
 public:
-    virtual ~Estimator(){};
-    virtual int LoadModel(const char* root_path) = 0;
+    Estimator();
+    virtual ~Estimator();
+    virtual int LoadModel(const char* root_path);
+    virtual void set_num_threads(int n);
+protected:
+    int num_threads = 2;
+    ncnn::Net* net_;
+    bool initialized_ = false;
 };
 
 // Wrapper for an individual cv::cvSize
@@ -78,17 +83,17 @@ typedef struct Rect {
 
 struct ImageInfo {
     std::string label_;
-    float score_;
+    float score;
 };
 
 struct Keypoint {
-    ov::Point2f p;
-    float prob;
+    Point2f p;
+    float score;
 };
 
 struct ObjectInfo {
 	Rect rect;
-	float prob;
+	float score;
     int label;
     std::vector<Point2f> pts;
 };
@@ -101,14 +106,15 @@ struct GridAndStride
 };
 
 int RatioAnchors(const Rect & anchor,
-	const std::vector<float>& ratios, std::vector<Rect>* anchors);
+	const std::vector<float>& ratios, std::vector<Rect>* anchors, int threads_num);
 
 int ScaleAnchors(const std::vector<Rect>& ratio_anchors,
-	const std::vector<float>& scales, std::vector<Rect>* anchors);
+	const std::vector<float>& scales, std::vector<Rect>* anchors, int threads_num);
 
 int GenerateAnchors(const int & base_size,
 	const std::vector<float>& ratios, const std::vector<float> scales,
-	std::vector<Rect>* anchors);
+	std::vector<Rect>* anchors,
+    int threads_num);
 
 float InterRectArea(const Rect & a,
 	const Rect & b);
@@ -128,7 +134,7 @@ int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
     inputs_tmp.assign(inputs.begin(), inputs.end());
     std::sort(inputs_tmp.begin(), inputs_tmp.end(),
     [](const T& a, const T& b) {
-        return a.score_ > b.score_;
+        return a.score > b.score;
     });
 
     std::vector<int> indexes(inputs_tmp.size());
@@ -145,7 +151,7 @@ int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
         for (int i = 1; i < tmp_indexes.size(); i++) {
             int tmp_i = tmp_indexes[i];
             float iou = 0.0f;
-            ComputeIOU(inputs_tmp[good_idx].location_, inputs_tmp[tmp_i].location_, &iou, type);
+            ComputeIOU(inputs_tmp[good_idx].rect, inputs_tmp[tmp_i].rect, &iou, type);
             if (iou <= threshold) {
                 indexes.push_back(tmp_i);
             }
@@ -159,6 +165,9 @@ void qsort_descent_inplace(std::vector<ObjectInfo>& objects, int left, int right
 void qsort_descent_inplace(std::vector<ObjectInfo>& objects); 
 
 void nms_sorted_bboxes(const std::vector<ObjectInfo>& objects, std::vector<int>& picked, float nms_threshold);
+
+// insightface/detection/scrfd/mmdet/core/anchor/anchor_generator.py gen_single_level_base_anchors()
+ncnn::Mat generate_anchors(int base_size, const ncnn::Mat& ratios, const ncnn::Mat& scales);
 
 int generate_grids_and_stride(const int target_size, std::vector<int>& strides, std::vector<GridAndStride>& grid_strides);
 

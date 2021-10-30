@@ -16,26 +16,8 @@ import (
 
 // Recognizer represents Recognizer interface
 type Recognizer interface {
-	Handler() C.IFaceRecognizer
-	LoadModel(modelPath string) error
+	common.Estimator
 	ExtractFeatures(img *common.Image, face common.Rectangle) ([]float64, error)
-	Destroy()
-}
-
-// LoadModel load recognizer model
-func LoadModel(r Recognizer, modelPath string) error {
-	cpath := C.CString(modelPath)
-	defer C.free(unsafe.Pointer(cpath))
-	retCode := C.load_model((C.IEstimator)(unsafe.Pointer(r.Handler())), cpath)
-	if retCode != 0 {
-		return openvision.LoadModelError(int(retCode))
-	}
-	return nil
-}
-
-// Destroy a recognizer
-func Destroy(r Recognizer) {
-	C.destroy_estimator((C.IEstimator)(unsafe.Pointer(r.Handler())))
 }
 
 // ExtractFeatures extract features using recognizer
@@ -47,7 +29,7 @@ func ExtractFeatures(r Recognizer, img *common.Image, faceRect common.Rectangle)
 	defer common.FreeCFloatVector(CFeatures)
 	CRect := faceRect.CRect(imgWidth, imgHeight)
 	errCode := C.extract_feature(
-		r.Handler(),
+		(C.IFaceRecognizer)(r.Pointer()),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth), C.int(imgHeight),
 		(*C.Rect)(unsafe.Pointer(CRect)),

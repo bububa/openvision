@@ -7,7 +7,6 @@ namespace ovface {
 // 抽象类
 class Detecter: public ov::Estimator {
 public:
-	virtual ~Detecter() {};
 	virtual int DetectFace(const unsigned char* rgbdata, 
         int img_width, int img_height,
         std::vector<FaceInfo>* faces) = 0;
@@ -48,6 +47,13 @@ class YoloFaceFactory : public DetecterFactory {
 public:
 	YoloFaceFactory() {}
 	~YoloFaceFactory() {}
+	Detecter* CreateDetecter();
+};
+
+class ScrfdFactory : public DetecterFactory {
+public:
+	ScrfdFactory() {}
+	~ScrfdFactory() {}
 	Detecter* CreateDetecter();
 };
 

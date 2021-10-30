@@ -6,7 +6,11 @@ package recognizer
 #include "openvision/face/recognizer.h"
 */
 import "C"
-import "github.com/bububa/openvision/go/common"
+import (
+	"unsafe"
+
+	"github.com/bububa/openvision/go/common"
+)
 
 // Mobilefacenet represents Mobilefacenet recognizer
 type Mobilefacenet struct {
@@ -20,19 +24,19 @@ func NewMobilefacenet() *Mobilefacenet {
 	}
 }
 
-// Handler returns C.IFaceRecognizer
-func (d *Mobilefacenet) Handler() C.IFaceRecognizer {
-	return d.d
+// Pointer implement Estimator interface
+func (d *Mobilefacenet) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel implement Recognizer interface
 func (d *Mobilefacenet) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Destroy implement Recognizer interface
 func (d *Mobilefacenet) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
 // ExtractFeatures implement Recognizer interface

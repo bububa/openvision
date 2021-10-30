@@ -9,17 +9,12 @@ namespace ovhand {
 
 class Yolox : public Detecter {
 public:
-    Yolox();
-    ~Yolox();
-
-    int LoadModel(const char* root_path);
+    int LoadModel(const char * root_path);
     int Detect(const unsigned char* rgbadata,
         int img_width, int img_height,
         std::vector<ov::ObjectInfo>& rois);
 
 private:
-	ncnn::Net* net_;
-    bool initialized_;
     const int target_size = 416;
     const float mean_vals[3] = {255.f * 0.485f, 255.f * 0.456, 255.f * 0.406f};
     const float norm_vals[3] = {1 / (255.f * 0.229f), 1 / (255.f * 0.224f), 1 / (255.f * 0.225f)};

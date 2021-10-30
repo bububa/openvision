@@ -23,24 +23,30 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
-	test_detect(imgPath, modelPath)
-	test_mask(imgPath, modelPath)
+	cpuCores := common.GetBigCPUCount()
+	common.SetOMPThreads(cpuCores)
+	log.Printf("CPU big cores:%d\n", cpuCores)
+	test_detect(imgPath, modelPath, cpuCores)
+	test_mask(imgPath, modelPath, cpuCores)
 }
 
-func test_detect(imgPath string, modelPath string) {
+func test_detect(imgPath string, modelPath string, threads int) {
 	for idx, d := range []detecter.Detecter{
 		retinaface(modelPath),
 		centerface(modelPath),
 		mtcnn(modelPath),
 		yoloface(modelPath),
+		scrfd(modelPath),
 	} {
+		common.SetEstimatorThreads(d, threads)
 		detect(d, imgPath, idx, "4.jpg", false)
 		d.Destroy()
 	}
 }
 
-func test_mask(imgPath string, modelPath string) {
+func test_mask(imgPath string, modelPath string, threads int) {
 	d := anticonv(modelPath)
+	common.SetEstimatorThreads(d, threads)
 	defer d.Destroy()
 	detect(d, imgPath, 0, "mask3.jpg", true)
 }
@@ -72,6 +78,15 @@ func yoloface(modelPath string) detecter.Detecter {
 	return d
 }
 
+func scrfd(modelPath string) detecter.Detecter {
+	modelPath = filepath.Join(modelPath, "scrfd/scrfd1g")
+	d := detecter.NewScrfd()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
 func centerface(modelPath string) detecter.Detecter {
 	modelPath = filepath.Join(modelPath, "centerface")
 	d := detecter.NewCenterface()
@@ -96,7 +111,7 @@ func detect(d detecter.Detecter, imgPath string, idx int, filename string, mask 
 	if err != nil {
 		log.Fatalln("load image failed,", err)
 	}
-	faces, err := d.DetectFace(common.NewImage(img))
+	faces, err := d.Detect(common.NewImage(img))
 	if err != nil {
 		log.Fatalln(err)
 	}

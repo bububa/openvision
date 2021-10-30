@@ -8,17 +8,13 @@ namespace ovface {
 using ANCHORS = std::vector<ov::Rect>;
 class AntiConv : public Detecter {
 public:
-	AntiConv();
-	~AntiConv();
 	int LoadModel(const char* root_path);
 	int DetectFace(const unsigned char* rgbdata, 
         int img_width, int img_height,
         std::vector<FaceInfo>* faces);
 
 private:
-	ncnn::Net* anticonv_net_;
 	std::vector<ANCHORS> anchors_generated_;
-	bool initialized_;
 	const int RPNs_[3] = { 32, 16, 8 };
 	const Size inputSize_ = { 640, 640 };
 	const float iouThreshold_ = 0.4f;

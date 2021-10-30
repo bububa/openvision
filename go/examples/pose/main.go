@@ -23,8 +23,12 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
+	cpuCores := common.GetBigCPUCount()
+	common.SetOMPThreads(cpuCores)
+	log.Printf("CPU big cores:%d\n", cpuCores)
 	d := ultralightDetector(modelPath)
 	defer d.Destroy()
+	common.SetEstimatorThreads(d, cpuCores)
 	detect(d, imgPath, "ultralight-pose3.jpg")
 }
 

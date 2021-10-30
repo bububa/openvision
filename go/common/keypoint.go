@@ -22,14 +22,14 @@ type Keypoint struct {
 func GoKeypoint(c *C.Keypoint, w float64, h float64) Keypoint {
 	return Keypoint{
 		Point: Pt(float64(c.p.x)/w, float64(c.p.y)/h),
-		Score: float32(c.prob),
+		Score: float32(c.score),
 	}
 }
 
 // Convert Keypoint to C.Keypoint pointer
 func (k Keypoint) CKeypoint(w float64, h float64) *C.Keypoint {
 	ret := (*C.Keypoint)(C.malloc(C.sizeof_Keypoint))
-	ret.prob = C.float(k.Score)
+	ret.score = C.float(k.Score)
 	ret.p = C.Point2f{
 		C.float(k.Point.X * w),
 		C.float(k.Point.Y * h),

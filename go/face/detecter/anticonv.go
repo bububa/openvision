@@ -7,6 +7,8 @@ package detecter
 */
 import "C"
 import (
+	"unsafe"
+
 	"github.com/bububa/openvision/go/common"
 	"github.com/bububa/openvision/go/face"
 )
@@ -25,20 +27,20 @@ func NewAnticonv() *Anticonv {
 
 // Destroy free detecter
 func (d *Anticonv) Destroy() {
-	Destroy(d)
+	common.DestroyEstimator(d)
 }
 
-// Handler returns C.IDetecter
-func (d *Anticonv) Handler() C.IFaceDetecter {
-	return d.d
+// Pointer implement Estimator interface
+func (d *Anticonv) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(d.d)
 }
 
 // LoadModel load model for detecter
 func (d *Anticonv) LoadModel(modelPath string) error {
-	return LoadModel(d, modelPath)
+	return common.EstimatorLoadModel(d, modelPath)
 }
 
-// DetectFace implement Detecter interface
-func (d *Anticonv) DetectFace(img *common.Image) ([]face.FaceInfo, error) {
-	return DetectFace(d, img)
+// Detect implement Detecter interface
+func (d *Anticonv) Detect(img *common.Image) ([]face.FaceInfo, error) {
+	return Detect(d, img)
 }

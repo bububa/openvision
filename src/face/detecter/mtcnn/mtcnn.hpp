@@ -11,6 +11,7 @@ public:
 	Mtcnn();
 	~Mtcnn();
 	int LoadModel(const char* root_path);
+    void set_num_threads(int n);
 	int DetectFace(const unsigned char* rgbdata, 
         int img_width, int img_height,
         std::vector<FaceInfo>* faces);

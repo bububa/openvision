@@ -5,44 +5,26 @@
 #endif // OV_VULKAN
 
 namespace ovface {
-AntiConv::AntiConv() :
-	anticonv_net_(new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    anticonv_net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-
-}
-
-AntiConv::~AntiConv() {
-	if (anticonv_net_) {
-		anticonv_net_->clear();
-	}
-}
 
 int AntiConv::LoadModel(const char * root_path) {
-	std::string param_file = std::string(root_path) + "/param";
-	std::string bin_file = std::string(root_path) + "/bin";
-	if (anticonv_net_->load_param(param_file.c_str()) == -1 ||
-		anticonv_net_->load_model(bin_file.c_str()) == -1) {
-		return 10000;
-	}
-
+    int ret = Estimator::LoadModel(root_path);
+    if (ret != 0) {
+        return ret;
+    }
 	// generate anchors
 	for (int i = 0; i < 3; ++i) {
 		ANCHORS anchors;
 		if (0 == i) {
-			GenerateAnchors(16, { 1.0f }, { 32, 16 }, &anchors);
+			GenerateAnchors(16, { 1.0f }, { 32, 16 }, &anchors, num_threads);
 		}
 		else if (1 == i) {
-			GenerateAnchors(16, { 1.0f }, { 8, 4 }, &anchors);
+			GenerateAnchors(16, { 1.0f }, { 8, 4 }, &anchors, num_threads);
 		}
 		else {
-			GenerateAnchors(16, { 1.0f }, { 2, 1 }, &anchors);
+			GenerateAnchors(16, { 1.0f }, { 2, 1 }, &anchors, num_threads);
 		}
 		anchors_generated_.push_back(anchors);
 	}
-	initialized_ = true;
 
 	return 0;
 }
@@ -60,7 +42,7 @@ int AntiConv::DetectFace(const unsigned char* rgbdata,
 
 	float factor_x = static_cast<float>(img_width) / inputSize_.width;
 	float factor_y = static_cast<float>(img_height) / inputSize_.height;
-	ncnn::Extractor ex = anticonv_net_->create_extractor();
+	ncnn::Extractor ex = net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata,
 		ncnn::Mat::PIXEL_RGB, img_width, img_height, inputSize_.width, inputSize_.height);
 	ex.input("data", in);
@@ -115,9 +97,9 @@ int AntiConv::DetectFace(const unsigned char* rgbdata,
 
 					FaceInfo face_info;
 					memset(&face_info, 0, sizeof(face_info));
-					face_info.score_ = score;
+					face_info.score = score;
 					face_info.mask_ = (prob > maskThreshold_);
-					face_info.location_ = curr_box;
+					face_info.rect = curr_box;
 					faces_tmp.push_back(face_info);
 				}
 			}

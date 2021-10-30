@@ -24,13 +24,19 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
+	cpuCores := common.GetBigCPUCount()
+	common.SetOMPThreads(cpuCores)
+	log.Printf("CPU big cores:%d\n", cpuCores)
 	estimator := handpose(modelPath)
 	defer estimator.Destroy()
+	common.SetEstimatorThreads(estimator, cpuCores)
 	for idx, d := range []detecter.Detecter{
-		yolox(modelPath), nanodet(modelPath),
+		yolox(modelPath),
+		nanodet(modelPath),
 	} {
 		defer d.Destroy()
-		detect(d, estimator, imgPath, "hand2.jpg", idx)
+		common.SetEstimatorThreads(d, cpuCores)
+		detect(d, estimator, imgPath, "hand1.jpg", idx)
 	}
 }
 

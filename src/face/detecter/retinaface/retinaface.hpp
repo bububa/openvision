@@ -5,20 +5,16 @@
 #include "net.h"
 
 namespace ovface {
-using ANCHORS = std::vector<Rect>;
+using ANCHORS = std::vector<ov::Rect>;
 class RetinaFace : public Detecter {
 public:
-	RetinaFace();
-	~RetinaFace();
 	int LoadModel(const char* root_path);
 	int DetectFace(const unsigned char* rgbdata,
         int img_width, int img_height,
         std::vector<FaceInfo>* faces);
 
 private:
-	ncnn::Net* retina_net_;
 	std::vector<ANCHORS> anchors_generated_;
-	bool initialized_;
 	const int RPNs_[3] = { 32, 16, 8 };
 	const Size inputSize_ = { 300, 300 };
 	const float iouThreshold_ = 0.4f;

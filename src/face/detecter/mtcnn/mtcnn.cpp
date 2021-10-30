@@ -32,6 +32,19 @@ Mtcnn::~Mtcnn() {
 	}
 }
 
+void Mtcnn::set_num_threads(int n) {
+    num_threads = n;
+    if (pnet_) {
+        pnet_->opt.num_threads = n;
+    }
+    if (rnet_) {
+        rnet_->opt.num_threads = n;
+    }
+    if (onet_) {
+        onet_->opt.num_threads = n;
+    }
+}
+
 int Mtcnn::LoadModel(const char * root_path) {
 	std::string pnet_param = std::string(root_path) + "/pnet.param";
 	std::string pnet_bin = std::string(root_path) + "/pnet.bin";
@@ -141,12 +154,12 @@ int Mtcnn::PDetect(const ncnn::Mat & img_in,
 				int bbox_height = y2 - y1 + 1;
 
 				FaceInfo face_info;
-				face_info.score_ = score;
-				face_info.location_.x = x1 + x1_reg * bbox_width;
-				face_info.location_.y = y1 + y1_reg * bbox_height;
-				face_info.location_.width = x2 + x2_reg * bbox_width - face_info.location_.x;
-				face_info.location_.height = y2 + y2_reg * bbox_height - face_info.location_.y;
-				face_info.location_ = face_info.location_ & Rect(0, 0, width, height);
+				face_info.score = score;
+				face_info.rect.x = x1 + x1_reg * bbox_width;
+				face_info.rect.y = y1 + y1_reg * bbox_height;
+				face_info.rect.width = x2 + x2_reg * bbox_width - face_info.rect.x;
+				face_info.rect.height = y2 + y2_reg * bbox_height - face_info.rect.y;
+				face_info.rect = face_info.rect & Rect(0, 0, width, height);
 				first_bboxes->push_back(face_info);
 			}
 		}
@@ -159,13 +172,13 @@ int Mtcnn::RDetect(const ncnn::Mat & img_in,
 	std::vector<FaceInfo>* second_bboxes) {
 	second_bboxes->clear();
 	for (int i = 0; i < static_cast<int>(first_bboxes.size()); ++i) {
-		Rect face = first_bboxes.at(i).location_ & Rect(0, 0, img_in.w, img_in.h);
+		Rect face = first_bboxes.at(i).rect & Rect(0, 0, img_in.w, img_in.h);
 		ncnn::Mat img_face, img_resized;
 		ncnn::copy_cut_border(img_in, img_face, face.y, img_in.h - face.br().y, face.x, img_in.w - face.br().x);
 		ncnn::resize_bilinear(img_face, img_resized, 24, 24);
 		ncnn::Extractor ex = rnet_->create_extractor();
 		ex.set_light_mode(true);
-		ex.set_num_threads(2);
+		// ex.set_num_threads(2);
 		ex.input("data", img_resized);
 		ncnn::Mat score_mat, location_mat;
 		ex.extract("prob1", score_mat);
@@ -178,13 +191,13 @@ int Mtcnn::RDetect(const ncnn::Mat & img_in,
 		float h_reg = location_mat[3];
 
 		FaceInfo face_info;
-		face_info.score_ = score;
-		face_info.location_.x = face.x + x_reg * face.width;
-		face_info.location_.y = face.y + y_reg * face.height;
-		face_info.location_.width = face.x + face.width +
-			w_reg * face.width - face_info.location_.x;
-		face_info.location_.height = face.y + face.height +
-			h_reg * face.height - face_info.location_.y;
+		face_info.score = score;
+		face_info.rect.x = face.x + x_reg * face.width;
+		face_info.rect.y = face.y + y_reg * face.height;
+		face_info.rect.width = face.x + face.width +
+			w_reg * face.width - face_info.rect.x;
+		face_info.rect.height = face.y + face.height +
+			h_reg * face.height - face_info.rect.y;
 		second_bboxes->push_back(face_info);
 	}
 	return 0;
@@ -195,14 +208,14 @@ int Mtcnn::ODetect(const ncnn::Mat & img_in,
 	std::vector<FaceInfo>* third_bboxes) {
 	third_bboxes->clear();
 	for (int i = 0; i < static_cast<int>(second_bboxes.size()); ++i) {
-		Rect face = second_bboxes.at(i).location_ & Rect(0, 0, img_in.w, img_in.h);
+		Rect face = second_bboxes.at(i).rect & Rect(0, 0, img_in.w, img_in.h);
 		ncnn::Mat img_face, img_resized;
 		ncnn::copy_cut_border(img_in, img_face, face.y, img_in.h - face.br().y, face.x, img_in.w - face.br().x);
 		ncnn::resize_bilinear(img_face, img_resized, 48, 48);
 
 		ncnn::Extractor ex = onet_->create_extractor();
 		ex.set_light_mode(true);
-		ex.set_num_threads(2);
+		// ex.set_num_threads(2);
 		ex.input("data", img_resized);
 		ncnn::Mat score_mat, location_mat, keypoints_mat;
 		ex.extract("prob1", score_mat);
@@ -216,13 +229,13 @@ int Mtcnn::ODetect(const ncnn::Mat & img_in,
 		float h_reg = location_mat[3];
 
 		FaceInfo face_info;
-		face_info.score_ = score;
-		face_info.location_.x = face.x + x_reg * face.width;
-		face_info.location_.y = face.y + y_reg * face.height;
-		face_info.location_.width = face.x + face.width +
-			w_reg * face.width - face_info.location_.x;
-		face_info.location_.height = face.y + face.height +
-			h_reg * face.height - face_info.location_.y;
+		face_info.score = score;
+		face_info.rect.x = face.x + x_reg * face.width;
+		face_info.rect.y = face.y + y_reg * face.height;
+		face_info.rect.width = face.x + face.width +
+			w_reg * face.width - face_info.rect.x;
+		face_info.rect.height = face.y + face.height +
+			h_reg * face.height - face_info.rect.y;
 
 		for (int num = 0; num < 5; num++) {
 			face_info.keypoints_[num] = face.x + face.width * keypoints_mat[num];
@@ -238,15 +251,15 @@ int Mtcnn::Refine(std::vector<FaceInfo>* bboxes, const Size max_size) {
 	int num_boxes = static_cast<int>(bboxes->size());
 	for (int i = 0; i < num_boxes; ++i) {
 		FaceInfo face_info = bboxes->at(i);
-		int width = face_info.location_.width;
-		int height = face_info.location_.height;
+		int width = face_info.rect.width;
+		int height = face_info.rect.height;
 		float max_side = fmaxf(width, height);
 
-		face_info.location_.x = face_info.location_.x + 0.5 * width - 0.5 * max_side;
-		face_info.location_.y = face_info.location_.y + 0.5 * height - 0.5 * max_side;
-		face_info.location_.width = max_side;
-		face_info.location_.height = max_side;
-		face_info.location_ = face_info.location_ & Rect(0, 0, max_size.width, max_size.height);
+		face_info.rect.x = face_info.rect.x + 0.5 * width - 0.5 * max_side;
+		face_info.rect.y = face_info.rect.y + 0.5 * height - 0.5 * max_side;
+		face_info.rect.width = max_side;
+		face_info.rect.height = max_side;
+		face_info.rect = face_info.rect & Rect(0, 0, max_size.width, max_size.height);
 		bboxes->at(i) = face_info;
 	}
 	
