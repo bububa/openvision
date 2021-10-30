@@ -1,9 +1,9 @@
-package detecter
+package estimator
 
 /*
 #include <stdlib.h>
 #include <stdbool.h>
-#include "openvision/pose/detecter.h"
+#include "openvision/pose/estimator.h"
 */
 import "C"
 import (
@@ -14,13 +14,13 @@ import (
 
 // Ultralight represents utralight detecter
 type Ultralight struct {
-	d C.IPoseDetecter
+	d C.IPoseEstimator
 }
 
 // NewUltralight returns a new Utralight
 func NewUltralight() *Ultralight {
 	return &Ultralight{
-		d: C.new_ultralight(),
+		d: C.new_ultralight_estimator(),
 	}
 }
 
@@ -39,7 +39,7 @@ func (d *Ultralight) LoadModel(modelPath string) error {
 	return common.EstimatorLoadModel(d, modelPath)
 }
 
-// Detect implement Detecter interface
-func (d *Ultralight) Detect(img *common.Image) ([]common.ObjectInfo, error) {
-	return Detect(d, img)
+// ExtractKeypoints implement Detecter interface
+func (d *Ultralight) ExtractKeypoints(img *common.Image, rect common.Rectangle) ([]common.Keypoint, error) {
+	return ExtractKeypoints(d, img, rect)
 }

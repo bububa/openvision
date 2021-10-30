@@ -92,6 +92,7 @@ file(COPY
 
 file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/pose/estimator.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/pose
 )
 

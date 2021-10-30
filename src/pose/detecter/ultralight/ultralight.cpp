@@ -6,41 +6,8 @@
 #endif // OV_VULKAN
 
 namespace ovpose {
-Ultralight::Ultralight() :
-    roi_net_(new ncnn::Net()),
-    pose_net_(new ncnn::Net()),
-	initialized_(false) {
-#ifdef OV_VULKAN
-    roi_net_->opt.use_vulkan_compute = true;
-    pose_net_->opt.use_vulkan_compute = true;
-#endif // OV_VULKAN
-}
 
-Ultralight::~Ultralight() {
-    roi_net_->clear();
-    pose_net_->clear();
-}
-
-int Ultralight::LoadModel(const char * root_path) {
-	std::string roi_param_file = std::string(root_path) + "/roi.param";
-	std::string roi_bin_file = std::string(root_path) + "/roi.bin";
-	if (roi_net_->load_param(roi_param_file.c_str()) == -1 ||
-		roi_net_->load_model(roi_bin_file.c_str()) == -1) {
-		return 10000;
-	}
-
-	std::string pose_param_file = std::string(root_path) + "/pose.param";
-	std::string pose_bin_file = std::string(root_path) + "/pose.bin";
-	if (pose_net_->load_param(pose_param_file.c_str()) == -1 ||
-		pose_net_->load_model(pose_bin_file.c_str()) == -1) {
-		return 10000;
-	}
-
-	initialized_ = true;
-	return 0;
-}
-
-int Ultralight::ExtractROIs(const unsigned char* rgbdata,
+int Ultralight::Detect(const unsigned char* rgbdata,
     int img_width, int img_height,
     std::vector<ov::ObjectInfo>* rois) {
 	if (!initialized_) {
@@ -54,7 +21,7 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
     //数据预处理
     in.substract_mean_normalize(mean_vals, norm_vals);
 
-    ncnn::Extractor ex = roi_net_->create_extractor();
+    ncnn::Extractor ex = net_->create_extractor();
     ex.input("data", in);
     ncnn::Mat out;
     ex.extract("output", out);
@@ -101,60 +68,6 @@ int Ultralight::ExtractROIs(const unsigned char* rgbdata,
         roi.score = score;
         rois->push_back(roi);
     }
-    return 0;
-}
-
-int Ultralight::ExtractKeypoints(const unsigned char* rgbdata, 
-    int img_width, int img_height,
-    const ov::Rect& rect, std::vector<ov::Keypoint>* keypoints) {
-    keypoints->clear();
-    int w = rect.width;
-    int h = rect.height;
-    size_t total_size = w * h * 3 * sizeof(unsigned char);
-    unsigned char* data = (unsigned char*)malloc(total_size);
-    const unsigned char *start_ptr = rgbdata;
-    for(size_t i = 0; i < h; ++i) {
-        const unsigned char* srcCursor = start_ptr + ((i + rect.y) * img_width + rect.x) * 3; 
-        unsigned char* dstCursor = data + i * w * 3;
-        memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * w);
-    }
-    ncnn::Mat in = ncnn::Mat::from_pixels_resize(data, ncnn::Mat::PIXEL_RGB, w, h, 192, 256);
-    //数据预处理
-    in.substract_mean_normalize(meanVals, normVals);
-
-    ncnn::Extractor ex = pose_net_->create_extractor();
-    ex.input("data", in);
-    ncnn::Mat out;
-    ex.extract("hybridsequential0_conv7_fwd", out);
-    for (int p = 0; p < out.c; p++)
-    {
-        const ncnn::Mat m = out.channel(p);
-
-        float max_prob = 0.f;
-        int max_x = 0;
-        int max_y = 0;
-        for (int y = 0; y < out.h; y++)
-        {
-            const float* ptr = m.row(y);
-            for (int x = 0; x < out.w; x++)
-            {
-                float prob = ptr[x];
-                if (prob > max_prob)
-                {
-                    max_prob = prob;
-                    max_x = x;
-                    max_y = y;
-                }
-            }
-        }
-
-        ov::Keypoint keypoint;
-        keypoint.p = ov::Point2f(max_x * w / (float)out.w+rect.x, max_y * h / (float)out.h+rect.y);
-        keypoint.score = max_prob;
-        keypoints->push_back(keypoint);
-    }
-
-    free(data);
     return 0;
 }
 

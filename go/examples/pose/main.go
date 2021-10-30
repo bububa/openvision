@@ -14,6 +14,7 @@ import (
 	"github.com/bububa/openvision/go/common"
 	"github.com/bububa/openvision/go/pose/detecter"
 	posedrawer "github.com/bububa/openvision/go/pose/drawer"
+	"github.com/bububa/openvision/go/pose/estimator"
 )
 
 func main() {
@@ -29,11 +30,14 @@ func main() {
 	d := ultralightDetector(modelPath)
 	defer d.Destroy()
 	common.SetEstimatorThreads(d, cpuCores)
-	detect(d, imgPath, "ultralight-pose3.jpg")
+	m := ultralightEstimator(modelPath)
+	defer m.Destroy()
+	common.SetEstimatorThreads(d, cpuCores)
+	detect(d, m, imgPath, "ultralight-pose3.jpg")
 }
 
 func ultralightDetector(modelPath string) detecter.Detecter {
-	modelPath = filepath.Join(modelPath, "ultralight-pose")
+	modelPath = filepath.Join(modelPath, "ultralight-pose/roi")
 	d := detecter.NewUltralight()
 	if err := d.LoadModel(modelPath); err != nil {
 		log.Fatalln(err)
@@ -41,15 +45,33 @@ func ultralightDetector(modelPath string) detecter.Detecter {
 	return d
 }
 
-func detect(d detecter.Detecter, imgPath string, filename string) {
+func ultralightEstimator(modelPath string) estimator.Estimator {
+	modelPath = filepath.Join(modelPath, "ultralight-pose/pose")
+	d := estimator.NewUltralight()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func detect(d detecter.Detecter, m estimator.Estimator, imgPath string, filename string) {
 	inPath := filepath.Join(imgPath, filename)
-	img, err := loadImage(inPath)
+	imgSrc, err := loadImage(inPath)
 	if err != nil {
 		log.Fatalln("load image failed,", err)
 	}
-	rois, err := d.ExtractKeypoints(common.NewImage(img))
+	img := common.NewImage(imgSrc)
+	rois, err := d.Detect(img)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	for idx, roi := range rois {
+		keypoints, err := m.ExtractKeypoints(img, roi.Rect)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		rois[idx].Keypoints = keypoints
 	}
 
 	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("pose-%s", filename))
