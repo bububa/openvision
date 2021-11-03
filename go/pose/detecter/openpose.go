@@ -3,6 +3,7 @@ package detecter
 /*
 #include <stdlib.h>
 #include <stdbool.h>
+#include "openvision/common/common.h"
 #include "openvision/pose/detecter.h"
 */
 import "C"
@@ -12,39 +13,39 @@ import (
 	"github.com/bububa/openvision/go/common"
 )
 
-// Ultralight represents utralight detecter
-type Ultralight struct {
+// OpenPose represents utralight detecter
+type OpenPose struct {
 	d C.IPoseDetecter
 }
 
-// NewUltralight returns a new Utralight
-func NewUltralight() *Ultralight {
-	return &Ultralight{
-		d: C.new_ultralight(),
+// NewOpenPose returns a new OpenPose
+func NewOpenPose() *OpenPose {
+	return &OpenPose{
+		d: C.new_openpose(),
 	}
 }
 
 // Destroy free detecter
-func (d *Ultralight) Destroy() {
+func (d *OpenPose) Destroy() {
 	common.DestroyEstimator(d)
 }
 
 // Pointer implement Estimator interface
-func (d *Ultralight) Pointer() unsafe.Pointer {
+func (d *OpenPose) Pointer() unsafe.Pointer {
 	return unsafe.Pointer(d.d)
 }
 
 // HasKeypoints implement Detecter interface
-func (d *Ultralight) HasKeypoints() bool {
-	return false
+func (d *OpenPose) HasKeypoints() bool {
+	return true
 }
 
 // LoadModel load model for detecter
-func (d *Ultralight) LoadModel(modelPath string) error {
+func (d *OpenPose) LoadModel(modelPath string) error {
 	return common.EstimatorLoadModel(d, modelPath)
 }
 
 // Detect implement Detecter interface
-func (d *Ultralight) Detect(img *common.Image) ([]common.ObjectInfo, error) {
+func (d *OpenPose) Detect(img *common.Image) ([]common.ObjectInfo, error) {
 	return Detect(d, img)
 }

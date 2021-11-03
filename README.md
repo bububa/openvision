@@ -33,7 +33,10 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
   - tracker (for face IOU calculation bettween frames)
   - hopenet (for head pose detection) [Google Drive](https://drive.google.com/drive/folders/1zLam-8s9ZMPDUxUEtNU2F9yFTDRM5fk-?usp=sharing)
 - pose
-  - detector (for pose estimation)
+  - detector (for pose detection/estimation)
+    - ultralight [Google Drive](https://drive.google.com/drive/folders/15b-I5HDyGe2WLb-TO85SJYmnYONvGOKh?usp=sharing)
+    - openpose [Google Drive](https://drive.google.com/drive/folders/1Q2mq7dOE-eHsvu4BYpBaWVLkU5roKsm5?usp=sharing)
+  - estimator (for pose estimation)
     - ultralight [Google Drive](https://drive.google.com/drive/folders/15b-I5HDyGe2WLb-TO85SJYmnYONvGOKh?usp=sharing)
 - hand
   - detector (for hand detect)

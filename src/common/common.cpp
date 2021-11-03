@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <math.h>
 #include <float.h>
+#include <iostream>
 #include "cpu.h"
 
 #ifdef OV_VULKAN
@@ -144,7 +145,6 @@ void Estimator::set_num_threads(int n) {
         net_->opt.num_threads = n;
     }
 }
-
 
 int RatioAnchors(const Rect & anchor,
 	const std::vector<float>& ratios, 

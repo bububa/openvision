@@ -24,5 +24,12 @@ public:
     ~UltralightFactory() {}
     Detecter* CreateDetecter();
 };
+
+class OpenPoseFactory: public DetecterFactory {
+public:
+    OpenPoseFactory() {}
+    ~OpenPoseFactory() {}
+    Detecter* CreateDetecter();
+};
 }
 #endif // !_POSE_DETECTER_H

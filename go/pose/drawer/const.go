@@ -64,12 +64,21 @@ var (
 	CocoPair = [16][2]CocoPart{
 		{0, 1}, {1, 3}, {0, 2}, {2, 4}, {5, 6}, {5, 7}, {7, 9}, {6, 8}, {8, 10}, {5, 11}, {6, 12}, {11, 12}, {11, 13}, {12, 14}, {13, 15}, {14, 16},
 	}
+
+	// OpenPosePair represents joints pair for openpose
+	OpenPosePair = [17][2]int{
+		{1, 2}, {1, 5}, {2, 3}, {3, 4}, {5, 6},
+		{6, 7}, {1, 8}, {8, 9}, {9, 10}, {1, 11},
+		{11, 12}, {12, 13}, {1, 0}, {0, 14}, {14, 16},
+		{0, 15}, {15, 17},
+	}
+
 	// CocoColors represents color for coco parts
-	CocoColors = [17]string{
+	CocoColors = [19]string{
 		"#ff0000", "#ff5500", "#ffaa00", "#ffff00",
 		"#aaff00", "#55ff00", "#00ff00", "#00ff55", "#00ffaa",
 		"#00ffff", "#00aaff", "#0055ff",
 		"#0000ff", "#aa00ff", "#ff00ff",
-		"#ff00aa", "#ff0055",
+		"#ff00aa", "#ff0055", "#ff55aa", "#aa0055",
 	}
 )

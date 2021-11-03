@@ -35,7 +35,7 @@ func New(options ...Option) *Drawer {
 }
 
 // Draw draw rois
-func (d *Drawer) Draw(img image.Image, rois []common.ObjectInfo, drawBorder bool) image.Image {
+func (d *Drawer) Draw(img image.Image, rois []common.ObjectInfo, drawBorder bool, openPose bool) image.Image {
 	imgW := float64(img.Bounds().Dx())
 	imgH := float64(img.Bounds().Dy())
 	out := image.NewRGBA(img.Bounds())
@@ -53,11 +53,22 @@ func (d *Drawer) Draw(img image.Image, rois []common.ObjectInfo, drawBorder bool
 			borderColor := d.BorderColor
 			common.DrawRectangle(gc, rect, borderColor, "", d.BorderStrokeWidth)
 		}
+
+		if len(roi.Keypoints) == 0 {
+			return out
+		}
 		// draw joins
-		for idx, pair := range CocoPair {
+		pairs := CocoPair[:]
+		if openPose {
+			pairs = OpenPosePair[:]
+		}
+		for idx, pair := range pairs {
 			p0 := roi.Keypoints[pair[0]]
 			p1 := roi.Keypoints[pair[1]]
 			if p0.Score < 0.2 || p1.Score < 0.2 {
+				continue
+			}
+			if p0.Point.X < 0 || p0.Point.Y < 0 || p1.Point.Y < 0 || p1.Point.X < 0 {
 				continue
 			}
 			cocoColor := CocoColors[idx]
@@ -73,6 +84,9 @@ func (d *Drawer) Draw(img image.Image, rois []common.ObjectInfo, drawBorder bool
 		// draw keypoints
 		for idx, pt := range roi.Keypoints {
 			if pt.Score < 0.2 {
+				continue
+			}
+			if pt.Point.X < 0 || pt.Point.Y < 0 {
 				continue
 			}
 			cocoColor := CocoColors[idx]

@@ -1,5 +1,6 @@
 #include "../pose.h"
 #include "handpose/handpose.hpp"
+#include <iostream>
 
 IHandPoseEstimator new_handpose() {
     return new ovhand::HandPose();

@@ -49,6 +49,7 @@ func (o ObjectInfo) ToCObjectInfo(w float64, h float64) *C.ObjectInfo {
 	ret.rect.y = C.int(o.Rect.Y * h)
 	ret.rect.width = C.int(o.Rect.Width * w)
 	ret.rect.height = C.int(o.Rect.Height * h)
+	return ret
 	if len(o.Keypoints) > 0 {
 		ret.pts = (*C.KeypointVector)(C.malloc(C.sizeof_KeypointVector))
 		ret.pts.length = C.int(len(o.Keypoints))
@@ -57,6 +58,7 @@ func (o ObjectInfo) ToCObjectInfo(w float64, h float64) *C.ObjectInfo {
 			pt := C.Keypoint{
 				C.Point2f{C.float(p.Point.X * w), C.float(p.Point.Y * h)},
 				C.float(p.Score),
+				C.int(0),
 			}
 			C.KeypointVectorSetValue(ret.pts, C.int(idx), &pt)
 		}

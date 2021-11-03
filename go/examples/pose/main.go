@@ -27,18 +27,34 @@ func main() {
 	cpuCores := common.GetBigCPUCount()
 	common.SetOMPThreads(cpuCores)
 	log.Printf("CPU big cores:%d\n", cpuCores)
-	d := ultralightDetector(modelPath)
-	defer d.Destroy()
-	common.SetEstimatorThreads(d, cpuCores)
-	m := ultralightEstimator(modelPath)
-	defer m.Destroy()
-	common.SetEstimatorThreads(d, cpuCores)
-	detect(d, m, imgPath, "ultralight-pose3.jpg")
+	for did, d := range []detecter.Detecter{
+		ultralightDetector(modelPath),
+		openposeDetector(modelPath),
+	} {
+		defer d.Destroy()
+		common.SetEstimatorThreads(d, cpuCores)
+		for mid, m := range []estimator.Estimator{
+			ultralightEstimator(modelPath),
+		} {
+			defer m.Destroy()
+			common.SetEstimatorThreads(d, cpuCores)
+			detect(d, m, imgPath, "ultralight-pose.jpg", did, mid)
+		}
+	}
 }
 
 func ultralightDetector(modelPath string) detecter.Detecter {
 	modelPath = filepath.Join(modelPath, "ultralight-pose/roi")
 	d := detecter.NewUltralight()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func openposeDetector(modelPath string) detecter.Detecter {
+	modelPath = filepath.Join(modelPath, "openpose")
+	d := detecter.NewOpenPose()
 	if err := d.LoadModel(modelPath); err != nil {
 		log.Fatalln(err)
 	}
@@ -54,7 +70,7 @@ func ultralightEstimator(modelPath string) estimator.Estimator {
 	return d
 }
 
-func detect(d detecter.Detecter, m estimator.Estimator, imgPath string, filename string) {
+func detect(d detecter.Detecter, m estimator.Estimator, imgPath string, filename string, did int, mid int) {
 	inPath := filepath.Join(imgPath, filename)
 	imgSrc, err := loadImage(inPath)
 	if err != nil {
@@ -65,20 +81,25 @@ func detect(d detecter.Detecter, m estimator.Estimator, imgPath string, filename
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	for idx, roi := range rois {
-		keypoints, err := m.ExtractKeypoints(img, roi.Rect)
-		if err != nil {
-			log.Fatalln(err)
+	if !d.HasKeypoints() {
+		for idx, roi := range rois {
+			keypoints, err := m.ExtractKeypoints(img, roi.Rect)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			rois[idx].Keypoints = keypoints
 		}
-		rois[idx].Keypoints = keypoints
+	}
+	var useOpenPose bool
+	if did == 1 {
+		useOpenPose = true
 	}
 
-	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("pose-%s", filename))
+	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("pose-%d-%d-%s", did, mid, filename))
 
 	drawer := posedrawer.New()
 
-	out := drawer.Draw(img, rois, true)
+	out := drawer.Draw(img, rois, true, useOpenPose)
 
 	if err := saveImage(out, outPath); err != nil {
 		log.Fatalln(err)

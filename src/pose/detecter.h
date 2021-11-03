@@ -9,6 +9,7 @@ extern "C" {
 #endif
     typedef void* IPoseDetecter;
     IPoseDetecter new_ultralight();
+    IPoseDetecter new_openpose();
     int detect_pose(IPoseDetecter d, const unsigned char* rgbdata,
         int img_width, int img_height,
         ObjectInfoVector* rois);

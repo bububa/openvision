@@ -239,8 +239,8 @@ int YoloFace::DetectFace(const unsigned char* rgbdata,
 
 		for (int j = 0; j < obj.pts.size(); j++)
 		{
-			float ptx = (obj.pts[j].x - (float(wpad) / 2)) / scale;
-			float pty = (obj.pts[j].y - (float(hpad) / 2)) / scale;
+			float ptx = (obj.pts[j].p.x - (float(wpad) / 2)) / scale;
+			float pty = (obj.pts[j].p.y - (float(hpad) / 2)) / scale;
 			obj.pts[j] = ov::Point2f(ptx, pty);
 		}
 
@@ -258,8 +258,8 @@ int YoloFace::DetectFace(const unsigned char* rgbdata,
         FaceInfo info;
         info.rect = obj.rect;
         for (int k = 0; k < 5; ++k) {
-            info.keypoints_[k] = obj.pts[k].x;
-            info.keypoints_[k + 5] = obj.pts[k].y;
+            info.keypoints_[k] = obj.pts[k].p.x;
+            info.keypoints_[k + 5] = obj.pts[k].p.y;
         }
 
         faces->push_back(info);

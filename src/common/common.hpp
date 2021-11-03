@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "config.h"
 #include "net.h"
 #ifdef OV_OPENMP 
@@ -24,31 +25,50 @@ protected:
 };
 
 // Wrapper for an individual cv::cvSize
-typedef struct Size {
+struct Size {
     int width;
     int height;
     Size(int _width = 0, int _height = 0): width(_width), height(_height) {}
-} Size;
+};
+//
+// Wrapper for an individual cv::cvSize2f
+struct Size2f {
+    float width;
+    float height;
+    Size2f(float _width = 0, float _height = 0): width(_width), height(_height) {}
+};
 
 // Wrapper for an individual cv::cvPoint
-typedef struct Point {
+struct Point {
     int x;
     int y;
     Point(int _x = 0, int _y = 0): x(_x), y(_y) {}
     Point operator-(const Point &p2) {
         return Point(x - p2.x, y - p2.y);
     };
-} Point;
+};
 
 // Wrapper for an individual cv::Point2f
-typedef struct Point2f {
+struct Point2f {
     float x;
     float y;
     Point2f(float _x = 0, float _y = 0): x(_x), y(_y) {}
-} Point2f;
+    Point2f operator*(float f) const {
+        return Point2f(x * f, y * f);
+    };
+    Point2f operator/(float f) const {
+        return Point2f(x / f, y / f);
+    };
+    Point2f operator+(const Point2f &p2) const {
+        return Point2f(x + p2.x, y + p2.y);
+    };
+    Point2f operator-(const Point2f &p2) const {
+        return Point2f(x - p2.x, y - p2.y);
+    };
+};
 
 // Wrapper for an individual cv::Rect
-typedef struct Rect {
+struct Rect {
     int x;
     int y;
     int width;
@@ -79,23 +99,44 @@ typedef struct Rect {
         }
         return Rect(inter_x, inter_y, inter_width, inter_height);
     };
-} Rect;
-
-struct ImageInfo {
-    std::string label_;
-    float score;
 };
 
 struct Keypoint {
     Point2f p;
     float score;
+    int id;
+    Keypoint(){};
+    Keypoint(const Point2f p_): p(p_){};
 };
 
 struct ObjectInfo {
 	Rect rect;
 	float score;
     int label;
-    std::vector<Point2f> pts;
+    std::vector<Keypoint> pts;
+};
+
+struct Image {
+    std::vector<float> data;
+    int width;
+    int height;
+    int channels;
+    float at(const Point& p) const {
+        return data.at((p.x + p.y * width) * channels);
+    };
+    float atChannel(const Point& p, int channel) const {
+        return data.at((p.x + p.y * width) * channels + channel);
+    };
+    Image(){};
+    Image(const ncnn::Mat& mat): width(mat.w), height(mat.h), channels(mat.c) {
+        int data_size = mat.total();
+        float* ptr = (float*)malloc(data_size * sizeof(float));
+        memcpy(ptr, mat.data, data_size * sizeof(float));
+        data.clear();
+        data.resize(data_size);
+        data.assign(ptr, ptr + data_size);
+        free(ptr);
+    };
 };
 
 struct GridAndStride
@@ -103,6 +144,20 @@ struct GridAndStride
     int grid0;
     int grid1;
     int stride;
+};
+
+template<typename T, std::size_t N>
+constexpr std::size_t arraySize(const T (&)[N]) noexcept {
+    return N;
+}
+
+static inline int cvRound(double x) {
+    int y;
+    if(x >= (int)x+0.5)
+       y = (int)x++;
+    else
+       y = (int)x;
+    return y;
 };
 
 int RatioAnchors(const Rect & anchor,

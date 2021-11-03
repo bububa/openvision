@@ -14,7 +14,8 @@ int extract_pose_keypoints(IPoseEstimator d, const unsigned char* rgbdata, int i
     keypoints->length = points.size();
     keypoints->points = (Keypoint*)malloc(keypoints->length * sizeof(Keypoint));
     for (size_t i = 0; i < points.size(); ++i) {
-        keypoints->points[i] = points[i];
+        keypoints->points[i].p = points[i].p;
+        keypoints->points[i].score = points[i].score;
     }
     return 0;
 }

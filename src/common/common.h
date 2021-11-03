@@ -8,6 +8,7 @@ extern "C" {
 
 #ifdef __cplusplus
 typedef ov::Size Size;
+typedef ov::Size2f Size2f;
 typedef ov::Point Point;
 typedef ov::Point2f Point2f;
 typedef ov::Rect Rect;
@@ -19,6 +20,12 @@ typedef struct Size {
     int width;
     int height;
 } Size;
+//
+// Wrapper for an individual cv::cvSize2f
+typedef struct Size2f {
+    int width;
+    int height;
+} Size2f;
 
 // Wrapper for an individual cv::cvPoint
 typedef struct Point {
@@ -41,11 +48,12 @@ typedef struct Rect {
     int height;
 } Rect;
 
+
 typedef struct Keypoint {
     Point2f p;
     float score;
+    int id;
 } Keypoint;
-
 
 #endif
 

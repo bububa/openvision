@@ -66,6 +66,7 @@ target_include_directories(openvision
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/estimator>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})

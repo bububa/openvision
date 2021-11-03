@@ -17,6 +17,7 @@ import (
 // Detecter represents deteter interface
 type Detecter interface {
 	common.Estimator
+	HasKeypoints() bool
 	Detect(img *common.Image) ([]common.ObjectInfo, error)
 }
 
