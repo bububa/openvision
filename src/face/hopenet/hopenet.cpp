@@ -56,6 +56,8 @@ int Hopenet::Detect(const unsigned char* rgbdata,
 
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face, ncnn::Mat::PIXEL_RGB2GRAY, roi.width, roi.height, 48, 48);
     ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
     ex.input("data", in);
 
     ncnn::Mat output;

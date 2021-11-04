@@ -35,6 +35,8 @@ func main() {
 		common.SetEstimatorThreads(d, cpuCores)
 		for mid, m := range []estimator.Estimator{
 			ultralightEstimator(modelPath),
+			moveNetEstimator(modelPath, estimator.MoveNetType_Lightning),
+			moveNetEstimator(modelPath, estimator.MoveNetType_Thunder),
 		} {
 			defer m.Destroy()
 			common.SetEstimatorThreads(d, cpuCores)
@@ -64,6 +66,19 @@ func openposeDetector(modelPath string) detecter.Detecter {
 func ultralightEstimator(modelPath string) estimator.Estimator {
 	modelPath = filepath.Join(modelPath, "ultralight-pose/pose")
 	d := estimator.NewUltralight()
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func moveNetEstimator(modelPath string, modelType estimator.MoveNetType) estimator.Estimator {
+	if modelType == estimator.MoveNetType_Lightning {
+		modelPath = filepath.Join(modelPath, "movenet/lightning")
+	} else {
+		modelPath = filepath.Join(modelPath, "movenet/thunder")
+	}
+	d := estimator.NewMoveNet(modelType)
 	if err := d.LoadModel(modelPath); err != nil {
 		log.Fatalln(err)
 	}

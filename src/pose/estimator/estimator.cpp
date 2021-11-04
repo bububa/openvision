@@ -1,8 +1,13 @@
 #include "../estimator.h"
 #include "ultralight/ultralight.hpp"
+#include "movenet/movenet.hpp"
 
 IPoseEstimator new_ultralight_estimator() {
     return new ovpose::UltralightEstimator();
+}
+
+IPoseEstimator new_movenet(const int model_type) {
+    return new ovpose::MoveNet(model_type);
 }
 
 int extract_pose_keypoints(IPoseEstimator d, const unsigned char* rgbdata, int img_width, int img_height, const Rect* rect, KeypointVector* keypoints) {
@@ -23,5 +28,9 @@ int extract_pose_keypoints(IPoseEstimator d, const unsigned char* rgbdata, int i
 namespace ovpose {
 Estimator* UltralightEstimatorFactory::CreateEstimator() {
     return new UltralightEstimator();
+}
+
+Estimator* MoveNetFactory::CreateEstimator(const int model_type) {
+    return new MoveNet(model_type);
 }
 }

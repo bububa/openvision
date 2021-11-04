@@ -42,9 +42,12 @@ int AntiConv::DetectFace(const unsigned char* rgbdata,
 
 	float factor_x = static_cast<float>(img_width) / inputSize_.width;
 	float factor_y = static_cast<float>(img_height) / inputSize_.height;
-	ncnn::Extractor ex = net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata,
 		ncnn::Mat::PIXEL_RGB, img_width, img_height, inputSize_.width, inputSize_.height);
+
+	ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
 	ex.input("data", in);
 
 	std::vector<FaceInfo> faces_tmp;

@@ -27,9 +27,11 @@ public:
     virtual ~Estimator();
     virtual int LoadModel(const char* root_path);
     virtual void set_num_threads(int n);
+    virtual void set_light_mode(bool mode);
 protected:
     ncnn::Net* net_;
     bool initialized_ = false;
+    bool light_mode_ = true;
 };
 
 // Wrapper for an individual cv::cvSize
@@ -239,6 +241,11 @@ float sigmoid(float x);
 
 void EnlargeRect(const float& scale, Rect* rect);
 void RectifyRect(Rect* rect);
+
+template<class ForwardIterator>
+inline static size_t argmax(ForwardIterator first, ForwardIterator last) {
+    return std::distance(first, std::max_element(first, last));
+};
 
 }
 

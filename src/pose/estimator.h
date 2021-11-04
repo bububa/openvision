@@ -9,6 +9,7 @@ extern "C" {
 #endif
     typedef void* IPoseEstimator;
     IPoseEstimator new_ultralight_estimator();
+    IPoseEstimator new_movenet(const int model_type);
     int extract_pose_keypoints(IPoseEstimator d, const unsigned char* rgbdata,
         int img_width, int img_height,
         const Rect* rect, KeypointVector* keypoints); 

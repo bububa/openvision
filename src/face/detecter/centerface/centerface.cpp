@@ -24,7 +24,10 @@ int CenterFace::DetectFace(const unsigned char* rgbdata,
 
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata, ncnn::Mat::PIXEL_RGB,
 		img_width, img_height, img_width_new, img_height_new);
+
 	ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
 	ex.input("input.1", in);
 	ncnn::Mat mat_heatmap, mat_scale, mat_offset, mat_landmark;
 	ex.extract("537", mat_heatmap);

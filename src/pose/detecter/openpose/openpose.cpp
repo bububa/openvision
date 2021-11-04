@@ -51,6 +51,8 @@ int OpenPose::Detect(const unsigned char* rgbdata,
     ncnn::Mat pafs;
     ncnn::Mat heatmaps;
     ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
     ex.input("data", in);
     ex.extract("stage_1_output_1_heatmaps", heatmaps);  // or stage_0_output_1_heatmaps
     ex.extract("stage_1_output_0_pafs", pafs);          // or stage_0_output_0_pafs

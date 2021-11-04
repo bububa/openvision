@@ -143,7 +143,8 @@ int Nanodet::Detect(const unsigned char* rgbdata,
     in_pad.substract_mean_normalize(mean_vals, norm_vals);
 
     ncnn::Extractor ex = net_->create_extractor();
-    //__android_log_print(ANDROID_LOG_WARN, "ncnn","input w:%d,h:%d",in_pad.w,in_pad.h);
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
     ex.input("input.1", in_pad);
 
     std::vector<ov::ObjectInfo> proposals;

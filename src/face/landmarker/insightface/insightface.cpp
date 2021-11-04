@@ -40,11 +40,13 @@ int InsightfaceLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
         unsigned char* dstCursor = img_face + i * face_enlarged.width * 3;
         memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * face_enlarged.width);
     }
+	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face,
+		ncnn::Mat::PIXEL_RGB, face_enlarged.width, face_enlarged.height, 192, 192);
 
 	// 4 do inference
 	ncnn::Extractor ex = net_->create_extractor();
-	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face,
-		ncnn::Mat::PIXEL_RGB, face_enlarged.width, face_enlarged.height, 192, 192);
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("fc1", out);

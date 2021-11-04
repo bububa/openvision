@@ -122,8 +122,9 @@ int Mtcnn::PDetect(const ncnn::Mat & img_in,
 		ncnn::Mat img_resized;
 		ncnn::resize_bilinear(img_in, img_resized, w, h);
 		ncnn::Extractor ex = pnet_->create_extractor();
-		//ex.set_num_threads(2);
-		ex.set_light_mode(true);
+        ex.set_light_mode(light_mode_);
+        ex.set_num_threads(num_threads);
+
 		ex.input("data", img_resized);
 		ncnn::Mat score_mat, location_mat;
 		ex.extract("prob1", score_mat);
@@ -177,8 +178,8 @@ int Mtcnn::RDetect(const ncnn::Mat & img_in,
 		ncnn::copy_cut_border(img_in, img_face, face.y, img_in.h - face.br().y, face.x, img_in.w - face.br().x);
 		ncnn::resize_bilinear(img_face, img_resized, 24, 24);
 		ncnn::Extractor ex = rnet_->create_extractor();
-		ex.set_light_mode(true);
-		// ex.set_num_threads(2);
+        ex.set_light_mode(light_mode_);
+        ex.set_num_threads(num_threads);
 		ex.input("data", img_resized);
 		ncnn::Mat score_mat, location_mat;
 		ex.extract("prob1", score_mat);
@@ -214,8 +215,8 @@ int Mtcnn::ODetect(const ncnn::Mat & img_in,
 		ncnn::resize_bilinear(img_face, img_resized, 48, 48);
 
 		ncnn::Extractor ex = onet_->create_extractor();
-		ex.set_light_mode(true);
-		// ex.set_num_threads(2);
+        ex.set_light_mode(light_mode_);
+        ex.set_num_threads(num_threads);
 		ex.input("data", img_resized);
 		ncnn::Mat score_mat, location_mat, keypoints_mat;
 		ex.extract("prob1", score_mat);

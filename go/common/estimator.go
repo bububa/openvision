@@ -24,6 +24,11 @@ func SetEstimatorThreads(e Estimator, n int) {
 	C.set_num_threads((C.IEstimator)(e.Pointer()), C.int(n))
 }
 
+// SetEstimatorLightMode set ncnn net opt.lightmode
+func SetEstimatorLightMode(e Estimator, mode bool) {
+	C.set_light_mode((C.IEstimator)(e.Pointer()), C.bool(mode))
+}
+
 // DestroyEstimator destory an Estimator
 func DestroyEstimator(e Estimator) {
 	C.destroy_estimator((C.IEstimator)(e.Pointer()))

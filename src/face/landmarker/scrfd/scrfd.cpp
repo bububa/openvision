@@ -39,9 +39,12 @@ int ScrfdLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
         memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * box.width);
     }
     
-    ncnn::Extractor ex = net_->create_extractor();
     ncnn::Mat ncnn_in = ncnn::Mat::from_pixels_resize(img_face, ncnn::Mat::PIXEL_RGB, box.width, box.height, 192, 192);
     ncnn_in.substract_mean_normalize(means, norms);
+
+    ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
     ex.input("input.1",ncnn_in);
     ncnn::Mat ncnn_out;
     ex.extract("482",ncnn_out);

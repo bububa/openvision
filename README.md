@@ -17,6 +17,7 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
 ## Features
 
 - face
+  - aligner (for face keypoints alignment)
   - detecter (for face location and keypoints detection)
     - mtcnn [Google Drive](https://drive.google.com/drive/folders/14ToHyDXZr4Ihuk8WYp1mVS7QnVxnzEjn?usp=sharing)
     - centerface [Google Drive](https://drive.google.com/drive/folders/1xMhO6aCnkkjt90Fh8BxVD_JHB3QJ2q-q?usp=sharing)
@@ -38,6 +39,7 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - openpose [Google Drive](https://drive.google.com/drive/folders/1Q2mq7dOE-eHsvu4BYpBaWVLkU5roKsm5?usp=sharing)
   - estimator (for pose estimation)
     - ultralight [Google Drive](https://drive.google.com/drive/folders/15b-I5HDyGe2WLb-TO85SJYmnYONvGOKh?usp=sharing)
+    - movenet [Google Drive](https://drive.google.com/drive/folders/14zgKk0tro1kjRrSTs0EAlEKrV8Q4XA34?usp=sharing)
 - hand
   - detector (for hand detect)
     - yolox [Google Drive](https://drive.google.com/drive/folders/1lNm5X6DJ1ZXVaqg54rXnRhvPfC5lAxlH?usp=sharing)

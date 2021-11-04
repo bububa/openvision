@@ -13,6 +13,7 @@ int UltralightEstimator::ExtractKeypoints(const unsigned char* rgbdata,
     keypoints->clear();
     int w = rect.width;
     int h = rect.height;
+    
     size_t total_size = w * h * 3 * sizeof(unsigned char);
     unsigned char* data = (unsigned char*)malloc(total_size);
     const unsigned char *start_ptr = rgbdata;
@@ -29,6 +30,8 @@ int UltralightEstimator::ExtractKeypoints(const unsigned char* rgbdata,
     in.substract_mean_normalize(meanVals, normVals);
 
     ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
     ex.input("data", in);
     ncnn::Mat out;
     ex.extract("hybridsequential0_conv7_fwd", out);

@@ -31,11 +31,14 @@ int Mobilefacenet::ExtractFeature(const unsigned char* rgbdata,
 
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face,
 		ncnn::Mat::PIXEL_RGB, face.width, face.height, 112, 112);
-	feature->resize(kFaceFeatureDim);
 	ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("fc1", out);
+
+	feature->resize(kFaceFeatureDim);
 	for (int i = 0; i < kFaceFeatureDim; ++i) {
 		feature->at(i) = out[i];
 	}

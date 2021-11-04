@@ -32,10 +32,12 @@ int HandPose::Detect(const unsigned char* rgbdata,
     const float meanVals[3] = { 128.0f, 128.0f,  128.0f };
     const float normVals[3] = { 0.00390625f, 0.00390625f, 0.00390625f };
     ncnn_in.substract_mean_normalize(meanVals, normVals);
-    ncnn::Extractor ex1 = net_->create_extractor();
-    ex1.input("input", ncnn_in);
+    ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
+    ex.input("input", ncnn_in);
     ncnn::Mat ncnn_out;
-    ex1.extract("output", ncnn_out);
+    ex.extract("output", ncnn_out);
     keypoints.resize(21);
 
     for (int c = 0; c < ncnn_out.c; c++)

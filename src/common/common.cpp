@@ -51,6 +51,10 @@ void set_num_threads(IEstimator d, int n) {
     static_cast<ov::Estimator*>(d)->set_num_threads(n);
 }
 
+void set_light_mode(IEstimator d, bool mode) {
+    static_cast<ov::Estimator*>(d)->set_light_mode(mode);
+}
+
 void FreePoint2fVector(Point2fVector* p) {
     if (p->points != NULL) {
         free(p->points);
@@ -164,6 +168,13 @@ void Estimator::set_num_threads(int n) {
     EstimatorBase::set_num_threads(n);
     if (net_) {
         net_->opt.num_threads = n;
+    }
+}
+
+void Estimator::set_light_mode(bool mode) {
+    if (net_) {
+        net_->opt.lightmode = mode;
+        light_mode_ = mode;
     }
 }
 

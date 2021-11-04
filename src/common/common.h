@@ -68,6 +68,7 @@ void set_omp_num_threads(int n);
 int load_model(IEstimator e, const char* root_path);
 void destroy_estimator(IEstimator e);
 void set_num_threads(IEstimator e, int n);
+void set_light_mode(IEstimator e, bool mode);
 
 typedef struct Point2fVector {
     Point2f* points;

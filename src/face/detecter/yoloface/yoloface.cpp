@@ -154,7 +154,8 @@ int YoloFace::DetectFace(const unsigned char* rgbdata,
     in_pad.substract_mean_normalize(0, norm_vals);
 
     ncnn::Extractor ex = net_->create_extractor();
-
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
     ex.input("data", in_pad);
 
     std::vector<ov::ObjectInfo> proposals;

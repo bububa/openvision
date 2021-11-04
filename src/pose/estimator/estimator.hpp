@@ -24,5 +24,12 @@ public:
     ~UltralightEstimatorFactory() {}
     Estimator* CreateEstimator();
 };
+
+class MoveNetFactory: public EstimatorFactory {
+public:
+    MoveNetFactory(const int model_type) {}
+    ~MoveNetFactory() {}
+    Estimator* CreateEstimator(const int model_type);
+};
 }
 #endif // !_POSE_ESTIMATOR_H

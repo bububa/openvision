@@ -29,10 +29,13 @@ int ZQLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
         unsigned char* dstCursor = img_face + i * face.width * 3;
         memcpy(dstCursor, srcCursor, sizeof(unsigned char) * 3 * face.width);
     }
-	ncnn::Extractor ex = net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face,
 		ncnn::Mat::PIXEL_RGB, face.width, face.height, 112, 112);
 	in.substract_mean_normalize(meanVals, normVals);
+
+	ncnn::Extractor ex = net_->create_extractor();
+    ex.set_light_mode(light_mode_);
+    ex.set_num_threads(num_threads);
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("bn6_3", out);
