@@ -38,6 +38,12 @@ var (
 			Message: "recognize face failed",
 		}
 	}
+	AlignFaceError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "align face failed",
+		}
+	}
 	TrackFaceError = func(code int) Error {
 		return Error{
 			Code:    code,

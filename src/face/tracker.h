@@ -7,9 +7,9 @@
 extern "C" {
 #endif
     typedef void* IFaceTracker;
-    IFaceTracker new_tracker();
-    void destroy_tracker(IFaceTracker t);
-    int track(IFaceTracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces); 
+    IFaceTracker new_face_tracker();
+    void destroy_face_tracker(IFaceTracker t);
+    int track_face(IFaceTracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces); 
 #ifdef __cplusplus
 }
 #endif

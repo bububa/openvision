@@ -32,6 +32,9 @@ int InsightfaceLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
     size_t total_size = face_enlarged.width * face_enlarged.height * 3 * sizeof(unsigned char);
     unsigned char* img_face = (unsigned char*)malloc(total_size);
     const unsigned char *start_ptr = rgbdata;
+#if defined(_OPENMP)
+#pragma omp parallel for num_threads(num_threads)
+#endif
     for(size_t i = 0; i < face_enlarged.height; ++i) {
         const unsigned char* srcCursor = start_ptr + ((i + face_enlarged.y) * img_width + face_enlarged.x) * 3; 
         unsigned char* dstCursor = img_face + i * face_enlarged.width * 3;

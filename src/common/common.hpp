@@ -12,14 +12,22 @@
 
 namespace ov {
 
-class Estimator {
+class EstimatorBase {
+public:
+    EstimatorBase();
+    virtual ~EstimatorBase();
+    virtual void set_num_threads(int n);
+protected:
+    int num_threads = 2;
+};
+
+class Estimator : public EstimatorBase {
 public:
     Estimator();
     virtual ~Estimator();
     virtual int LoadModel(const char* root_path);
     virtual void set_num_threads(int n);
 protected:
-    int num_threads = 2;
     ncnn::Net* net_;
     bool initialized_ = false;
 };
@@ -136,6 +144,7 @@ struct Image {
         data.resize(data_size);
         data.assign(ptr, ptr + data_size);
         free(ptr);
+        ptr=NULL;
     };
 };
 

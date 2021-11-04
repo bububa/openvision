@@ -21,6 +21,9 @@ int ZQLandmarker::ExtractKeypoints(const unsigned char* rgbdata,
     size_t total_size = face.width * face.height * 3 * sizeof(unsigned char);
     unsigned char* img_face = (unsigned char*)malloc(total_size);
     const unsigned char *start_ptr = rgbdata;
+#if defined(_OPENMP)
+#pragma omp parallel for num_threads(num_threads)
+#endif
     for(size_t i = 0; i < face.height; ++i) {
         const unsigned char* srcCursor = start_ptr + ((i + face.y) * img_width + face.x) * 3; 
         unsigned char* dstCursor = img_face + i * face.width * 3;

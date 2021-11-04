@@ -1,10 +1,17 @@
 package common
 
+/*
+#include <stdlib.h>
+#include <stdbool.h>
+#include "openvision/common/common.h"
+*/
+import "C"
 import (
 	"bytes"
 	"image"
+	"image/color"
 	"io"
-	"sync"
+	"unsafe"
 
 	"github.com/llgcode/draw2d/draw2dimg"
 	"github.com/llgcode/draw2d/draw2dkit"
@@ -61,44 +68,34 @@ func (i Image) HeightF64() float64 {
 	return float64(i.Bounds().Dy())
 }
 
-// Crop returns cropped image bytes in Rectangle
-func (i Image) Crop(rect Rectangle) []byte {
-	imgW := i.WidthF64()
-	imgH := i.HeightF64()
-	imgWInt := i.Width()
-	imgHInt := i.Height()
-	cropWidth := int(rect.Width)
-	if rect.MaxX() > imgW {
-		cropWidth = imgWInt
-	}
-	cropHeight := int(rect.Height)
-	if rect.MaxY() > imgH {
-		cropHeight = imgHInt
-	}
-	xOffset := int(rect.X)
-	if rect.X < 1e-15 {
-		xOffset = 0
-	}
-	yOffset := int(rect.Y)
-	if rect.Y < 1e-15 {
-		yOffset = 0
-	}
-	imgData := i.Bytes()
-	ret := make([]byte, 0, cropWidth*cropHeight*3)
-	pool := &sync.Pool{
-		New: func() interface{} {
-			return make([]byte, cropWidth*3)
-		},
-	}
-	for y := 0; y < cropHeight; y++ {
-		srcCur := ((y+yOffset)*imgWInt + xOffset) * 3
-		dist := pool.Get().([]byte)
-		dist = dist[:0]
-		copy(dist, imgData[srcCur:cropWidth*3])
-		pool.Put(dist)
-		ret = append(ret, dist...)
-	}
+// NewCImage returns new C.Image
+func NewCImage() *C.Image {
+	ret := (*C.Image)(C.malloc(C.sizeof_Image))
 	return ret
+}
+
+func FreeCImage(c *C.Image) {
+	C.FreeImage(c)
+	C.free(unsafe.Pointer(c))
+}
+
+func GoImage(c *C.Image) (image.Image, error) {
+	w := int(c.width)
+	h := int(c.height)
+	channels := int(c.channels)
+	data := C.GoBytes(unsafe.Pointer(c.data), C.int(w*h*channels)*C.sizeof_uchar)
+	return NewImageFromBytes(data, w, h, channels)
+}
+
+func NewImageFromBytes(data []byte, w int, h int, channels int) (image.Image, error) {
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			pos := (y*w + x) * channels
+			img.SetRGBA(x, y, color.RGBA{uint8(data[pos]), uint8(data[pos+1]), uint8(data[pos+2]), 255})
+		}
+	}
+	return img, nil
 }
 
 // Image2RGB write image rgbdata to buffer
@@ -107,7 +104,7 @@ func Image2RGB(buf io.Writer, img image.Image) {
 	for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
 		for i := bounds.Min.X; i < bounds.Max.X; i++ {
 			r, g, b, _ := img.At(i, j).RGBA()
-			buf.Write([]byte{byte(b >> 8), byte(g >> 8), byte(r >> 8)})
+			buf.Write([]byte{byte(r >> 8), byte(g >> 8), byte(b >> 8)})
 		}
 	}
 }
@@ -118,7 +115,7 @@ func Image2RGBA(buf io.Writer, img image.Image) {
 	for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
 		for i := bounds.Min.X; i < bounds.Max.X; i++ {
 			r, g, b, a := img.At(i, j).RGBA()
-			buf.Write([]byte{byte(b >> 8), byte(g >> 8), byte(r >> 8), byte(a >> 8)})
+			buf.Write([]byte{byte(r >> 8), byte(g >> 8), byte(b >> 8), byte(a >> 8)})
 		}
 	}
 }
@@ -129,7 +126,7 @@ func Image2BGR(buf io.Writer, img image.Image) {
 	for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
 		for i := bounds.Min.X; i < bounds.Max.X; i++ {
 			r, g, b, _ := img.At(i, j).RGBA()
-			buf.Write([]byte{byte(r >> 8), byte(g >> 8), byte(b >> 8)})
+			buf.Write([]byte{byte(b >> 8), byte(g >> 8), byte(r >> 8)})
 		}
 	}
 }

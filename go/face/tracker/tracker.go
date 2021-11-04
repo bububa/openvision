@@ -23,13 +23,13 @@ type Tracker struct {
 // NewTracker returns a new Tracker
 func NewTracker() *Tracker {
 	return &Tracker{
-		d: C.new_tracker(),
+		d: C.new_face_tracker(),
 	}
 }
 
 // Destroy destroy C.ITracker
 func (t *Tracker) Destroy() {
-	C.destroy_tracker(t.d)
+	C.destroy_face_tracker(t.d)
 }
 
 // Track track faces
@@ -42,7 +42,7 @@ func (t *Tracker) Track(img *common.Image, faces []face.FaceInfo) ([]face.Tracke
 	defer face.FreeCFaceInfoVector(CCurrFaces)
 	CTrackedFaces := face.NewCTrackedFaceInfoVector()
 	defer face.FreeCTrackedFaceInfoVector(CTrackedFaces)
-	errCode := C.track(
+	errCode := C.track_face(
 		t.d,
 		(*C.FaceInfoVector)(unsafe.Pointer(CCurrFaces)),
 		(*C.TrackedFaceInfoVector)(unsafe.Pointer(CTrackedFaces)),

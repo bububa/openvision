@@ -45,6 +45,9 @@ int Hopenet::Detect(const unsigned char* rgbdata,
     size_t total_size = roi.width * roi.height * 3 * sizeof(unsigned char);
     unsigned char* img_face = (unsigned char*)malloc(total_size);
     const unsigned char *start_ptr = rgbdata;
+#if defined(_OPENMP)
+#pragma omp parallel for num_threads(num_threads)
+#endif
     for(size_t i = 0; i < roi.height; ++i) {
         const unsigned char* srcCursor = start_ptr + ((i + roi.y) * img_width + roi.x) * 3; 
         unsigned char* dstCursor = img_face + i * roi.width * 3;

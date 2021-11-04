@@ -59,6 +59,7 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/tracker>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/aligner>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter>
@@ -82,6 +83,7 @@ file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/face/recognizer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/tracker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/aligner.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/face
 )
 

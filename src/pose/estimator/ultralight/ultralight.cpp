@@ -16,6 +16,9 @@ int UltralightEstimator::ExtractKeypoints(const unsigned char* rgbdata,
     size_t total_size = w * h * 3 * sizeof(unsigned char);
     unsigned char* data = (unsigned char*)malloc(total_size);
     const unsigned char *start_ptr = rgbdata;
+#if defined(_OPENMP)
+#pragma omp parallel for num_threads(num_threads)
+#endif
     for(size_t i = 0; i < h; ++i) {
         const unsigned char* srcCursor = start_ptr + ((i + rect.y) * img_width + rect.x) * 3; 
         unsigned char* dstCursor = data + i * w * 3;

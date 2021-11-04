@@ -110,11 +110,22 @@ void FreeObjectInfoVector(ObjectInfoVector *p) {
         p->items= NULL;
     }
 }
+
+void FreeImage(Image* p) {
+    if (p->data != NULL) {
+        free(p->data);
+        p->data = NULL;
+    }
+}
+
 namespace ov {
 
-Estimator::Estimator() {
+Estimator::Estimator() : EstimatorBase() {
     net_ = new ncnn::Net();
 	initialized_ = false;
+    if (num_threads > 0) {
+        net_->opt.num_threads = num_threads;
+    }
 #ifdef OV_VULKAN
     net_->opt.use_vulkan_compute = true;
 #endif // OV_VULKAN
@@ -139,8 +150,18 @@ int Estimator::LoadModel(const char * root_path) {
 	return 0;
 }
 
-void Estimator::set_num_threads(int n) {
+EstimatorBase::EstimatorBase() {
+    num_threads = ncnn::get_big_cpu_count();    
+}
+
+EstimatorBase::~EstimatorBase() {}
+
+void EstimatorBase::set_num_threads(int n) {
     num_threads = n;
+}
+
+void Estimator::set_num_threads(int n) {
+    EstimatorBase::set_num_threads(n);
     if (net_) {
         net_->opt.num_threads = n;
     }

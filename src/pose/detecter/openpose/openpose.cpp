@@ -384,9 +384,9 @@ void OpenPose::postProcess(const ncnn::Mat &pafs, const ncnn::Mat &heatmaps,
 
     std::vector<std::vector<ov::Keypoint> > peaksFromHeatMap(cv_heatmaps_upsample.size());
 
-// #if defined(_OPENMP)
-// #pragma omp parallel for num_threads(num_threads)
-// #endif
+#if defined(_OPENMP)
+#pragma omp parallel for num_threads(num_threads)
+#endif
     for (int i = 0; i < cv_heatmaps_upsample.size(); i++) {
         this->findPeaks(cv_heatmaps_upsample, minPeaksDistance, peaksFromHeatMap, i);
     }

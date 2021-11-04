@@ -1,15 +1,15 @@
 #include "../tracker.h"
 #include <queue>
 
-IFaceTracker new_tracker() {
+IFaceTracker new_face_tracker() {
     return new ovface::Tracker();
 }
 
-void destroy_tracker(IFaceTracker t) {
+void destroy_face_tracker(IFaceTracker t) {
     delete static_cast<ovface::Tracker*>(t);
 }
 
-int track(IFaceTracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces) {
+int track_face(IFaceTracker t, const FaceInfoVector* curr_faces, TrackedFaceInfoVector* faces) {
     std::vector<ovface::FaceInfo> cfaces;    
     for (int i = 0; i < curr_faces->length; ++i) {
         cfaces.push_back(static_cast<ovface::FaceInfo>(curr_faces->faces[i]));

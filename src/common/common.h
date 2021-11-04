@@ -55,6 +55,7 @@ typedef struct Keypoint {
     int id;
 } Keypoint;
 
+
 #endif
 
 typedef void* IEstimator;
@@ -104,6 +105,15 @@ typedef struct KeypointVector {
 
 void FreeKeypointVector(KeypointVector *p);
 void KeypointVectorSetValue(KeypointVector *p, int i, const Keypoint* val);
+
+typedef struct ImageC {
+    unsigned char* data;
+    int width;
+    int height;
+    int channels;
+} Image;
+
+void FreeImage(Image* p);
 
 typedef struct ObjectInfoC {
     Rect rect;
