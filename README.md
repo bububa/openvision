@@ -40,6 +40,9 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
   - estimator (for pose estimation)
     - ultralight [Google Drive](https://drive.google.com/drive/folders/15b-I5HDyGe2WLb-TO85SJYmnYONvGOKh?usp=sharing)
     - movenet [Google Drive](https://drive.google.com/drive/folders/14zgKk0tro1kjRrSTs0EAlEKrV8Q4XA34?usp=sharing)
+  - segmentor (for pose segmentation)
+    - deeplabv3plus [Google Drive](https://drive.google.com/drive/folders/1BjiK0IiVAfyX30OoyQzoe1YBzvSudghG?usp=sharing)
+    - erdnet [Google Drive](https://drive.google.com/drive/folders/1WkQqYT9D4oGL6Gubu0SOeqcZmrdZ5cNw?usp=sharing)
 - hand
   - detector (for hand detect)
     - yolox [Google Drive](https://drive.google.com/drive/folders/1lNm5X6DJ1ZXVaqg54rXnRhvPfC5lAxlH?usp=sharing)

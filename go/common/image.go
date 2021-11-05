@@ -92,7 +92,11 @@ func NewImageFromBytes(data []byte, w int, h int, channels int) (image.Image, er
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			pos := (y*w + x) * channels
-			img.SetRGBA(x, y, color.RGBA{uint8(data[pos]), uint8(data[pos+1]), uint8(data[pos+2]), 255})
+			var alpha byte = 255
+			if channels == 4 {
+				alpha = data[pos+3]
+			}
+			img.SetRGBA(x, y, color.RGBA{uint8(data[pos]), uint8(data[pos+1]), uint8(data[pos+2]), uint8(alpha)})
 		}
 	}
 	return img, nil

@@ -130,6 +130,8 @@ Estimator::Estimator() : EstimatorBase() {
     if (num_threads > 0) {
         net_->opt.num_threads = num_threads;
     }
+    net_->opt.blob_allocator = &blob_allocator_;
+    net_->opt.workspace_allocator = &workspace_allocator_;
 #ifdef OV_VULKAN
     net_->opt.use_vulkan_compute = true;
 #endif // OV_VULKAN
@@ -139,6 +141,8 @@ Estimator::~Estimator() {
     if (net_) {
         net_->clear();
     }
+    workspace_allocator_.clear();
+    blob_allocator_.clear();
 }
 
 int Estimator::LoadModel(const char * root_path) {

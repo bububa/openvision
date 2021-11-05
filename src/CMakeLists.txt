@@ -68,6 +68,7 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/estimator>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/segmentor>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})
@@ -96,6 +97,7 @@ file(COPY
 file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/pose/estimator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/pose/segmentor.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/pose
 )
 

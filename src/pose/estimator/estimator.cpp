@@ -30,7 +30,4 @@ Estimator* UltralightEstimatorFactory::CreateEstimator() {
     return new UltralightEstimator();
 }
 
-Estimator* MoveNetFactory::CreateEstimator(const int model_type) {
-    return new MoveNet(model_type);
-}
 }

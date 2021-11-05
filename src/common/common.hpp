@@ -30,6 +30,8 @@ public:
     virtual void set_light_mode(bool mode);
 protected:
     ncnn::Net* net_;
+    ncnn::PoolAllocator workspace_allocator_;
+    ncnn::UnlockedPoolAllocator blob_allocator_;
     bool initialized_ = false;
     bool light_mode_ = true;
 };
