@@ -10,6 +10,12 @@ namespace ovpose {
 int UltralightEstimator::ExtractKeypoints(const unsigned char* rgbdata, 
     int img_width, int img_height,
     const ov::Rect& rect, std::vector<ov::Keypoint>* keypoints) {
+	if (!initialized_) {
+		return 10000;
+	}
+	if (rgbdata == 0){
+		return 10001;
+	}
     keypoints->clear();
     int w = rect.width;
     int h = rect.height;

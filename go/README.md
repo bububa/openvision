@@ -1,4 +1,12 @@
-# libopenvision deep learning visualization C library
+# Openvision Golang binding 
+vision detection/estimation/transformation based on deep learning 
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/bububa/openvision/go.svg)](https://pkg.go.dev/github.com/bububa/openvision/go)
+[![GitHub go.mod Go version of a Go module](https://img.shields.io/github/go-mod/go-version/bububa/openvision/go.svg)](https://github.com/bububa/openvision/go)
+[![GoReportCard](https://goreportcard.com/badge/github.com/bububa/openvision/go)](https://goreportcard.com/report/github.com/bububa/openvision/go)
+[![GitHub license](https://img.shields.io/github/license/bububa/openvision/go.svg)](https://github.com/bububa/openvision/blob/master/go/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/bububa/openvision.svg)](https://GitHub.com/bububa/openvision/releases/)
+
 
 ## Prerequest
 
@@ -6,15 +14,19 @@
 - openmp
 - vulkan(optional)
 
-## Build
-
+## Install
 ```bash
-git submodule update --init --recursuve
+git clone github.com/bububa/openvision.git
 cd build
-cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang
+cmake -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNCNN_VULKAN=ON # -DNCNN_VULKAN is optional
+make -j 4
+# modify go.mod replace github.com/bububa/openvision/go path
 ```
 
-## Features
+## Build tags
+- vulkan build with vulkan
+
+## Features & models
 
 - face
   - aligner (for face keypoints alignment)
@@ -51,15 +63,3 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - handnet [Google Drive](https://drive.google.com/drive/folders/1DsCGmiVaZobbMWRp5Oec8GbIpeg7CsNR?usp=sharing)
 - styletransfer
   - animegan2 [Google Drive](https://drive.google.com/drive/folders/1K6ZScENPHVbxupHkwl5WcpG8PPECtD8e?usp=sharing)
-- golang binding (github.com/bububa/openvision/go)
-
-## Reference
-
-- [MirrorYuChen/ncnn_example](https://github.com/MirrorYuChen/ncnn_example)
-- [nihui/ncnn-android-nanodet](https://github.com/nihui/ncnn-android-nanodet)
-- [FeiGeChuanShu/ncnn_Android_face](https://github.com/FeiGeChuanShu/ncnn_Android_face)
-- [FeiGeChuanShu/ncnn_nanodet_hand](https://github.com/FeiGeChuanShu/ncnn_nanodet_hand)
-- [docongminh/deep-head-pose-ncnn](https://github.com/docongminh/deep-head-pose-ncnn)
-- [nilseuropa/hopenet_ncnn](https://github.com/nilseuropa/hopenet_ncnn)
-- [dog-qiuqiu/Ultralight-SimplePose](https://github.com/dog-qiuqiu/Ultralight-SimplePose)
-- [GHLab/deep-head-pose-lite-ncnn](https://github.com/GHLab/deep-head-pose-lite-ncnn)

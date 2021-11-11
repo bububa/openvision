@@ -9,7 +9,7 @@ namespace ovpose {
 
 class MoveNet: public Estimator {
 public:
-    MoveNet(const int model_type); // 0: ligntning, 1: thunder
+    MoveNet(int model_type); // 0: ligntning, 1: thunder
 	int ExtractKeypoints(const unsigned char* rgbdata,
         int img_width, int img_height,
         const ov::Rect& rect, 

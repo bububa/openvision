@@ -10,6 +10,7 @@ extern "C" {
     typedef void* IPoseSegmentor;
     IPoseSegmentor new_deeplabv3plus_pose_segmentor();
     IPoseSegmentor new_erdnet_pose_segmentor();
+    IPoseSegmentor new_rvm_pose_segmentor(int w, int h);
     int pose_segment_matting(IPoseSegmentor s, const unsigned char* rgbdata,
         int img_width, int img_height,
         Image* out);

@@ -9,6 +9,12 @@ namespace ovpose {
 int ERDNetSegmentor::Matting(const unsigned char* rgbdata,
     int img_width, int img_height,
     Image* out) {
+	if (!initialized_) {
+		return 10000;
+	}
+	if (rgbdata == 0){
+		return 10001;
+	}
 
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata, ncnn::Mat::PIXEL_RGB, img_width, img_height, target_size, target_size);
     ncnn::Mat matting = ncnn::Mat(target_size, target_size, 3);
@@ -48,6 +54,12 @@ int ERDNetSegmentor::Merge(const unsigned char* rgbdata,
     const unsigned char* bgdata,
     int bg_width, int bg_height,
     Image* out) {
+	if (!initialized_) {
+		return 10000;
+	}
+	if (rgbdata == 0){
+		return 10001;
+	}
 
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgbdata, ncnn::Mat::PIXEL_RGB, img_width, img_height, target_size, target_size);
     ncnn::Mat bg = ncnn::Mat::from_pixels_resize(bgdata, ncnn::Mat::PIXEL_RGB, bg_width, bg_height, target_size, target_size);

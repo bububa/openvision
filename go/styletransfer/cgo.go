@@ -1,7 +1,7 @@
 //go:build !vulkan
 // +build !vulkan
 
-package pose
+package styletransfer
 
 /*
 #cgo CXXFLAGS:   --std=c++11 -fopenmp

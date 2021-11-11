@@ -31,8 +31,15 @@ func main() {
 	} {
 		defer seg.Destroy()
 		common.SetEstimatorThreads(seg, cpuCores)
-		matting(seg, imgPath, "ultralight-pose2.jpg", idx)
-		merge(seg, imgPath, "ultralight-pose2.jpg", "bg2.jpg", idx)
+		matting(seg, imgPath, "ultralight-pose.jpg", idx)
+		//merge(seg, imgPath, "ultralight-pose.jpg", "bg2.jpg", idx)
+	}
+	seg := rvm(modelPath, 512, 512)
+	defer seg.Destroy()
+	common.SetEstimatorThreads(seg, cpuCores)
+	for i := 1; i < 4; i++ {
+		filename := fmt.Sprintf("slice/%d.jpeg", i)
+		videomatting(seg, imgPath, filename, i)
 	}
 }
 
@@ -52,6 +59,33 @@ func erdnet(modelPath string) segmentor.Segmentor {
 		log.Fatalln(err)
 	}
 	return d
+}
+
+func rvm(modelPath string, w int, h int) segmentor.Segmentor {
+	modelPath = filepath.Join(modelPath, fmt.Sprintf("rvm/mobilenetv3/%dx%d", w, h))
+	d := segmentor.NewRVM(w, h)
+	if err := d.LoadModel(modelPath); err != nil {
+		log.Fatalln(err)
+	}
+	return d
+}
+
+func videomatting(seg segmentor.Segmentor, imgPath string, filename string, idx int) {
+	inPath := filepath.Join(imgPath, filename)
+	imgLoaded, err := loadImage(inPath)
+	if err != nil {
+		log.Fatalln("load image failed,", err)
+	}
+	img := common.NewImage(imgLoaded)
+	out, err := seg.Matting(img)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	outPath := filepath.Join(imgPath, "./results/videomatting", fmt.Sprintf("%d.jpeg", idx))
+	if err := saveImage(out, outPath); err != nil {
+		log.Fatalln(err)
+	}
+
 }
 
 func matting(seg segmentor.Segmentor, imgPath string, filename string, idx int) {

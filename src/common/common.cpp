@@ -125,6 +125,8 @@ void FreeImage(Image* p) {
 namespace ov {
 
 Estimator::Estimator() : EstimatorBase() {
+    blob_allocator_.set_size_compare_ratio(0.f);
+    workspace_allocator_.set_size_compare_ratio(0.f);
     net_ = new ncnn::Net();
 	initialized_ = false;
     if (num_threads > 0) {

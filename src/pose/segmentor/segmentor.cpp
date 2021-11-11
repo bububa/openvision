@@ -1,6 +1,7 @@
 #include "../segmentor.h"
 #include "deeplabv3plus/deeplabv3plus.hpp"
 #include "erdnet/erdnet.hpp"
+#include "rvm/rvm.hpp"
 
 IPoseSegmentor new_deeplabv3plus_pose_segmentor() {
     return new ovpose::Deeplabv3plusSegmentor();
@@ -8,6 +9,10 @@ IPoseSegmentor new_deeplabv3plus_pose_segmentor() {
 
 IPoseSegmentor new_erdnet_pose_segmentor() {
     return new ovpose::ERDNetSegmentor();
+}
+
+IPoseSegmentor new_rvm_pose_segmentor(int w, int h) {
+    return new ovpose::RVM(w, h);
 }
 
 int pose_segment_matting(IPoseSegmentor s, const unsigned char* rgbdata,
