@@ -1,6 +1,6 @@
 // +build !vulkan
 
-package eye
+package recognizer
 
 /*
 #cgo CXXFLAGS:   --std=c++11 -fopenmp

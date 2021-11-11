@@ -58,6 +58,7 @@ target_include_directories(openvision
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/tracker>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hair>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/eye>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/aligner>
 
@@ -92,6 +93,7 @@ file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/aligner.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/hair.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/eye.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/face
 )
 
