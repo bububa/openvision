@@ -69,14 +69,7 @@ int RVM::Matting(const unsigned char *rgbdata, int img_width, int img_height,
   for (int c = 0; c < 3; ++c) {
     float *pImage = matting.channel(c);
     for (int i = 0; i < target_width * target_height; i++) {
-      float alpha = pha[i];
-      if (alpha <= 0) {
-        alpha = 0;
-      } else if (alpha > 1) {
-        alpha = 1;
-      }
-      int value = 255 * alpha;
-      pImage[i] = value;
+      pImage[i] = pha[i] * 255;
     }
   }
 
@@ -132,6 +125,13 @@ int RVM::Merge(const unsigned char *rgbdata, int img_width, int img_height,
   ex.input("r2i", r2i);
   ex.input("r3i", r3i);
   ex.input("r4i", r4i);
+
+  ncnn::Mat r1o, r2o, r3o, r4o;
+  ex.extract("r4o", r4o);
+  ex.extract("r3o", r3o);
+  ex.extract("r2o", r2o);
+  ex.extract("r1o", r1o);
+
   ncnn::Mat fgr, pha;
   ex.extract("fgr", fgr);
   ex.extract("pha", pha);
@@ -140,18 +140,8 @@ int RVM::Merge(const unsigned char *rgbdata, int img_width, int img_height,
     float *pImage = matting.channel(c);
     for (int i = 0; i < target_width * target_height; i++) {
       float alpha = pha[i];
-      if (alpha <= 0) {
-        alpha = 0;
-      } else if (alpha > 1) {
-        alpha = 1;
-      }
-      float frv = fgr.channel(c)[i];
-      if (frv < 0) {
-        frv = 0;
-      } else if (frv > 1) {
-        frv = 1;
-      }
-      float value = fgr.channel(c)[i] * 255 * alpha;
+      float value =
+          fgr.channel(c)[i] * 255 * alpha + bg.channel(c)[i] * (1 - alpha);
       pImage[i] = value;
     }
   }
@@ -165,9 +155,12 @@ int RVM::Merge(const unsigned char *rgbdata, int img_width, int img_height,
   out->data = (unsigned char *)malloc(outimg.total());
   outimg.to_pixels(out->data, ncnn::Mat::PIXEL_RGB);
 
-  // 4. update context (needed for video detection.)
-  context_is_update = false; // init state.
-  // this->update_context(ex);
+  r1i.clone_from(r1o); // deepcopy
+  r2i.clone_from(r2o); // deepcopy
+  r3i.clone_from(r3o); // deepcopy
+  r4i.clone_from(r4o); // deepcopy
+
+  context_is_update = true;
 
   return 0;
 }

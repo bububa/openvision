@@ -68,6 +68,12 @@ var (
 			Message: "detect pose failed",
 		}
 	}
+	TrackerError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "object tracker error",
+		}
+	}
 	RealsrError = func(code int) Error {
 		return Error{
 			Code:    code,
