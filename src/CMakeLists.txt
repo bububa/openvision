@@ -71,6 +71,8 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/segmentor>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/styletransfer>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tracker>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})
@@ -106,5 +108,10 @@ file(COPY
 file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/styletransfer/styletransfer.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/styletransfer
+)
+
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/tracker/tracker.h
+    DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/tracker
 )
 

@@ -43,6 +43,7 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
   - segmentor (for pose segmentation)
     - deeplabv3plus [Google Drive](https://drive.google.com/drive/folders/1BjiK0IiVAfyX30OoyQzoe1YBzvSudghG?usp=sharing)
     - erdnet [Google Drive](https://drive.google.com/drive/folders/1WkQqYT9D4oGL6Gubu0SOeqcZmrdZ5cNw?usp=sharing)
+    - rvm (RobustVideoMatting) [Google Drive](https://drive.google.com/drive/folders/1roV7L8Z3OIC4C7CKQcm_KJ_CPHeTJug5?usp=sharing)
 - hand
   - detector (for hand detect)
     - yolox [Google Drive](https://drive.google.com/drive/folders/1lNm5X6DJ1ZXVaqg54rXnRhvPfC5lAxlH?usp=sharing)
@@ -51,6 +52,8 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - handnet [Google Drive](https://drive.google.com/drive/folders/1DsCGmiVaZobbMWRp5Oec8GbIpeg7CsNR?usp=sharing)
 - styletransfer
   - animegan2 [Google Drive](https://drive.google.com/drive/folders/1K6ZScENPHVbxupHkwl5WcpG8PPECtD8e?usp=sharing)
+- tracker
+  - lighttrack [Google Drive](https://drive.google.com/drive/folders/16cxns_xzSOABHn6UcY1OXyf4MFcSSbEf?usp=sharing)
 - golang binding (github.com/bububa/openvision/go)
 
 ## Reference

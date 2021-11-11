@@ -58,6 +58,8 @@ func GoRect(c *C.Rect, w float64, h float64) Rectangle {
 	)
 }
 
+var ZR = Rectangle{}
+
 // Point represents a Point
 type Point struct {
 	X float64
@@ -68,6 +70,8 @@ type Point struct {
 func Pt(x, y float64) Point {
 	return Point{x, y}
 }
+
+var ZP = Point{}
 
 // GoPoint2f conver C.Point2f to Point
 func GoPoint2f(c *C.Point2f, w float64, h float64) Point {
