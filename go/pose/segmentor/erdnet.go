@@ -7,7 +7,6 @@ package segmentor
 */
 import "C"
 import (
-	"image"
 	"unsafe"
 
 	"github.com/bububa/openvision/go/common"
@@ -41,11 +40,11 @@ func (d *ERDNet) LoadModel(modelPath string) error {
 }
 
 // Matting implement Segmentor interface
-func (d *ERDNet) Matting(img *common.Image) (image.Image, error) {
-	return Matting(d, img)
+func (d *ERDNet) Matting(img *common.Image, out *common.Image) error {
+	return Matting(d, img, out)
 }
 
 // Merge implement Segmentor interface
-func (d *ERDNet) Merge(img *common.Image, bg *common.Image) (image.Image, error) {
-	return Merge(d, img, bg)
+func (d *ERDNet) Merge(img *common.Image, bg *common.Image, out *common.Image) error {
+	return Merge(d, img, bg, out)
 }

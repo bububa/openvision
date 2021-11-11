@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/bububa/openvision/go/common"
-	"github.com/bububa/openvision/go/styletransfer"
+	"github.com/bububa/openvision/go/face/hair"
 )
 
 func main() {
@@ -22,27 +22,21 @@ func main() {
 	modelPath := filepath.Join(dataPath, "./models")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
-	cpuCores := common.GetBigCPUCount()
-	common.SetOMPThreads(cpuCores)
-	log.Printf("CPU big cores:%d\n", cpuCores)
-	for _, modelName := range []string{"celeba", "facepaintv1", "facepaintv2"} {
-		transfer := animegan2(modelPath, modelName)
-		defer transfer.Destroy()
-		common.SetEstimatorThreads(transfer, cpuCores)
-		transform(transfer, imgPath, "transfer1.jpg", modelName)
-	}
+	d := estimator(modelPath)
+	defer d.Destroy()
+	matting(d, imgPath, "hair1.jpg")
 }
 
-func animegan2(modelPath string, modelName string) styletransfer.StyleTransfer {
-	modelPath = filepath.Join(modelPath, "animegan2", modelName)
-	d := styletransfer.NewAnimeGan2()
+func estimator(modelPath string) *hair.Hair {
+	modelPath = filepath.Join(modelPath, "hair")
+	d := hair.NewHair()
 	if err := d.LoadModel(modelPath); err != nil {
 		log.Fatalln(err)
 	}
 	return d
 }
 
-func transform(transfer styletransfer.StyleTransfer, imgPath string, filename string, modelName string) {
+func matting(d *hair.Hair, imgPath string, filename string) {
 	inPath := filepath.Join(imgPath, filename)
 	imgLoaded, err := loadImage(inPath)
 	if err != nil {
@@ -50,13 +44,15 @@ func transform(transfer styletransfer.StyleTransfer, imgPath string, filename st
 	}
 	img := common.NewImage(imgLoaded)
 	out := common.NewImage(nil)
-	if err := transfer.Transform(img, out); err != nil {
+	if err := d.Matting(img, out); err != nil {
 		log.Fatalln(err)
 	}
-	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("%s-%s", modelName, filename))
+	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("hair-matting-%s", filename))
+
 	if err := saveImage(out, outPath); err != nil {
 		log.Fatalln(err)
 	}
+
 }
 
 func loadImage(filePath string) (image.Image, error) {

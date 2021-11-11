@@ -34,7 +34,6 @@ func (h *Hopenet) Pointer() unsafe.Pointer {
 // LoadModel load detecter model
 func (h *Hopenet) LoadModel(modelPath string) error {
 	return common.EstimatorLoadModel(h, modelPath)
-	return nil
 }
 
 // Destroy destroy C.IHopeNet

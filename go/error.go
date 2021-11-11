@@ -56,6 +56,12 @@ var (
 			Message: "detect head pose failed",
 		}
 	}
+	HairMattingError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "hair matting failed",
+		}
+	}
 	DetectHandError = func(code int) Error {
 		return Error{
 			Code:    code,

@@ -7,7 +7,6 @@ package styletransfer
 */
 import "C"
 import (
-	"image"
 	"unsafe"
 
 	"github.com/bububa/openvision/go/common"
@@ -41,6 +40,6 @@ func (d *AnimeGan2) LoadModel(modelPath string) error {
 }
 
 // Transform implement StyleTransfer interface
-func (d *AnimeGan2) Transform(img *common.Image) (image.Image, error) {
-	return Transform(d, img)
+func (d *AnimeGan2) Transform(img *common.Image, out *common.Image) error {
+	return Transform(d, img, out)
 }

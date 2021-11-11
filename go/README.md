@@ -45,6 +45,7 @@ make -j 4
     - scrfd [Google Drive](https://drive.google.com/drive/folders/1XPjfsuXGj9rXqAmo1K70BsqWmHvoYQv_?usp=sharing)
   - tracker (for face IOU calculation bettween frames)
   - hopenet (for head pose detection) [Google Drive](https://drive.google.com/drive/folders/1zLam-8s9ZMPDUxUEtNU2F9yFTDRM5fk-?usp=sharing)
+  - hair (for hair segmentation) [Google Drive](https://drive.google.com/drive/folders/14DOBaFrxTL1k4T1ved5qfRUUziurItT8?usp=sharing)
 - pose
   - detector (for pose detection/estimation)
     - ultralight [Google Drive](https://drive.google.com/drive/folders/15b-I5HDyGe2WLb-TO85SJYmnYONvGOKh?usp=sharing)

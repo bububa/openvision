@@ -50,8 +50,9 @@ func align(d detecter.Detecter, a *aligner.Aligner, imgPath string, filename str
 	if err != nil {
 		log.Fatalln(err)
 	}
+	aligned := common.NewImage(nil)
 	for idx, face := range faces {
-		aligned, err := a.Align(img, face)
+		err := a.Align(img, face, aligned)
 		if err != nil {
 			log.Fatalln(err)
 		}
