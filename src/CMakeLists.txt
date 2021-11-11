@@ -73,6 +73,8 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/styletransfer>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tracker>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/counter>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})
@@ -115,3 +117,7 @@ file(COPY
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/tracker
 )
 
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/counter/counter.h
+    DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/counter
+)

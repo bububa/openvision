@@ -74,6 +74,12 @@ var (
 			Message: "object tracker error",
 		}
 	}
+	CounterError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "object counter error",
+		}
+	}
 	RealsrError = func(code int) Error {
 		return Error{
 			Code:    code,
