@@ -39,7 +39,7 @@ func (d *Lenet) Destroy() {
 	common.DestroyEstimator(d)
 }
 
-// Status implement Eye Detecter interface
-func (d *Lenet) Status(img *common.Image, faceRect common.Rectangle) ([]float64, error) {
-	return Status(d, img, faceRect)
+// IsClosed implement Eye Detecter interface
+func (d *Lenet) IsClosed(img *common.Image, faceRect common.Rectangle) (bool, error) {
+	return IsClosed(d, img, faceRect)
 }

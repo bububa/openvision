@@ -17,27 +17,28 @@ import (
 // Detecter represents Eye Detector interface
 type Detecter interface {
 	common.Estimator
-	Status(img *common.Image, face common.Rectangle) ([]float64, error)
+	IsClosed(img *common.Image, face common.Rectangle) (bool, error)
 }
 
-// Status extract scores using recognizer
-func Status(r Detecter, img *common.Image, faceRect common.Rectangle) ([]float64, error) {
+// IsClosed check whether eyes are closed
+func IsClosed(r Detecter, img *common.Image, faceRect common.Rectangle) (bool, error) {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
-	CFeatures := common.NewCFloatVector()
-	defer common.FreeCFloatVector(CFeatures)
+	scoresC := common.NewCFloatVector()
+	defer common.FreeCFloatVector(scoresC)
 	CRect := faceRect.CRect(imgWidth, imgHeight)
 	errCode := C.eye_status(
 		(C.IEye)(r.Pointer()),
 		(*C.uchar)(unsafe.Pointer(&data[0])),
 		C.int(imgWidth), C.int(imgHeight),
 		(*C.Rect)(unsafe.Pointer(CRect)),
-		(*C.FloatVector)(unsafe.Pointer(CFeatures)),
+		(*C.FloatVector)(unsafe.Pointer(scoresC)),
 	)
 	C.free(unsafe.Pointer(CRect))
 	if errCode != 0 {
-		return nil, openvision.RecognizeFaceError(int(errCode))
+		return false, openvision.RecognizeFaceError(int(errCode))
 	}
-	return common.GoFloatVector(CFeatures), nil
+	scores := common.GoFloatVector(scoresC)
+	return len(scores) > 0 && scores[0] == 1, nil
 }
