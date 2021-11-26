@@ -231,5 +231,5 @@ func DrawLabelInWidth(gc *draw2dimg.GraphicContext, font *Font, label string, pt
 	width := right - left
 	fontWidth := width + padding*2
 	scale := boundWidth / fontWidth
-	DrawLabelInWidth(gc, font, label, pt, txtColor, bgColor, scale)
+	DrawLabel(gc, font, label, pt, txtColor, bgColor, scale)
 }
