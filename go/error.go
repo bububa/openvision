@@ -92,4 +92,16 @@ var (
 			Message: "super-resolution process error",
 		}
 	}
+	TrainingError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "training process failed",
+		}
+	}
+	ClassifyError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "classify process failed",
+		}
+	}
 )

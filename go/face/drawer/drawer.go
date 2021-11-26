@@ -26,6 +26,10 @@ type Drawer struct {
 	MaskColor string
 	// InvalidBorderColor
 	InvalidBorderColor string
+	// LabelColor string
+	LabelColor string
+	// Font
+	Font *common.Font
 }
 
 // New returns a new Drawer
@@ -38,6 +42,7 @@ func New(options ...Option) *Drawer {
 		KeypointRadius:      DefaultKeypointRadius,
 		InvalidBorderColor:  DefaultInvalidBorderColor,
 		MaskColor:           DefaultBorderColor,
+		LabelColor:          DefaultLabelColor,
 	}
 	for _, opt := range options {
 		opt.apply(d)
@@ -68,6 +73,9 @@ func (d *Drawer) Draw(img image.Image, faces []face.FaceInfo) image.Image {
 		// draw keypoints
 		for _, pt := range face.Keypoints {
 			common.DrawCircle(gc, common.Pt(pt.X*imgW, pt.Y*imgH), d.KeypointRadius, d.KeypointColor, "", d.KeypointStrokeWidth)
+		}
+		if face.Label != "" {
+			common.DrawLabelInWidth(gc, d.Font, face.Label, common.Pt(rect.X, rect.MaxY()), d.LabelColor, borderColor, rect.Width)
 		}
 	}
 	return out

@@ -1,5 +1,7 @@
 package drawer
 
+import "github.com/bububa/openvision/go/common"
+
 // Option represents Drawer option interface
 type Option interface {
 	apply(*Drawer)
@@ -57,5 +59,19 @@ func WithInvalidBorderColor(color string) Option {
 func WithMaskColor(color string) Option {
 	return optionFunc(func(d *Drawer) {
 		d.MaskColor = color
+	})
+}
+
+// WithLabelColor set Drawer LabelColor
+func WithLabelColor(color string) Option {
+	return optionFunc(func(d *Drawer) {
+		d.LabelColor = color
+	})
+}
+
+// WithFont set Drawer Font
+func WithFont(font *common.Font) Option {
+	return optionFunc(func(d *Drawer) {
+		d.Font = font
 	})
 }

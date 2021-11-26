@@ -22,6 +22,8 @@ type FaceInfo struct {
 	Keypoints [5]common.Point
 	// Mask has mask or not
 	Mask bool
+	// Label
+	Label string
 }
 
 // GoFaceInfo convert c FaceInfo to go type

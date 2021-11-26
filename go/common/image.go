@@ -36,6 +36,13 @@ func NewImage(img image.Image) *Image {
 	}
 }
 
+func (i *Image) Reset() {
+	i.Image = nil
+	if i.buffer != nil {
+		i.buffer.Reset()
+	}
+}
+
 // Write write bytes to buffer
 func (i *Image) Write(b []byte) {
 	if i.buffer == nil {
@@ -184,4 +191,45 @@ func DrawCircle(gc *draw2dimg.GraphicContext, pt Point, r float64, borderColor s
 	} else {
 		gc.Stroke()
 	}
+}
+
+// DrawLabel draw label text to image
+func DrawLabel(gc *draw2dimg.GraphicContext, font *Font, label string, pt Point, txtColor string, bgColor string, scale float64) {
+	if font == nil || font.Cache == nil || font.Data == nil {
+		return
+	}
+	gc.FontCache = font.Cache
+	gc.SetFontData(*font.Data)
+	gc.SetFontSize(font.Size * scale)
+	var (
+		x       = float64(pt.X)
+		y       = float64(pt.Y)
+		padding = 2.0 * scale
+	)
+	left, top, right, bottom := gc.GetStringBounds(label)
+	height := bottom - top
+	width := right - left
+	if bgColor != "" {
+		gc.SetFillColor(ColorFromHex(bgColor))
+		draw2dkit.Rectangle(gc, x, y, x+width+padding*2, y+height+padding*2)
+		gc.Fill()
+	}
+	gc.SetFillColor(ColorFromHex(txtColor))
+	gc.FillStringAt(label, x-left+padding, y-top+padding)
+}
+
+// DrawLabelInWidth draw label text to image in width restrict
+func DrawLabelInWidth(gc *draw2dimg.GraphicContext, font *Font, label string, pt Point, txtColor string, bgColor string, boundWidth float64) {
+	if font == nil || font.Cache == nil || font.Data == nil {
+		return
+	}
+	gc.FontCache = font.Cache
+	gc.SetFontData(*font.Data)
+	gc.SetFontSize(font.Size)
+	left, _, right, _ := gc.GetStringBounds(label)
+	padding := 2.0
+	width := right - left
+	fontWidth := width + padding*2
+	scale := boundWidth / fontWidth
+	DrawLabelInWidth(gc, font, label, pt, txtColor, bgColor, scale)
 }

@@ -60,6 +60,8 @@ func GoRect(c *C.Rect, w float64, h float64) Rectangle {
 
 var ZR = Rectangle{}
 
+var FullRect = Rect(0, 0, 1, 1)
+
 // Point represents a Point
 type Point struct {
 	X float64
