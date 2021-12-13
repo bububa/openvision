@@ -1,5 +1,9 @@
 package drawer
 
+import (
+	"github.com/bububa/openvision/go/common"
+)
+
 // Option represents Drawer option interface
 type Option interface {
 	apply(*Drawer)
@@ -36,5 +40,19 @@ func WithKeypointRadius(r float64) Option {
 func WithKeypointStrokeWidth(w float64) Option {
 	return optionFunc(func(d *Drawer) {
 		d.KeypointStrokeWidth = w
+	})
+}
+
+// WithKeypointColor set Drawer KeypointColor
+func WithKeypointColor(color string) Option {
+	return optionFunc(func(d *Drawer) {
+		d.KeypointColor = color
+	})
+}
+
+// WithFont set Drawer Font
+func WithFont(font *common.Font) Option {
+	return optionFunc(func(d *Drawer) {
+		d.Font = font
 	})
 }

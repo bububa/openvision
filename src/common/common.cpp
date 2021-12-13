@@ -58,6 +58,13 @@ void FreePoint2fVector(Point2fVector *p) {
   }
 }
 
+void FreePoint3dVector(Point3dVector *p) {
+  if (p->points != NULL) {
+    free(p->points);
+    p->points = NULL;
+  }
+}
+
 void Point2fVectorSetValue(Point2fVector *p, int i, const Point2f *val) {
   if (p->points == NULL || i >= p->length) {
     return;

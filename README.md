@@ -53,6 +53,8 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - nanodet [Google Drive](https://drive.google.com/drive/folders/1ywH7r_clqqA_BAOFSzA92Q0lxJtWlN3z?usp=sharing)
   - pose (for hand pose estimation)
     - handnet [Google Drive](https://drive.google.com/drive/folders/1DsCGmiVaZobbMWRp5Oec8GbIpeg7CsNR?usp=sharing)
+  - pose3d (for 3d handpose detection)
+    - mediapipe [Google Drive](https://drive.google.com/drive/folders/1LsqIGB55dusZJqmP1uhnQUnNE2tLzifp?usp=sharing)
 - styletransfer
   - animegan2 [Google Drive](https://drive.google.com/drive/folders/1K6ZScENPHVbxupHkwl5WcpG8PPECtD8e?usp=sharing)
 - tracker

@@ -90,6 +90,9 @@ func NewCPoint2fVector() *C.Point2fVector {
 
 // GoPoint2fVector convert C.Point2fVector to []Point
 func GoPoint2fVector(cVector *C.Point2fVector, w float64, h float64) []Point {
+	if cVector == nil {
+		return nil
+	}
 	l := int(cVector.length)
 	ret := make([]Point, 0, l)
 	ptr := unsafe.Pointer(cVector.points)
@@ -103,5 +106,54 @@ func GoPoint2fVector(cVector *C.Point2fVector, w float64, h float64) []Point {
 // FreeCPoint2fVector release C.Point2fVector memory
 func FreeCPoint2fVector(c *C.Point2fVector) {
 	C.FreePoint2fVector(c)
+	C.free(unsafe.Pointer(c))
+}
+
+// Point3d represents a 3dPoint
+type Point3d struct {
+	X float64
+	Y float64
+	Z float64
+}
+
+// Pt3d returns a New Point3d
+func Pt3d(x, y, z float64) Point3d {
+	return Point3d{x, y, z}
+}
+
+var ZP3d = Point3d{}
+
+// GoPoint3d conver C.Point3d to Point3d
+func GoPoint3d(c *C.Point3d) Point3d {
+	return Pt3d(
+		float64(c.x),
+		float64(c.y),
+		float64(c.z),
+	)
+}
+
+// NewCPoint3dVector retruns C.Point3dVector pointer
+func NewCPoint3dVector() *C.Point3dVector {
+	return (*C.Point3dVector)(C.malloc(C.sizeof_Point3d))
+}
+
+// GoPoint3dVector convert C.Point3dVector to []Point3d
+func GoPoint3dVector(cVector *C.Point3dVector) []Point3d {
+	if cVector == nil {
+		return nil
+	}
+	l := int(cVector.length)
+	ret := make([]Point3d, 0, l)
+	ptr := unsafe.Pointer(cVector.points)
+	for i := 0; i < l; i++ {
+		cPoint3d := (*C.Point3d)(unsafe.Pointer(uintptr(ptr) + uintptr(C.sizeof_Point3d*C.int(i))))
+		ret = append(ret, GoPoint3d(cPoint3d))
+	}
+	return ret
+}
+
+// FreeCPoint3dVector release C.Point3dVector memory
+func FreeCPoint3dVector(c *C.Point3dVector) {
+	C.FreePoint3dVector(c)
 	C.free(unsafe.Pointer(c))
 }

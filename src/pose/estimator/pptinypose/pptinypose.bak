@@ -1,0 +1,161 @@
+#include "pptinypose.hpp"
+#include <string>
+
+#ifdef OV_VULKAN
+#include "gpu.h"
+#endif // OV_VULKAN
+
+namespace ovpose {
+static int argmax(const ncnn::Mat &bottom_blob, ncnn::Mat &top_blob,
+                  std::vector<float> &prob) {
+  int size = bottom_blob.total();
+  const float *ptr = bottom_blob;
+  std::vector<std::pair<float, int>> vec;
+  vec.resize(size);
+  for (int i = 0; i < size; i++) {
+    vec[i] = std::make_pair(ptr[i], i);
+  }
+  top_blob.create(bottom_blob.c, 1, 1, 4u);
+  float *outptr = top_blob;
+
+  for (size_t i = 0; i < bottom_blob.c; i++) {
+    int size0 = bottom_blob.channel(i).total();
+    std::partial_sort(vec.begin() + size0 * i, vec.begin() + size0 * (i + 1),
+                      vec.begin() + size0 * (i + 1),
+                      std::greater<std::pair<float, int>>());
+    outptr[i] = vec[size0 * i].second - size0 * i;
+    prob.push_back(vec[size0 * i].first);
+  }
+
+  return 0;
+}
+
+static void dark_parse(const ncnn::Mat &heatmap, std::vector<int> &dim,
+                       std::vector<float> &coords, int px, int py, int ch) {
+  /*DARK postpocessing, Zhang et al. Distribution-Aware Coordinate
+  Representation for Human Pose Estimation (CVPR 2020).
+  1) offset = - hassian.inv() * derivative
+  2) dx = (heatmap[x+1] - heatmap[x-1])/2.
+  3) dxx = (dx[x+1] - dx[x-1])/2.
+  4) derivative = Mat([dx, dy])
+  5) hassian = Mat([[dxx, dxy], [dxy, dyy]])
+  */
+
+  float *heatmap_data = (float *)heatmap.channel(ch).data;
+  std::vector<float> heatmap_ch;
+  heatmap_ch.insert(heatmap_ch.begin(), heatmap_data,
+                    heatmap_data + heatmap.channel(ch).total());
+  cv::Mat heatmap_mat = cv::Mat(heatmap_ch).reshape(0, dim[2]);
+  heatmap_mat.convertTo(heatmap_mat, CV_32FC1);
+  cv::GaussianBlur(heatmap_mat, heatmap_mat, cv::Size(3, 3), 0, 0);
+  heatmap_mat = heatmap_mat.reshape(1, 1);
+  heatmap_ch = std::vector<float>(heatmap_mat.reshape(1, 1));
+
+  ncnn::Mat heatmap_mat = heatmap.channel(ch).reshape(dim[2]);
+  heatmap_mat = heatmap_mat.reshape(1);
+  heatmap_ch = (float *)heatmap_mat.data;
+
+  float epsilon = 1e-10;
+  // sample heatmap to get values in around target location
+  float xy = log(fmax(heatmap_ch[py * dim[3] + px], epsilon));
+  float xr = log(fmax(heatmap_ch[py * dim[3] + px + 1], epsilon));
+  float xl = log(fmax(heatmap_ch[py * dim[3] + px - 1], epsilon));
+
+  float xr2 = log(fmax(heatmap_ch[py * dim[3] + px + 2], epsilon));
+  float xl2 = log(fmax(heatmap_ch[py * dim[3] + px - 2], epsilon));
+  float yu = log(fmax(heatmap_ch[(py + 1) * dim[3] + px], epsilon));
+  float yd = log(fmax(heatmap_ch[(py - 1) * dim[3] + px], epsilon));
+  float yu2 = log(fmax(heatmap_ch[(py + 2) * dim[3] + px], epsilon));
+  float yd2 = log(fmax(heatmap_ch[(py - 2) * dim[3] + px], epsilon));
+  float xryu = log(fmax(heatmap_ch[(py + 1) * dim[3] + px + 1], epsilon));
+  float xryd = log(fmax(heatmap_ch[(py - 1) * dim[3] + px + 1], epsilon));
+  float xlyu = log(fmax(heatmap_ch[(py + 1) * dim[3] + px - 1], epsilon));
+  float xlyd = log(fmax(heatmap_ch[(py - 1) * dim[3] + px - 1], epsilon));
+
+  // compute dx/dy and dxx/dyy with sampled values
+  float dx = 0.5 * (xr - xl);
+  float dy = 0.5 * (yu - yd);
+  float dxx = 0.25 * (xr2 - 2 * xy + xl2);
+  float dxy = 0.25 * (xryu - xryd - xlyu + xlyd);
+  float dyy = 0.25 * (yu2 - 2 * xy + yd2);
+
+  // finally get offset by derivative and hassian, which combined by dx/dy and
+  // dxx/dyy
+  if (dxx * dyy - dxy * dxy != 0) {
+    float M[2][2] = {dxx, dxy, dxy, dyy};
+    float D[2] = {dx, dy};
+    cv::Mat hassian(2, 2, CV_32F, M);
+    cv::Mat derivative(2, 1, CV_32F, D);
+    cv::Mat offset = -hassian.inv() * derivative;
+    coords[ch * 2] += offset.at<float>(0, 0);
+    coords[ch * 2 + 1] += offset.at<float>(1, 0);
+  }
+}
+
+static std::vector<float> get_final_preds(const ncnn::Mat &heatmap,
+                                          const ncnn::Mat &argmax_out) {
+  std::vector<float> coords((size_t)heatmap.c * 2);
+  for (int i = 0; i < heatmap.c; i++) {
+    int idx = argmax_out[i];
+    coords[i * 2] = idx % heatmap.w;
+    coords[i * 2 + 1] = (float)idx / heatmap.w;
+
+    int px = int(coords[i * 2] + 0.5);
+    int py = int(coords[i * 2 + 1] + 0.5);
+
+    std::vector<int> dim({1, heatmap.c, heatmap.h, heatmap.w});
+    dark_parse(heatmap, dim, coords, px, py, i);
+  }
+
+  return coords;
+}
+PPTinyPoseEstimator::PPTinyPoseEstimator(int target_size) : Estimator() {
+  if (target_size == 128) {
+    target_width_ = 96;
+    target_height_ = 128;
+  } else {
+    target_width_ = 196;
+    target_height_ = 256;
+  }
+}
+
+int PPTinyPoseEstimator::ExtractKeypoints(
+    const unsigned char *rgbdata, int img_width, int img_height,
+    const ov::Rect &rect, std::vector<ov::Keypoint> *keypoints) {
+  if (!initialized_) {
+    return 10000;
+  }
+  if (rgbdata == 0) {
+    return 10001;
+  }
+  keypoints->clear();
+
+  ncnn::Mat in = ncnn::Mat::from_pixels_roi_resize(
+      rgbdata, ncnn::Mat::PIXEL_RGB, img_width, img_height, rect.x, rect.y,
+      rect.width, rect.height, target_width_, target_height_);
+  in.substract_mean_normalize(meanVals, normVals);
+
+  ncnn::Extractor ex = net_->create_extractor();
+  ex.set_light_mode(light_mode_);
+  ex.set_num_threads(num_threads);
+  ex.input("image", in);
+  ncnn::Mat out;
+  ex.extract("save_infer_model/scale_0.tmp_1", out);
+
+  ncnn::Mat argmax_out;
+  std::vector<float> probs;
+  argmax(out, argmax_out, probs);
+  std::vector<float> coords = get_final_preds(out, argmax_out);
+
+  for (int i = 0; i < coords.size() / 2; i++) {
+    ov::KeyPoint keypoint;
+    keypoint.p = ov::Point(coords[i * 2] * rect.width / (float)out.w + rect.x,
+                           coords[i * 2 + 1] * rect.h / (float)out.h + rect.y);
+    keypoint.score = probs[i];
+    keypoints->push_back(keypoint);
+  }
+
+  return 0;
+}
+
+} // namespace ovpose

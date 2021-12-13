@@ -76,6 +76,13 @@ struct Point2f {
   };
 };
 
+struct Point3d {
+  float x;
+  float y;
+  float z;
+  Point3d(float _x = 0, float _y = 0, float _z = 0) : x(_x), y(_y), z(_z) {}
+};
+
 // Wrapper for an individual cv::Rect
 struct Rect {
   int x;

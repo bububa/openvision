@@ -71,6 +71,7 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/pose>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/pose3d>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter>
@@ -109,6 +110,7 @@ file(COPY
 file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/hand/pose.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hand/pose3d.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/hand
 )
 

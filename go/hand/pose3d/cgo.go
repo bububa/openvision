@@ -1,6 +1,6 @@
 // +build !vulkan
 
-package tracker
+package pose3d
 
 /*
 #cgo CXXFLAGS:   --std=c++11 -fopenmp

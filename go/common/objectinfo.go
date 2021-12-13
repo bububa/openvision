@@ -20,6 +20,8 @@ type ObjectInfo struct {
 	Rect Rectangle
 	// Points keypoints
 	Keypoints []Keypoint
+	// Name
+	Name string
 }
 
 // GoObjectInfo convert C.ObjectInfo to go type
