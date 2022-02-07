@@ -77,8 +77,8 @@ func videomatting(seg segmentor.Segmentor, imgPath string, filename string, idx 
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	out, err := seg.Matting(img)
-	if err != nil {
+	out := common.NewImage(nil)
+	if err := seg.Matting(img, out); err != nil {
 		log.Fatalln(err)
 	}
 	outPath := filepath.Join(imgPath, "./results/videomatting", fmt.Sprintf("%d.jpeg", idx))
@@ -95,8 +95,8 @@ func matting(seg segmentor.Segmentor, imgPath string, filename string, idx int) 
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	out, err := seg.Matting(img)
-	if err != nil {
+	out := common.NewImage(nil)
+	if err := seg.Matting(img, out); err != nil {
 		log.Fatalln(err)
 	}
 	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("poseseg-matting-%d-%s", idx, filename))
@@ -119,8 +119,8 @@ func merge(seg segmentor.Segmentor, imgPath string, filename string, bgFilename 
 		log.Fatalln("load bg image failed,", err)
 	}
 	bg := common.NewImage(bgLoaded)
-	out, err := seg.Merge(img, bg)
-	if err != nil {
+	out := common.NewImage(nil)
+	if err := seg.Merge(img, bg, out); err != nil {
 		log.Fatalln(err)
 	}
 	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("poseseg-merge-%d-%s", idx, filename))

@@ -11,123 +11,134 @@ typedef ov::Size Size;
 typedef ov::Size2f Size2f;
 typedef ov::Point Point;
 typedef ov::Point2f Point2f;
+typedef ov::Point3d Point3d;
 typedef ov::Rect Rect;
 typedef ov::Keypoint Keypoint;
 #else
 
 // Wrapper for an individual cv::cvSize
 typedef struct Size {
-    int width;
-    int height;
+  int width;
+  int height;
 } Size;
 //
 // Wrapper for an individual cv::cvSize2f
 typedef struct Size2f {
-    int width;
-    int height;
+  int width;
+  int height;
 } Size2f;
 
 // Wrapper for an individual cv::cvPoint
 typedef struct Point {
-    int x;
-    int y;
+  int x;
+  int y;
 } Point;
 
 // Wrapper for an individual cv::Point2f
 typedef struct Point2f {
-    float x;
-    float y;
+  float x;
+  float y;
 } Point2f;
 
+typedef struct Point3d {
+  float x;
+  float y;
+  float z;
+} Point3d;
 
 // Wrapper for an individual cv::Rect
 typedef struct Rect {
-    int x;
-    int y;
-    int width;
-    int height;
+  int x;
+  int y;
+  int width;
+  int height;
 } Rect;
 
-
 typedef struct Keypoint {
-    Point2f p;
-    float score;
-    int id;
+  Point2f p;
+  float score;
+  int id;
 } Keypoint;
-
 
 #endif
 
-typedef void* IEstimator;
+typedef void *IEstimator;
 
 int get_gpu_count();
 int create_gpu_instance();
 void destroy_gpu_instance();
-int get_big_cpu_count(); 
+int get_big_cpu_count();
 void set_omp_num_threads(int n);
-int load_model(IEstimator e, const char* root_path);
+int load_model(IEstimator e, const char *root_path);
 void destroy_estimator(IEstimator e);
 void set_num_threads(IEstimator e, int n);
 void set_light_mode(IEstimator e, bool mode);
 
 typedef struct Point2fVector {
-    Point2f* points;
-    int length;
+  Point2f *points;
+  int length;
 } Point2fVector;
 
 void FreePoint2fVector(Point2fVector *p);
-void Point2fVectorSetValue(Point2fVector *p, int i, const Point2f* val);
+void Point2fVectorSetValue(Point2fVector *p, int i, const Point2f *val);
+
+typedef struct Point3dVector {
+  Point3d *points;
+  int length;
+} Point3dVector;
+
+void FreePoint3dVector(Point3dVector *p);
 
 typedef struct RectVector {
-    Rect* rects;
-    int length;
+  Rect *rects;
+  int length;
 } RectVector;
 
 void FreeRectVector(RectVector *p);
 
 typedef struct FloatVector {
-    float* values;
-    int length;
+  float *values;
+  int length;
 } FloatVector;
 
 void FreeFloatVector(FloatVector *p);
 
 typedef struct Bytes {
-    unsigned char* values;
-    int length;
+  unsigned char *values;
+  int length;
 } Bytes;
 
 void FreeBytes(Bytes *p);
 
 typedef struct KeypointVector {
-    Keypoint* points;
-    int length;
+  Keypoint *points;
+  int length;
 } KeypointVector;
 
 void FreeKeypointVector(KeypointVector *p);
-void KeypointVectorSetValue(KeypointVector *p, int i, const Keypoint* val);
+void KeypointVectorSetValue(KeypointVector *p, int i, const Keypoint *val);
 
 typedef struct ImageC {
-    unsigned char* data;
-    int width;
-    int height;
-    int channels;
+  unsigned char *data;
+  int width;
+  int height;
+  int channels;
 } Image;
 
-void FreeImage(Image* p);
+void FreeImage(Image *p);
 
 typedef struct ObjectInfoC {
-    Rect rect;
-    float score;
-    int label;
-    KeypointVector* pts;
+  Rect rect;
+  float score;
+  int label;
+  KeypointVector *pts;
 } ObjectInfo;
 
 void FreeObjectInfo(ObjectInfo *p);
 
 typedef struct ObjectInfoVector {
-    ObjectInfo* items;
-    int length;
+  ObjectInfo *items;
+  int length;
 } ObjectInfoVector;
 
 void FreeObjectInfoVector(ObjectInfoVector *p);

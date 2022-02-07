@@ -7,9 +7,10 @@
 #include "hopenet/hopenet.hpp"
 extern "C" {
 #endif
-    typedef void* IHopenet;
-    IHopenet new_hopenet();
-    int hopenet_detect(IHopenet d, const unsigned char* rgbdata, int img_width, int img_height, const Rect* roi, HeadPose* euler_angles); 
+typedef void *IHopenet;
+IHopenet new_hopenet();
+int hopenet_detect(IHopenet d, const unsigned char *rgbdata, int img_width,
+                   int img_height, const Rect *roi, HeadPose *euler_angles);
 #ifdef __cplusplus
 }
 #endif

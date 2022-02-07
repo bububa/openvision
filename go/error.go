@@ -56,6 +56,12 @@ var (
 			Message: "detect head pose failed",
 		}
 	}
+	HairMattingError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "hair matting failed",
+		}
+	}
 	DetectHandError = func(code int) Error {
 		return Error{
 			Code:    code,
@@ -74,10 +80,28 @@ var (
 			Message: "object tracker error",
 		}
 	}
+	CounterError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "object counter error",
+		}
+	}
 	RealsrError = func(code int) Error {
 		return Error{
 			Code:    code,
 			Message: "super-resolution process error",
+		}
+	}
+	TrainingError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "training process failed",
+		}
+	}
+	ClassifyError = func(code int) Error {
+		return Error{
+			Code:    code,
+			Message: "classify process failed",
 		}
 	}
 )

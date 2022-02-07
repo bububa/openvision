@@ -8,7 +8,6 @@ package styletransfer
 */
 import "C"
 import (
-	"image"
 	"unsafe"
 
 	openvision "github.com/bububa/openvision/go"
@@ -18,11 +17,11 @@ import (
 // StyleTransfer represents Style Transfer interface
 type StyleTransfer interface {
 	common.Estimator
-	Transform(img *common.Image) (image.Image, error)
+	Transform(img *common.Image, out *common.Image) error
 }
 
 // Transform returns style transform image
-func Transform(d StyleTransfer, img *common.Image) (image.Image, error) {
+func Transform(d StyleTransfer, img *common.Image, out *common.Image) error {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
@@ -35,7 +34,8 @@ func Transform(d StyleTransfer, img *common.Image) (image.Image, error) {
 		C.int(imgHeight),
 		(*C.Image)(unsafe.Pointer(outImgC)))
 	if errCode != 0 {
-		return nil, openvision.DetectPoseError(int(errCode))
+		return openvision.DetectPoseError(int(errCode))
 	}
-	return common.GoImage(outImgC)
+	common.GoImage(outImgC, out)
+	return nil
 }

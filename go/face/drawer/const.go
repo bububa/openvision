@@ -17,4 +17,6 @@ const (
 	DefaultKeypointStrokeWidth = 2
 	// DefaultInvalidBorderColor default drawer invalid border color
 	DefaultInvalidBorderColor = common.Red
+	// DefaultLabelColor default label color
+	DefaultLabelColor = common.White
 )

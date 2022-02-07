@@ -26,11 +26,29 @@ type Image struct {
 // NewImage returns a new Image
 func NewImage(img image.Image) *Image {
 	buf := new(bytes.Buffer)
+	if img == nil {
+		return &Image{buffer: buf}
+	}
 	Image2RGB(buf, img)
 	return &Image{
 		Image:  img,
 		buffer: buf,
 	}
+}
+
+func (i *Image) Reset() {
+	i.Image = nil
+	if i.buffer != nil {
+		i.buffer.Reset()
+	}
+}
+
+// Write write bytes to buffer
+func (i *Image) Write(b []byte) {
+	if i.buffer == nil {
+		return
+	}
+	i.buffer.Write(b)
 }
 
 // Bytes returns image bytes in rgb
@@ -74,20 +92,23 @@ func NewCImage() *C.Image {
 	return ret
 }
 
+// FreeCImage free C.Image
 func FreeCImage(c *C.Image) {
 	C.FreeImage(c)
 	C.free(unsafe.Pointer(c))
 }
 
-func GoImage(c *C.Image) (image.Image, error) {
+// GoImage returns Image from C.Image
+func GoImage(c *C.Image, out *Image) {
 	w := int(c.width)
 	h := int(c.height)
 	channels := int(c.channels)
 	data := C.GoBytes(unsafe.Pointer(c.data), C.int(w*h*channels)*C.sizeof_uchar)
-	return NewImageFromBytes(data, w, h, channels)
+	NewImageFromBytes(data, w, h, channels, out)
 }
 
-func NewImageFromBytes(data []byte, w int, h int, channels int) (image.Image, error) {
+// NewImageFromBytes returns Image by []byte
+func NewImageFromBytes(data []byte, w int, h int, channels int, out *Image) {
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
@@ -97,9 +118,10 @@ func NewImageFromBytes(data []byte, w int, h int, channels int) (image.Image, er
 				alpha = data[pos+3]
 			}
 			img.SetRGBA(x, y, color.RGBA{uint8(data[pos]), uint8(data[pos+1]), uint8(data[pos+2]), uint8(alpha)})
+			out.Write([]byte{byte(data[pos]), byte(data[pos+1]), byte(data[pos+2]), byte(alpha)})
 		}
 	}
-	return img, nil
+	out.Image = img
 }
 
 // Image2RGB write image rgbdata to buffer
@@ -169,4 +191,45 @@ func DrawCircle(gc *draw2dimg.GraphicContext, pt Point, r float64, borderColor s
 	} else {
 		gc.Stroke()
 	}
+}
+
+// DrawLabel draw label text to image
+func DrawLabel(gc *draw2dimg.GraphicContext, font *Font, label string, pt Point, txtColor string, bgColor string, scale float64) {
+	if font == nil || font.Cache == nil || font.Data == nil {
+		return
+	}
+	gc.FontCache = font.Cache
+	gc.SetFontData(*font.Data)
+	gc.SetFontSize(font.Size * scale)
+	var (
+		x       = float64(pt.X)
+		y       = float64(pt.Y)
+		padding = 2.0 * scale
+	)
+	left, top, right, bottom := gc.GetStringBounds(label)
+	height := bottom - top
+	width := right - left
+	if bgColor != "" {
+		gc.SetFillColor(ColorFromHex(bgColor))
+		draw2dkit.Rectangle(gc, x, y, x+width+padding*2, y+height+padding*2)
+		gc.Fill()
+	}
+	gc.SetFillColor(ColorFromHex(txtColor))
+	gc.FillStringAt(label, x-left+padding, y-top+padding)
+}
+
+// DrawLabelInWidth draw label text to image in width restrict
+func DrawLabelInWidth(gc *draw2dimg.GraphicContext, font *Font, label string, pt Point, txtColor string, bgColor string, boundWidth float64) {
+	if font == nil || font.Cache == nil || font.Data == nil {
+		return
+	}
+	gc.FontCache = font.Cache
+	gc.SetFontData(*font.Data)
+	gc.SetFontSize(font.Size)
+	left, _, right, _ := gc.GetStringBounds(label)
+	padding := 2.0
+	width := right - left
+	fontWidth := width + padding*2
+	scale := boundWidth / fontWidth
+	DrawLabel(gc, font, label, pt, txtColor, bgColor, scale)
 }

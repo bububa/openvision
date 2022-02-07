@@ -1,6 +1,7 @@
 file(GLOB_RECURSE SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.c
 )
 
 message(${SRC_FILES})
@@ -9,6 +10,11 @@ message(${SRC_FILES})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -fPIC -std=c++11 -fopenmp")
 add_library(openvision STATIC ${SRC_FILES})
 target_link_libraries(openvision PUBLIC ncnn)
+
+# set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../libtorch/share/cmake/Torch")
+# find_package(Torch REQUIRED)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+# target_link_libraries(openvision PUBLIC ${TORCH_LIBRARIES})
 
 if(OV_OPENMP)
     find_package(OpenMP)
@@ -57,13 +63,15 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/recognizer/mobilefacenet>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/tracker>
-
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hair>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/eye>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/face/aligner>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/pose>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hand/pose3d>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/pose/detecter>
@@ -73,6 +81,11 @@ target_include_directories(openvision
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/styletransfer>
 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tracker>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/counter>
+
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/classifier>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/classifier/svm>
 )
 
 #install(TARGETS openvision EXPORT openvision ARCHIVE DESTINATION ${LIBRARY_OUTPUT_PATH})
@@ -89,12 +102,15 @@ file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/face/tracker.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/hopenet.h
     ${CMAKE_CURRENT_SOURCE_DIR}/face/aligner.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/hair.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/face/eye.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/face
 )
 
 file(COPY
     ${CMAKE_CURRENT_SOURCE_DIR}/hand/detecter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/hand/pose.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/hand/pose3d.h
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/hand
 )
 
@@ -115,3 +131,13 @@ file(COPY
     DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/tracker
 )
 
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/counter/counter.h
+    DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/counter
+)
+
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/classifier/svm_trainer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/classifier/svm_classifier.h
+    DESTINATION ${INCLUDE_OUTPUT_PATH}/openvision/classifier
+)

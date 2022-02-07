@@ -8,7 +8,6 @@ package segmentor
 */
 import "C"
 import (
-	"image"
 	"unsafe"
 
 	openvision "github.com/bububa/openvision/go"
@@ -18,12 +17,12 @@ import (
 // Segmentor represents segmentor interface
 type Segmentor interface {
 	common.Estimator
-	Matting(img *common.Image) (image.Image, error)
-	Merge(img *common.Image, bg *common.Image) (image.Image, error)
+	Matting(img *common.Image, out *common.Image) error
+	Merge(img *common.Image, bg *common.Image, out *common.Image) error
 }
 
 // Matting returns pose segment matting image
-func Matting(d Segmentor, img *common.Image) (image.Image, error) {
+func Matting(d Segmentor, img *common.Image, out *common.Image) error {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
@@ -36,13 +35,14 @@ func Matting(d Segmentor, img *common.Image) (image.Image, error) {
 		C.int(imgHeight),
 		(*C.Image)(unsafe.Pointer(outImgC)))
 	if errCode != 0 {
-		return nil, openvision.DetectPoseError(int(errCode))
+		return openvision.DetectPoseError(int(errCode))
 	}
-	return common.GoImage(outImgC)
+	common.GoImage(outImgC, out)
+	return nil
 }
 
 // Merge merge pose with background
-func Merge(d Segmentor, img *common.Image, bg *common.Image) (image.Image, error) {
+func Merge(d Segmentor, img *common.Image, bg *common.Image, out *common.Image) error {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
@@ -59,7 +59,8 @@ func Merge(d Segmentor, img *common.Image, bg *common.Image) (image.Image, error
 		C.int(bgWidth), C.int(bgHeight),
 		(*C.Image)(unsafe.Pointer(outImgC)))
 	if errCode != 0 {
-		return nil, openvision.DetectPoseError(int(errCode))
+		return openvision.DetectPoseError(int(errCode))
 	}
-	return common.GoImage(outImgC)
+	common.GoImage(outImgC, out)
+	return nil
 }

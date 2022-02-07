@@ -38,6 +38,9 @@ func parseHexColor(x string) (r, g, b, a uint32) {
 }
 
 const (
+	White = "#FFFFFF"
+	Black = "#000000"
+	Gray  = "#333333"
 	Green = "#64DD17"
 	Pink  = "#E91E63"
 	Red   = "#FF1744"

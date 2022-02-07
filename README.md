@@ -33,6 +33,9 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - scrfd [Google Drive](https://drive.google.com/drive/folders/1XPjfsuXGj9rXqAmo1K70BsqWmHvoYQv_?usp=sharing)
   - tracker (for face IOU calculation bettween frames)
   - hopenet (for head pose detection) [Google Drive](https://drive.google.com/drive/folders/1zLam-8s9ZMPDUxUEtNU2F9yFTDRM5fk-?usp=sharing)
+  - hair (for hair segmentation) [Google Drive](https://drive.google.com/drive/folders/14DOBaFrxTL1k4T1ved5qfRUUziurItT8?usp=sharing)
+  - eye
+    - lenet (eye status detector) [Google Drive](https://drive.google.com/drive/folders/1jaonx6PeXFLA8gBKo4eQGuxsncVnqS7o?usp=sharing)
 - pose
   - detector (for pose detection/estimation)
     - ultralight [Google Drive](https://drive.google.com/drive/folders/15b-I5HDyGe2WLb-TO85SJYmnYONvGOKh?usp=sharing)
@@ -50,10 +53,14 @@ cmake .. # optional -DNCNN_VULKAN=OFF -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COM
     - nanodet [Google Drive](https://drive.google.com/drive/folders/1ywH7r_clqqA_BAOFSzA92Q0lxJtWlN3z?usp=sharing)
   - pose (for hand pose estimation)
     - handnet [Google Drive](https://drive.google.com/drive/folders/1DsCGmiVaZobbMWRp5Oec8GbIpeg7CsNR?usp=sharing)
+  - pose3d (for 3d handpose detection)
+    - mediapipe [Google Drive](https://drive.google.com/drive/folders/1LsqIGB55dusZJqmP1uhnQUnNE2tLzifp?usp=sharing)
 - styletransfer
   - animegan2 [Google Drive](https://drive.google.com/drive/folders/1K6ZScENPHVbxupHkwl5WcpG8PPECtD8e?usp=sharing)
 - tracker
   - lighttrack [Google Drive](https://drive.google.com/drive/folders/16cxns_xzSOABHn6UcY1OXyf4MFcSSbEf?usp=sharing)
+- counter
+  - p2pnet [Google Drive](https://drive.google.com/drive/folders/1kmtBsPIS79C3hMAwm_Tv9tAPvJLV9k35?usp=sharing)
 - golang binding (github.com/bububa/openvision/go)
 
 ## Reference

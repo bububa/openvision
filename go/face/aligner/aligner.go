@@ -8,7 +8,6 @@ package aligner
 */
 import "C"
 import (
-	"image"
 	"unsafe"
 
 	openvision "github.com/bububa/openvision/go"
@@ -39,7 +38,7 @@ func (a *Aligner) SetThreads(n int) {
 }
 
 // Align face
-func (a *Aligner) Align(img *common.Image, faceInfo face.FaceInfo) (image.Image, error) {
+func (a *Aligner) Align(img *common.Image, faceInfo face.FaceInfo, out *common.Image) error {
 	imgWidth := img.WidthF64()
 	imgHeight := img.HeightF64()
 	data := img.Bytes()
@@ -61,7 +60,8 @@ func (a *Aligner) Align(img *common.Image, faceInfo face.FaceInfo) (image.Image,
 		(*C.Image)(unsafe.Pointer(outImgC)),
 	)
 	if errCode != 0 {
-		return nil, openvision.AlignFaceError(int(errCode))
+		return openvision.AlignFaceError(int(errCode))
 	}
-	return common.GoImage(outImgC)
+	common.GoImage(outImgC, out)
+	return nil
 }

@@ -7,16 +7,14 @@
 namespace ovface {
 class Hopenet : public ov::Estimator {
 public:
-    int LoadModel(const char* root_path);
-    int Detect(const unsigned char* rgbdata, 
-        int img_width, int img_height,
-        Rect roi, HeadPose* euler_angles);
+  int LoadModel(const char *root_path);
+  int Detect(const unsigned char *rgbdata, int img_width, int img_height,
+             ov::Rect roi, HeadPose *euler_angles);
 
 private:
-    float idx_tensor[66];
-    void softmax(float* z, size_t el);
-    double getAngle(float* prediction, size_t len);
-
+  float idx_tensor[66];
+  void softmax(float *z, size_t el);
+  double getAngle(float *prediction, size_t len);
 };
-}
+} // namespace ovface
 #endif // !_HEAD_HOPENET_H_

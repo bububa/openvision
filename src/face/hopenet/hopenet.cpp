@@ -32,7 +32,7 @@ int Hopenet::LoadModel(const char *root_path) {
 }
 
 int Hopenet::Detect(const unsigned char *rgbdata, int img_width, int img_height,
-                    Rect roi, HeadPose *head_angles) {
+                    ov::Rect roi, HeadPose *head_angles) {
   float diff = fabs(roi.height - roi.width);
   if (roi.height > roi.width) {
     roi.x -= diff / 2;

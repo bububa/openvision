@@ -49,15 +49,14 @@ func transform(transfer styletransfer.StyleTransfer, imgPath string, filename st
 		log.Fatalln("load image failed,", err)
 	}
 	img := common.NewImage(imgLoaded)
-	out, err := transfer.Transform(img)
-	if err != nil {
+	out := common.NewImage(nil)
+	if err := transfer.Transform(img, out); err != nil {
 		log.Fatalln(err)
 	}
 	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("%s-%s", modelName, filename))
 	if err := saveImage(out, outPath); err != nil {
 		log.Fatalln(err)
 	}
-
 }
 
 func loadImage(filePath string) (image.Image, error) {

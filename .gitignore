@@ -70,3 +70,5 @@ _testmain.go
 test
 .vim
 dist/
+
+libtorch/

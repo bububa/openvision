@@ -9,10 +9,14 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"strconv"
 	"strings"
+
+	"github.com/llgcode/draw2d"
 
 	"github.com/bububa/openvision/go/common"
 	"github.com/bububa/openvision/go/face/detecter"
+	"github.com/bububa/openvision/go/face/drawer"
 	facedrawer "github.com/bububa/openvision/go/face/drawer"
 )
 
@@ -21,16 +25,35 @@ func main() {
 	dataPath := cleanPath(wd, "~/go/src/github.com/bububa/openvision/data")
 	imgPath := filepath.Join(dataPath, "./images")
 	modelPath := filepath.Join(dataPath, "./models")
+	fontPath := filepath.Join(dataPath, "./font")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
 	cpuCores := common.GetBigCPUCount()
 	common.SetOMPThreads(cpuCores)
 	log.Printf("CPU big cores:%d\n", cpuCores)
-	test_detect(imgPath, modelPath, cpuCores)
-	test_mask(imgPath, modelPath, cpuCores)
+	test_detect(imgPath, modelPath, fontPath, cpuCores)
+	test_mask(imgPath, modelPath, fontPath, cpuCores)
 }
 
-func test_detect(imgPath string, modelPath string, threads int) {
+func load_font(fontPath string) *common.Font {
+	fontCache := common.NewFontCache(fontPath)
+	fnt := &common.Font{
+		Size: 9,
+		Data: &draw2d.FontData{
+			Name: "NotoSansCJKsc",
+			//Name:   "Roboto",
+			Family: draw2d.FontFamilySans,
+			Style:  draw2d.FontStyleNormal,
+		},
+	}
+	if err := fnt.Load(fontCache); err != nil {
+		log.Fatalln(err)
+	}
+	return fnt
+}
+func test_detect(imgPath string, modelPath string, fontPath string, threads int) {
+	fnt := load_font(fontPath)
+	drawer := facedrawer.New(drawer.WithFont(fnt))
 	for idx, d := range []detecter.Detecter{
 		retinaface(modelPath),
 		centerface(modelPath),
@@ -39,16 +62,22 @@ func test_detect(imgPath string, modelPath string, threads int) {
 		scrfd(modelPath),
 	} {
 		common.SetEstimatorThreads(d, threads)
-		detect(d, imgPath, idx, "4.jpg", false)
+		detect(d, drawer, imgPath, idx, "4.jpg")
 		d.Destroy()
 	}
 }
 
-func test_mask(imgPath string, modelPath string, threads int) {
+func test_mask(imgPath string, modelPath string, fontPath string, threads int) {
+	fnt := load_font(fontPath)
+	drawer := facedrawer.New(
+		facedrawer.WithBorderColor(common.Red),
+		facedrawer.WithMaskColor(common.Green),
+		facedrawer.WithFont(fnt),
+	)
 	d := anticonv(modelPath)
 	common.SetEstimatorThreads(d, threads)
 	defer d.Destroy()
-	detect(d, imgPath, 0, "mask3.jpg", true)
+	detect(d, drawer, imgPath, 0, "mask3.jpg")
 }
 
 func retinaface(modelPath string) detecter.Detecter {
@@ -105,7 +134,7 @@ func anticonv(modelPath string) detecter.Detecter {
 	return d
 }
 
-func detect(d detecter.Detecter, imgPath string, idx int, filename string, mask bool) {
+func detect(d detecter.Detecter, drawer *facedrawer.Drawer, imgPath string, idx int, filename string) {
 	inPath := filepath.Join(imgPath, filename)
 	img, err := loadImage(inPath)
 	if err != nil {
@@ -116,18 +145,11 @@ func detect(d detecter.Detecter, imgPath string, idx int, filename string, mask 
 		log.Fatalln(err)
 	}
 
-	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("%d-%s", idx, filename))
-
-	var drawer *facedrawer.Drawer
-	if mask {
-		drawer = facedrawer.New(
-			facedrawer.WithBorderColor(common.Red),
-			facedrawer.WithMaskColor(common.Green),
-		)
-	} else {
-		drawer = facedrawer.New()
+	for idx, face := range faces {
+		faces[idx].Label = strconv.FormatFloat(float64(face.Score), 'f', 4, 64)
 	}
 
+	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("%d-%s", idx, filename))
 	out := drawer.Draw(img, faces)
 
 	if err := saveImage(out, outPath); err != nil {
