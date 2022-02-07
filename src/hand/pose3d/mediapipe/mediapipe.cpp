@@ -440,6 +440,7 @@ int MediapipeHand::Detect(const unsigned char *rgbdata, int img_width,
   decode_bounds(region_list, prob_threshold, target_size, target_size, scores,
                 bboxes, anchors);
   non_max_suppression(region_list, region_nms_list, nms_threshold);
+
   objects.clear();
   pack_detect_result(detect_results, region_nms_list, target_size, objects);
 
@@ -490,10 +491,9 @@ int MediapipeHand::Detect(const unsigned char *rgbdata, int img_width,
     ncnn::Mat trans_image =
         ncnn::Mat::from_pixels(trans_mat, ncnn::Mat::PIXEL_RGB, 224, 224);
 
+    free(trans_mat);
     float score = GetLandmarks(trans_image, tm, objects[i].skeleton,
                                objects[i].skeleton3d);
-
-    free(trans_mat);
   }
   return 0;
 }

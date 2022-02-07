@@ -43,6 +43,7 @@ func main() {
 	// }
 	d3d := mediapipe(modelPath)
 	detect3d(d3d, imgPath, fontPath, "hand1.jpg")
+	detect3d(d3d, imgPath, fontPath, "hand2.jpg")
 }
 
 func yolox(modelPath string) detecter.Detecter {

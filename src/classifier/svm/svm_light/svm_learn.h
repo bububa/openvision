@@ -19,9 +19,12 @@
 #ifndef SVM_LEARN
 #define SVM_LEARN
 
+#include "svm_common.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 void svm_learn_classification(DOC **, double *, long, long, LEARN_PARM *,
                               KERNEL_PARM *, KERNEL_CACHE *, MODEL *, double *);
 void svm_learn_regression(DOC **, double *, long, long, LEARN_PARM *,
