@@ -13,9 +13,10 @@ import (
 
 // PalmObject
 type PalmObject struct {
+	Name       string
 	Score      float64
 	Rotation   float64
-	Rect       []Point
+	RectPoints []Point
 	Landmarks  []Point
 	Skeleton   []Point
 	Skeleton3d []Point3d
@@ -37,7 +38,7 @@ func GoPalmObject(cObj *C.PalmObject, w float64, h float64) PalmObject {
 	return PalmObject{
 		Score:      float64(cObj.score),
 		Rotation:   float64(cObj.rotation),
-		Rect:       GoPoint2fVector(cObj.rect, w, h),
+		RectPoints: GoPoint2fVector(cObj.rect, w, h),
 		Landmarks:  GoPoint2fVector(cObj.landmarks, w, h),
 		Skeleton:   GoPoint2fVector(cObj.skeleton, w, h),
 		Skeleton3d: GoPoint3dVector(cObj.skeleton3d),

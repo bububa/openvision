@@ -297,6 +297,8 @@ void compute_detect_to_roi(DetectRegion &region, const int &target_size,
     palm.landmarks[i] = region.landmarks[i];
   }
 
+  palm.rotation = rotation;
+
   palm.score = region.score;
 }
 

@@ -3,7 +3,9 @@ package drawer
 import (
 	"image"
 	"image/color"
+	"math"
 
+	"github.com/llgcode/draw2d"
 	"github.com/llgcode/draw2d/draw2dimg"
 	"github.com/llgcode/draw2d/draw2dkit"
 
@@ -124,12 +126,12 @@ func (d *Drawer) DrawPalm(img image.Image, rois []common.PalmObject) image.Image
 		gc.SetLineWidth(d.BorderStrokeWidth)
 		gc.SetStrokeColor(common.ColorFromHex(d.BorderColor))
 		gc.BeginPath()
-		for idx, pt := range roi.Rect {
+		for idx, pt := range roi.RectPoints {
 			gc.MoveTo(pt.X*imgW, pt.Y*imgH)
-			if idx == len(roi.Rect)-1 {
-				gc.LineTo(roi.Rect[0].X*imgW, roi.Rect[0].Y*imgH)
+			if idx == 3 {
+				gc.LineTo(roi.RectPoints[0].X*imgW, roi.RectPoints[0].Y*imgH)
 			} else {
-				gc.LineTo(roi.Rect[idx+1].X*imgW, roi.Rect[idx+1].Y*imgH)
+				gc.LineTo(roi.RectPoints[idx+1].X*imgW, roi.RectPoints[idx+1].Y*imgH)
 			}
 		}
 		gc.Close()
@@ -168,6 +170,18 @@ func (d *Drawer) DrawPalm(img image.Image, rois []common.PalmObject) image.Image
 		}
 		for _, pt := range roi.Landmarks {
 			common.DrawCircle(gc, common.Pt(pt.X*imgW, pt.Y*imgH), d.KeypointRadius, d.KeypointColor, "", d.KeypointStrokeWidth)
+		}
+		// draw name
+		if roi.Name != "" {
+			deltaX := (roi.RectPoints[2].X - roi.RectPoints[3].X) * imgW
+			deltaY := (roi.RectPoints[2].Y - roi.RectPoints[3].Y) * imgH
+			width := math.Sqrt(math.Abs(deltaX*deltaX) + math.Abs(deltaY*deltaY))
+			metrix := draw2d.NewRotationMatrix(roi.Rotation)
+			ptX, ptY := metrix.InverseTransformPoint(roi.RectPoints[3].X*imgW, roi.RectPoints[3].Y*imgH)
+			gc.Save()
+			gc.Rotate(roi.Rotation)
+			common.DrawLabelInWidth(gc, d.Font, roi.Name, common.Pt(ptX, ptY), d.LabelColor, d.BorderColor, width)
+			gc.Restore()
 		}
 	}
 	return out

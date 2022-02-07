@@ -16,6 +16,7 @@ import (
 	handdrawer "github.com/bububa/openvision/go/hand/drawer"
 	"github.com/bububa/openvision/go/hand/pose"
 	"github.com/bububa/openvision/go/hand/pose3d"
+	"github.com/llgcode/draw2d"
 )
 
 func main() {
@@ -23,6 +24,7 @@ func main() {
 	dataPath := cleanPath(wd, "~/go/src/github.com/bububa/openvision/data")
 	imgPath := filepath.Join(dataPath, "./images")
 	modelPath := filepath.Join(dataPath, "./models")
+	fontPath := filepath.Join(dataPath, "./font")
 	common.CreateGPUInstance()
 	defer common.DestroyGPUInstance()
 	cpuCores := common.GetBigCPUCount()
@@ -40,7 +42,7 @@ func main() {
 	// 	detect(d, estimator, imgPath, "hand2.jpg", idx)
 	// }
 	d3d := mediapipe(modelPath)
-	detect3d(d3d, imgPath, "hand1.jpg")
+	detect3d(d3d, imgPath, fontPath, "hand1.jpg")
 }
 
 func yolox(modelPath string) detecter.Detecter {
@@ -119,7 +121,7 @@ func detect(d detecter.Detecter, e pose.Estimator, imgPath string, filename stri
 	}
 }
 
-func detect3d(d *pose3d.Mediapipe, imgPath string, filename string) {
+func detect3d(d *pose3d.Mediapipe, imgPath string, fontPath string, filename string) {
 	inPath := filepath.Join(imgPath, filename)
 	imgSrc, err := loadImage(inPath)
 	if err != nil {
@@ -130,8 +132,9 @@ func detect3d(d *pose3d.Mediapipe, imgPath string, filename string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Printf("%+v\n", rois)
-	drawer := handdrawer.New()
+	// log.Printf("%+v\n", rois)
+	fnt := load_font(fontPath)
+	drawer := handdrawer.New(handdrawer.WithFont(fnt))
 	outPath := filepath.Join(imgPath, "./results", fmt.Sprintf("pose3d-hand-%s", filename))
 	out := drawer.DrawPalm(img, rois)
 
@@ -186,4 +189,21 @@ func cleanPath(wd string, path string) string {
 		return filepath.Join(dir, path[2:])
 	}
 	return filepath.Join(wd, path)
+}
+
+func load_font(fontPath string) *common.Font {
+	fontCache := common.NewFontCache(fontPath)
+	fnt := &common.Font{
+		Size: 9,
+		Data: &draw2d.FontData{
+			Name: "NotoSansCJKsc",
+			//Name:   "Roboto",
+			Family: draw2d.FontFamilySans,
+			Style:  draw2d.FontStyleNormal,
+		},
+	}
+	if err := fnt.Load(fontCache); err != nil {
+		log.Fatalln(err)
+	}
+	return fnt
 }
